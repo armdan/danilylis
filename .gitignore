@@ -45,3 +45,11 @@ Thumbs.db
 .idea/
 .vscode/
 >>>>>>> 0c545f0 (Initial commit)
+node_modules/
+dist/
+build/
+coverage/
+.env
+.env.*
+.idea/
+.vscode/
