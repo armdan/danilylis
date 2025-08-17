@@ -6,10 +6,10 @@ const rateLimit = require('express-rate-limit');
 const path = require('path');
 require('dotenv').config();
 
-// Create Express app FIRST
+// Create Express app
 const app = express();
 
-// Trust proxy for rate limiting (since you're using nginx proxy)
+// Trust proxy for rate limiting
 app.set('trust proxy', 1);
 
 // Import routes
@@ -22,40 +22,13 @@ const reportRoutes = require('./routes/reports');
 const userRoutes = require('./routes/users');
 const dashboardRoutes = require('./routes/dashboard');
 
-// Security middleware with simple CSP for local development
+// Security middleware - disabled CSP for development
 app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: [
-        "'self'",
-        "'unsafe-inline'",
-        "https://cdnjs.cloudflare.com"
-      ],
-      styleSrc: [
-        "'self'",
-        "'unsafe-inline'",
-        "https://cdnjs.cloudflare.com"
-      ],
-      fontSrc: [
-        "'self'",
-        "https://cdnjs.cloudflare.com",
-        "data:"
-      ],
-      imgSrc: [
-        "'self'",
-        "data:",
-        "https:"
-      ],
-      connectSrc: [
-        "'self'"
-      ]
-    }
-  },
+  contentSecurityPolicy: false,
   crossOriginEmbedderPolicy: false
 }));
 
-// Rate limiting - generous for local development
+// Rate limiting - generous for development
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 1000, // High limit for development
@@ -67,7 +40,7 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Simple CORS for local development
+// CORS for local development
 app.use(cors());
 
 // Body parsing middleware
@@ -86,7 +59,16 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://192.168.86.118:27017/labo
 .then(() => console.log('Connected to MongoDB'))
 .catch(err => console.error('MongoDB connection error:', err));
 
-// TEMPORARY: Reset admin users - add this after your other routes
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+  });
+});
+
+// Reset admin users endpoint
 app.get('/reset-admin', async (req, res) => {
   try {
     const User = require('./models/User');
@@ -179,6 +161,6 @@ app.use((req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
-  console.log(`Local access: http://192.168.86.66:${PORT}`);
-  console.log(`Localhost: http://localhost:${PORT}`);
+  console.log(`Local access: http://localhost:${PORT}`);
+  console.log(`Network access: http://0.0.0.0:${PORT}`);
 });

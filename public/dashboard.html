@@ -1,314 +1,341 @@
-// Dashboard frontend JavaScript (browser-compatible)
-
-$(document).ready(function() {
-    console.log('Dashboard loading...');
-    
-    // Check authentication
-    if (!isAuthenticated()) {
-        window.location.href = '/';
-        return;
-    }
-
-    // Initialize dashboard
-    initializeDashboard();
-    loadDashboardData();
-    setupEventHandlers();
-    
-    console.log('Dashboard initialized successfully');
-});
-
-function isAuthenticated() {
-    const token = localStorage.getItem('authToken');
-    return token !== null && token.trim() !== '';
-}
-
-function getAuthHeaders() {
-    const token = localStorage.getItem('authToken');
-    return token ? { 'Authorization': `Bearer ${token}` } : {};
-}
-
-function initializeDashboard() {
-    const userStr = localStorage.getItem('user');
-    
-    if (userStr) {
-        try {
-            const user = JSON.parse(userStr);
-            $('#userName').text(user.firstName + ' ' + user.lastName);
-            $('#welcomeUserName').text(user.firstName);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Laboratory Information System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/dashboard.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/dashboard">
+                <i class="fas fa-flask"></i>
+                Laboratory Information System
+            </a>
             
-            // Populate profile modal if it exists
-            $('#profileFirstName').val(user.firstName);
-            $('#profileLastName').val(user.lastName);
-            $('#profileEmail').val(user.email);
-            $('#profilePhone').val(user.phone || '');
-            $('#profileRole').val((user.role || '').replace('_', ' ').toUpperCase());
-            $('#profileDepartment').val((user.department || '').toUpperCase());
-            
-            // Show/hide quick actions based on role
-            $('.quick-action-btn').each(function() {
-                const allowedRoles = $(this).data('role');
-                if (allowedRoles) {
-                    const roles = allowedRoles.toString().split(',');
-                    if (!roles.includes(user.role)) {
-                        $(this).hide();
-                    }
-                }
-            });
-        } catch (e) {
-            console.error('Error parsing user data:', e);
-        }
-    }
-}
-
-function loadDashboardData() {
-    // Load statistics
-    loadStatistics();
-    
-    // Load recent orders
-    loadRecentOrders();
-    
-    // Load alerts
-    loadAlerts();
-}
-
-function loadStatistics() {
-    $.ajax({
-        url: '/api/dashboard/statistics',
-        method: 'GET',
-        headers: getAuthHeaders(),
-        success: function(response) {
-            $('#totalPatients').text(response.totalPatients || 0);
-            $('#pendingOrders').text(response.pendingOrders || 0);
-            $('#completedTests').text(response.completedTests || 0);
-            $('#criticalResults').text(response.criticalResults || 0);
-        },
-        error: function(xhr) {
-            console.error('Error loading statistics:', xhr);
-            // Set default values on error
-            $('#totalPatients').text('0');
-            $('#pendingOrders').text('0');
-            $('#completedTests').text('0');
-            $('#criticalResults').text('0');
-            
-            if (xhr.status === 401) {
-                handleAuthError();
-            }
-        }
-    });
-}
-
-function loadRecentOrders() {
-    $.ajax({
-        url: '/api/orders?limit=5&sort=-createdAt',
-        method: 'GET',
-        headers: getAuthHeaders(),
-        success: function(response) {
-            const tbody = $('#recentOrdersTable tbody');
-            tbody.empty();
-            
-            if (response.orders && response.orders.length > 0) {
-                response.orders.forEach(order => {
-                    const row = createOrderRow(order);
-                    tbody.append(row);
-                });
-            } else {
-                tbody.append(`
-                    <tr>
-                        <td colspan="5" class="text-center text-muted">
-                            No recent orders found
-                        </td>
-                    </tr>
-                `);
-            }
-        },
-        error: function(xhr) {
-            console.error('Error loading recent orders:', xhr);
-            $('#recentOrdersTable tbody').html(`
-                <tr>
-                    <td colspan="5" class="text-center text-danger">
-                        Error loading recent orders
-                    </td>
-                </tr>
-            `);
-            
-            if (xhr.status === 401) {
-                handleAuthError();
-            }
-        }
-    });
-}
-
-function createOrderRow(order) {
-    const statusClass = getStatusClass(order.status);
-    const formattedDate = new Date(order.createdAt).toLocaleDateString();
-    const testCount = order.tests ? order.tests.length : 0;
-    
-    return `
-        <tr>
-            <td>
-                <a href="/orders?id=${order._id}" class="text-primary">
-                    ${order.orderNumber || 'N/A'}
-                </a>
-            </td>
-            <td>
-                ${order.patient ? (order.patient.firstName + ' ' + order.patient.lastName) : 'Unknown'}
-            </td>
-            <td>
-                <span class="badge badge-info">${testCount} test${testCount !== 1 ? 's' : ''}</span>
-            </td>
-            <td>
-                <span class="badge ${statusClass}">${(order.status || 'unknown').toUpperCase()}</span>
-            </td>
-            <td>${formattedDate}</td>
-        </tr>
-    `;
-}
-
-function getStatusClass(status) {
-    const statusClasses = {
-        'pending': 'badge-warning',
-        'completed': 'badge-success',
-        'cancelled': 'badge-danger',
-        'partial': 'badge-info',
-        'processing': 'badge-primary'
-    };
-    return statusClasses[status] || 'badge-secondary';
-}
-
-function loadAlerts() {
-    $.ajax({
-        url: '/api/dashboard/alerts',
-        method: 'GET',
-        headers: getAuthHeaders(),
-        success: function(response) {
-            const container = $('#alertsContainer');
-            
-            if (response.alerts && response.alerts.length > 0) {
-                container.empty();
-                response.alerts.forEach(alert => {
-                    const alertHtml = `
-                        <div class="alert alert-${alert.type} alert-dismissible fade show">
-                            <i class="fas fa-${getAlertIcon(alert.type)}"></i>
-                            ${alert.message}
-                            <button type="button" class="close" data-dismiss="alert">
-                                <span>&times;</span>
-                            </button>
-                        </div>
-                    `;
-                    container.append(alertHtml);
-                });
-            }
-        },
-        error: function(xhr) {
-            console.error('Error loading alerts:', xhr);
-            if (xhr.status === 401) {
-                handleAuthError();
-            }
-        }
-    });
-}
-
-function getAlertIcon(type) {
-    const icons = {
-        'info': 'info-circle',
-        'warning': 'exclamation-triangle',
-        'danger': 'exclamation-circle',
-        'success': 'check-circle'
-    };
-    return icons[type] || 'info-circle';
-}
-
-function setupEventHandlers() {
-    // Refresh dashboard data every 5 minutes
-    setInterval(loadDashboardData, 5 * 60 * 1000);
-    
-    // Manual refresh button
-    $('#refreshDashboard').on('click', function() {
-        loadDashboardData();
-        showNotification('Dashboard refreshed', 'success');
-    });
-}
-
-function updateProfile() {
-    const profileData = {
-        firstName: $('#profileFirstName').val(),
-        lastName: $('#profileLastName').val(),
-        email: $('#profileEmail').val(),
-        phone: $('#profilePhone').val()
-    };
-
-    $.ajax({
-        url: '/api/auth/profile',
-        method: 'PUT',
-        headers: getAuthHeaders(),
-        contentType: 'application/json',
-        data: JSON.stringify(profileData),
-        success: function(response) {
-            // Update stored user data
-            localStorage.setItem('user', JSON.stringify(response.user));
-            
-            // Update UI
-            $('#userName').text(response.user.firstName + ' ' + response.user.lastName);
-            $('#welcomeUserName').text(response.user.firstName);
-            
-            $('#profileModal').modal('hide');
-            showNotification('Profile updated successfully', 'success');
-        },
-        error: function(xhr) {
-            console.error('Error updating profile:', xhr);
-            const response = xhr.responseJSON;
-            const message = response?.message || 'Error updating profile';
-            showNotification(message, 'danger');
-            
-            if (xhr.status === 401) {
-                handleAuthError();
-            }
-        }
-    });
-}
-
-function showNotification(message, type) {
-    const notification = `
-        <div class="alert alert-${type} alert-dismissible fade show" style="position: fixed; top: 100px; right: 20px; z-index: 9999;">
-            ${message}
-            <button type="button" class="close" data-dismiss="alert">
-                <span>&times;</span>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
             </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="fas fa-chart-pie"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/patients">
+                            <i class="fas fa-users"></i> Patients
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/tests">
+                            <i class="fas fa-vial"></i> Tests
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/orders">
+                            <i class="fas fa-clipboard-list"></i> Orders
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/results">
+                            <i class="fas fa-chart-line"></i> Results
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reports">
+                            <i class="fas fa-file-medical"></i> Reports
+                        </a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+                            <i class="fas fa-user-circle"></i>
+                            <span id="userName">User</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#profileModal">
+                                <i class="fas fa-user"></i> Profile
+                            </a>
+                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#settingsModal">
+                                <i class="fas fa-cog"></i> Settings
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#" onclick="logout()">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
-    `;
-    
-    $('body').append(notification);
-    
-    // Auto-dismiss after 3 seconds
-    setTimeout(() => {
-        $('.alert').last().alert('close');
-    }, 3000);
-}
+    </nav>
 
-function handleAuthError() {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    localStorage.removeItem('rememberMe');
-    window.location.href = '/';
-}
+    <!-- Main Content -->
+    <div class="container-fluid main-content">
+        <div class="row">
+            <!-- Welcome Section -->
+            <div class="col-12">
+                <div class="welcome-section">
+                    <h1 class="welcome-title">Welcome back, <span id="welcomeUserName">User</span>!</h1>
+                    <p class="welcome-subtitle">Here's what's happening in your laboratory today</p>
+                </div>
+            </div>
+        </div>
 
-// Global logout function
-function logout() {
-    if (confirm('Are you sure you want to logout?')) {
-        console.log('Logging out user...');
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('user');
-        localStorage.removeItem('rememberMe');
-        // Force redirect to login page
-        window.location.replace('/');
-    }
-}
+        <!-- Statistics Cards -->
+        <div class="row">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="stat-card stat-card-primary">
+                    <div class="stat-card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="stat-title">Total Patients</div>
+                                <div class="stat-number" id="totalPatients">-</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-users stat-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-// Force logout function (no confirmation)
-function forceLogout() {
-    console.log('Force logging out user...');
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user'); 
-    localStorage.removeItem('rememberMe');
-    window.location.replace('/');
-}
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="stat-card stat-card-success">
+                    <div class="stat-card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="stat-title">Pending Orders</div>
+                                <div class="stat-number" id="pendingOrders">-</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-clipboard-list stat-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="stat-card stat-card-info">
+                    <div class="stat-card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="stat-title">Completed Tests</div>
+                                <div class="stat-number" id="completedTests">-</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-vial stat-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="stat-card stat-card-warning">
+                    <div class="stat-card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="stat-title">Critical Results</div>
+                                <div class="stat-number" id="criticalResults">-</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-exclamation-triangle stat-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts and Recent Activity -->
+        <div class="row">
+            <!-- Recent Orders -->
+            <div class="col-lg-8 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Recent Orders</h5>
+                        <a href="/orders" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="recentOrdersTable">
+                                <thead>
+                                    <tr>
+                                        <th>Order #</th>
+                                        <th>Patient</th>
+                                        <th>Tests</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="5" class="text-center">
+                                            <div class="spinner-border spinner-border-sm" role="status">
+                                                <span class="sr-only">Loading...</span>
+                                            </div>
+                                            Loading recent orders...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="col-lg-4 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="quick-actions">
+                            <a href="/patients" class="quick-action-btn" data-role="admin,doctor,receptionist">
+                                <i class="fas fa-user-plus"></i>
+                                <span>Add Patient</span>
+                            </a>
+                            <a href="/orders" class="quick-action-btn" data-role="admin,doctor,lab_technician">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>Create Order</span>
+                            </a>
+                            <a href="/tests" class="quick-action-btn" data-role="admin">
+                                <i class="fas fa-vial"></i>
+                                <span>Manage Tests</span>
+                            </a>
+                            <a href="/results" class="quick-action-btn" data-role="admin,lab_technician">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Enter Results</span>
+                            </a>
+                            <a href="/reports" class="quick-action-btn">
+                                <i class="fas fa-file-medical"></i>
+                                <span>Generate Report</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Status -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">System Status</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="system-status">
+                            <div class="status-item">
+                                <div class="status-indicator status-online"></div>
+                                <span>Database Connection</span>
+                                <small class="text-success">Online</small>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-indicator status-online"></div>
+                                <span>Lab Equipment</span>
+                                <small class="text-success">Operational</small>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-indicator status-warning"></div>
+                                <span>Backup System</span>
+                                <small class="text-warning">Scheduled</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alerts and Notifications -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Alerts & Notifications</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="alertsContainer">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i>
+                                Welcome to the Laboratory Information System! All systems are operational.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">User Profile</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="profileForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="profileFirstName">First Name</label>
+                                    <input type="text" class="form-control" id="profileFirstName">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="profileLastName">Last Name</label>
+                                    <input type="text" class="form-control" id="profileLastName">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="profileEmail">Email</label>
+                            <input type="email" class="form-control" id="profileEmail">
+                        </div>
+                        <div class="form-group">
+                            <label for="profilePhone">Phone</label>
+                            <input type="tel" class="form-control" id="profilePhone">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="profileRole">Role</label>
+                                    <input type="text" class="form-control" id="profileRole" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="profileDepartment">Department</label>
+                                    <input type="text" class="form-control" id="profileDepartment" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="updateProfile()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

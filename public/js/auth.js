@@ -3,7 +3,7 @@ const AuthManager = {
     // Check if user is authenticated
     isAuthenticated() {
         const token = localStorage.getItem('authToken');
-        return token !== null;
+        return token !== null && token.trim() !== '';
     },
 
     // Get stored token
@@ -28,8 +28,7 @@ const AuthManager = {
         localStorage.removeItem('authToken');
         localStorage.removeItem('user');
         localStorage.removeItem('rememberMe');
-        // Force HTTP redirect
-        window.location.replace('http://' + window.location.host + '/');
+        window.location.replace('/');
     },
 
     // Check if user has specific role
@@ -46,25 +45,15 @@ const AuthManager = {
     // Redirect to login if not authenticated
     requireAuth() {
         if (!this.isAuthenticated()) {
-            window.location.replace('http://' + window.location.host + '/');
+            window.location.replace('/');
             return false;
         }
         return true;
-    },
-
-    // Force HTTP redirect
-    forceHTTP() {
-        if (window.location.protocol === 'https:') {
-            window.location.replace('http://' + window.location.host + window.location.pathname + window.location.search);
-        }
     }
 };
 
 // Setup AJAX defaults when document is ready
 $(document).ready(function() {
-    // Force HTTP protocol
-    AuthManager.forceHTTP();
-    
     // Add auth headers to all AJAX requests
     $.ajaxSetup({
         beforeSend: function(xhr) {

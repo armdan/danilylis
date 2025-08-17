@@ -164,7 +164,7 @@
                                     <i class="fas fa-user"></i>
                                 </span>
                             </div>
-                            <input type="text" class="form-control" id="username" name="username" autocomplete="username" placeholder="Enter username or email">
+                            <input type="text" class="form-control" id="username" name="username" autocomplete="username" placeholder="Enter username or email" value="admin">
                         </div>
                     </div>
                     
@@ -176,7 +176,7 @@
                                     <i class="fas fa-lock"></i>
                                 </span>
                             </div>
-                            <input type="password" class="form-control" id="password" name="password" autocomplete="current-password" placeholder="Enter password">
+                            <input type="password" class="form-control" id="password" name="password" autocomplete="current-password" placeholder="Enter password" value="admin123">
                         </div>
                     </div>
                     
@@ -209,23 +209,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Force HTTP redirect if accessed via HTTPS
-        if (window.location.protocol === 'https:') {
-            window.location.replace('http://' + window.location.host + window.location.pathname);
-        }
-
-        // Self-contained login script - forces HTTP for all API calls
+        // Define API_BASE_URL at the top
+        var API_BASE_URL = window.location.protocol + '//' + window.location.host;
         var isLoggingIn = false;
-        var API_BASE_URL = 'http://192.168.86.118:3000';
 
         $(document).ready(function() {
             console.log('Login page loaded');
+            console.log('API_BASE_URL:', API_BASE_URL);
             
             // Check for existing token
             var token = localStorage.getItem('authToken');
             if (token && token.trim() !== '') {
                 console.log('Found existing token, redirecting...');
-                window.location.href = API_BASE_URL + '/dashboard';
+                window.location.href = '/dashboard';
                 return;
             }
 
@@ -264,12 +260,14 @@
             }
 
             console.log('Attempting login...');
+            console.log('Login URL:', API_BASE_URL + '/api/auth/login');
+            
             isLoggingIn = true;
             setLoadingState(true);
             clearAlerts();
 
             $.ajax({
-                url: API_BASE_URL + '/api/auth/login',
+                url: '/api/auth/login', // Use relative URL
                 method: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({
@@ -278,7 +276,7 @@
                 }),
                 timeout: 30000,
                 success: function(response) {
-                    console.log('Login successful');
+                    console.log('Login successful:', response);
                     
                     if (response && response.token && response.user) {
                         localStorage.setItem('authToken', response.token);
@@ -291,15 +289,15 @@
                         showAlert('Login successful! Redirecting...', 'success');
                         
                         setTimeout(function() {
-                            window.location.href = API_BASE_URL + '/dashboard';
+                            window.location.href = '/dashboard';
                         }, 1000);
                     } else {
                         showAlert('Invalid response from server', 'danger');
                         resetLogin();
                     }
                 },
-                error: function(xhr) {
-                    console.error('Login failed:', xhr.status, xhr.responseText);
+                error: function(xhr, status, error) {
+                    console.error('Login failed:', xhr.status, xhr.responseText, error);
                     
                     var message = 'Login failed. Please try again.';
                     
@@ -310,7 +308,7 @@
                     } else if (xhr.status === 429) {
                         message = 'Too many attempts. Please wait and try again.';
                     } else if (xhr.status === 0) {
-                        message = 'Cannot connect to server';
+                        message = 'Cannot connect to server. Check if server is running.';
                     } else if (xhr.status === 500) {
                         message = 'Server error. Please try again.';
                     }

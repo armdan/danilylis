@@ -1,12 +1,11 @@
-// Dashboard frontend JavaScript (browser-compatible)
-
+// Enhanced Dashboard JavaScript
 $(document).ready(function() {
     console.log('Dashboard loading...');
     
-    // Check authentication first
-    if (!isAuthenticated()) {
+    // Check authentication
+    if (!AuthManager.isAuthenticated()) {
         console.log('User not authenticated, redirecting to login...');
-        forceLogout();
+        window.location.href = '/';
         return;
     }
 
@@ -22,23 +21,12 @@ $(document).ready(function() {
     }
 });
 
-function isAuthenticated() {
-    const token = localStorage.getItem('authToken');
-    return token !== null && token.trim() !== '';
-}
-
-function getAuthHeaders() {
-    const token = localStorage.getItem('authToken');
-    return token ? { 'Authorization': `Bearer ${token}` } : {};
-}
-
 function initializeDashboard() {
-    const userStr = localStorage.getItem('user');
+    const user = AuthManager.getUser();
     
-    if (userStr) {
+    if (user) {
         try {
-            const user = JSON.parse(userStr);
-            $('#userName').text(user.firstName + ' ' + user.lastName);
+            $('#userName').text(`${user.firstName} ${user.lastName}`);
             $('#welcomeUserName').text(user.firstName);
             
             // Populate profile modal if it exists
@@ -66,13 +54,8 @@ function initializeDashboard() {
 }
 
 function loadDashboardData() {
-    // Load statistics
     loadStatistics();
-    
-    // Load recent orders
     loadRecentOrders();
-    
-    // Load alerts
     loadAlerts();
 }
 
@@ -80,7 +63,7 @@ function loadStatistics() {
     $.ajax({
         url: '/api/dashboard/statistics',
         method: 'GET',
-        headers: getAuthHeaders(),
+        headers: AuthManager.getAuthHeaders(),
         success: function(response) {
             $('#totalPatients').text(response.totalPatients || 0);
             $('#pendingOrders').text(response.pendingOrders || 0);
@@ -96,7 +79,7 @@ function loadStatistics() {
             $('#criticalResults').text('0');
             
             if (xhr.status === 401) {
-                handleAuthError();
+                AuthManager.logout();
             }
         }
     });
@@ -106,7 +89,7 @@ function loadRecentOrders() {
     $.ajax({
         url: '/api/orders?limit=5&sort=-createdAt',
         method: 'GET',
-        headers: getAuthHeaders(),
+        headers: AuthManager.getAuthHeaders(),
         success: function(response) {
             const tbody = $('#recentOrdersTable tbody');
             tbody.empty();
@@ -137,7 +120,7 @@ function loadRecentOrders() {
             `);
             
             if (xhr.status === 401) {
-                handleAuthError();
+                AuthManager.logout();
             }
         }
     });
@@ -171,11 +154,11 @@ function createOrderRow(order) {
 
 function getStatusClass(status) {
     const statusClasses = {
-        'pending': 'badge-warning',
-        'completed': 'badge-success',
-        'cancelled': 'badge-danger',
-        'partial': 'badge-info',
-        'processing': 'badge-primary'
+        'pending': 'badge-pending',
+        'completed': 'badge-completed',
+        'cancelled': 'badge-cancelled',
+        'partial': 'badge-partial',
+        'processing': 'badge-processing'
     };
     return statusClasses[status] || 'badge-secondary';
 }
@@ -184,7 +167,7 @@ function loadAlerts() {
     $.ajax({
         url: '/api/dashboard/alerts',
         method: 'GET',
-        headers: getAuthHeaders(),
+        headers: AuthManager.getAuthHeaders(),
         success: function(response) {
             const container = $('#alertsContainer');
             
@@ -207,7 +190,7 @@ function loadAlerts() {
         error: function(xhr) {
             console.error('Error loading alerts:', xhr);
             if (xhr.status === 401) {
-                handleAuthError();
+                AuthManager.logout();
             }
         }
     });
@@ -227,7 +210,7 @@ function setupEventHandlers() {
     // Refresh dashboard data every 5 minutes
     setInterval(loadDashboardData, 5 * 60 * 1000);
     
-    // Manual refresh button
+    // Manual refresh button (if exists)
     $('#refreshDashboard').on('click', function() {
         loadDashboardData();
         showNotification('Dashboard refreshed', 'success');
@@ -245,7 +228,7 @@ function updateProfile() {
     $.ajax({
         url: '/api/auth/profile',
         method: 'PUT',
-        headers: getAuthHeaders(),
+        headers: AuthManager.getAuthHeaders(),
         contentType: 'application/json',
         data: JSON.stringify(profileData),
         success: function(response) {
@@ -253,7 +236,7 @@ function updateProfile() {
             localStorage.setItem('user', JSON.stringify(response.user));
             
             // Update UI
-            $('#userName').text(response.user.firstName + ' ' + response.user.lastName);
+            $('#userName').text(`${response.user.firstName} ${response.user.lastName}`);
             $('#welcomeUserName').text(response.user.firstName);
             
             $('#profileModal').modal('hide');
@@ -266,7 +249,7 @@ function updateProfile() {
             showNotification(message, 'danger');
             
             if (xhr.status === 401) {
-                handleAuthError();
+                AuthManager.logout();
             }
         }
     });
@@ -288,32 +271,4 @@ function showNotification(message, type) {
     setTimeout(() => {
         $('.alert').last().alert('close');
     }, 3000);
-}
-
-function handleAuthError() {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    localStorage.removeItem('rememberMe');
-    window.location.href = '/';
-}
-
-// Global logout function
-function logout() {
-    if (confirm('Are you sure you want to logout?')) {
-        console.log('Logging out user...');
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('user');
-        localStorage.removeItem('rememberMe');
-        // Force redirect to login page
-        window.location.replace('/');
-    }
-}
-
-// Force logout function (no confirmation)
-function forceLogout() {
-    console.log('Force logging out user...');
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user'); 
-    localStorage.removeItem('rememberMe');
-    window.location.replace('/');
 }
