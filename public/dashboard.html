@@ -9,75 +9,7 @@
     <link href="css/dashboard.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/dashboard">
-                <i class="fas fa-flask"></i>
-                Laboratory Information System
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="/dashboard">
-                            <i class="fas fa-chart-pie"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/patients">
-                            <i class="fas fa-users"></i> Patients
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/tests">
-                            <i class="fas fa-vial"></i> Tests
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/orders">
-                            <i class="fas fa-clipboard-list"></i> Orders
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/results">
-                            <i class="fas fa-chart-line"></i> Results
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/reports">
-                            <i class="fas fa-file-medical"></i> Reports
-                        </a>
-                    </li>
-                </ul>
-                
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
-                            <i class="fas fa-user-circle"></i>
-                            <span id="userName">User</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#profileModal">
-                                <i class="fas fa-user"></i> Profile
-                            </a>
-                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#settingsModal">
-                                <i class="fas fa-cog"></i> Settings
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#" onclick="logout()">
-                                <i class="fas fa-sign-out-alt"></i> Logout
-                            </a>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <!-- Navigation will be loaded here by navbar-loader.js -->
 
     <!-- Main Content -->
     <div class="container-fluid main-content">
@@ -92,7 +24,7 @@
         </div>
 
         <!-- Statistics Cards -->
-        <div class="row">
+        <div class="row mb-4">
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="stat-card stat-card-primary">
                     <div class="stat-card-body">
@@ -182,10 +114,7 @@
                                 <tbody>
                                     <tr>
                                         <td colspan="5" class="text-center">
-                                            <div class="spinner-border spinner-border-sm" role="status">
-                                                <span class="sr-only">Loading...</span>
-                                            </div>
-                                            Loading recent orders...
+                                            <i class="fas fa-spinner fa-spin"></i> Loading recent orders...
                                         </td>
                                     </tr>
                                 </tbody>
@@ -207,20 +136,16 @@
                                 <i class="fas fa-user-plus"></i>
                                 <span>Add Patient</span>
                             </a>
-                            <a href="/orders" class="quick-action-btn" data-role="admin,doctor,lab_technician">
+                            <a href="/orders" class="quick-action-btn" data-role="admin,doctor,receptionist">
                                 <i class="fas fa-plus-circle"></i>
-                                <span>Create Order</span>
-                            </a>
-                            <a href="/tests" class="quick-action-btn" data-role="admin">
-                                <i class="fas fa-vial"></i>
-                                <span>Manage Tests</span>
+                                <span>New Order</span>
                             </a>
                             <a href="/results" class="quick-action-btn" data-role="admin,lab_technician">
-                                <i class="fas fa-chart-line"></i>
+                                <i class="fas fa-flask"></i>
                                 <span>Enter Results</span>
                             </a>
-                            <a href="/reports" class="quick-action-btn">
-                                <i class="fas fa-file-medical"></i>
+                            <a href="/reports" class="quick-action-btn" data-role="admin,doctor">
+                                <i class="fas fa-chart-line"></i>
                                 <span>Generate Report</span>
                             </a>
                         </div>
@@ -275,67 +200,221 @@
         </div>
     </div>
 
-    <!-- Profile Modal -->
-    <div class="modal fade" id="profileModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">User Profile</h5>
-                    <button type="button" class="close" data-dismiss="modal">
-                        <span>&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="profileForm">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="profileFirstName">First Name</label>
-                                    <input type="text" class="form-control" id="profileFirstName">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="profileLastName">Last Name</label>
-                                    <input type="text" class="form-control" id="profileLastName">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="profileEmail">Email</label>
-                            <input type="email" class="form-control" id="profileEmail">
-                        </div>
-                        <div class="form-group">
-                            <label for="profilePhone">Phone</label>
-                            <input type="tel" class="form-control" id="profilePhone">
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="profileRole">Role</label>
-                                    <input type="text" class="form-control" id="profileRole" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="profileDepartment">Department</label>
-                                    <input type="text" class="form-control" id="profileDepartment" readonly>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="updateProfile()">Save Changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+    <script src="js/navbar-loader.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/dashboard.js"></script>
+
+    <script>
+        // Initialize dashboard page
+        $(document).ready(function() {
+            console.log('🔄 Dashboard loading...');
+            
+            // Load navbar first, then initialize dashboard
+            loadNavbar(function() {
+                console.log('✅ Navbar loaded, checking auth...');
+                
+                // Check authentication
+                if (!checkAuth()) {
+                    console.log('❌ User not authenticated, redirecting to login...');
+                    window.location.href = '/';
+                    return;
+                }
+
+                console.log('✅ Authentication passed');
+                
+                // Initialize dashboard first
+                try {
+                    initializeDashboard();
+                    loadDashboardData();
+                    setupEventHandlers();
+                    console.log('✅ Dashboard initialized successfully');
+                } catch (error) {
+                    console.error('❌ Error initializing dashboard:', error);
+                    showNotification('Error loading dashboard', 'danger');
+                }
+
+                // Update navbar user name AFTER everything is loaded
+                setTimeout(function() {
+                    console.log('🔄 Attempting to update navbar user...');
+                    if (typeof forceUpdateNavbarUser === 'function') {
+                        forceUpdateNavbarUser();
+                    } else {
+                        // Fallback
+                        const user = AuthManager.getUser();
+                        const userNameElement = document.getElementById('userName');
+                        if (user && userNameElement) {
+                            userNameElement.textContent = `${user.firstName} ${user.lastName}`;
+                            console.log('✅ Fallback navbar update successful');
+                        }
+                    }
+                }, 500); // Wait 500ms for navbar to fully render
+            });
+        });
+
+        // Initialize dashboard with user info
+        function initializeDashboard() {
+            const user = AuthManager.getUser();
+            
+            if (user) {
+                try {
+                    // Update welcome message
+                    $('#welcomeUserName').text(user.firstName || 'User');
+                    
+                    // Show/hide quick actions based on role
+                    $('.quick-action-btn').each(function() {
+                        const allowedRoles = $(this).data('role');
+                        if (allowedRoles) {
+                            const roles = allowedRoles.toString().split(',');
+                            if (!roles.includes(user.role)) {
+                                $(this).hide();
+                            }
+                        }
+                    });
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                }
+            }
+        }
+
+        // Load dashboard data
+        function loadDashboardData() {
+            loadStatistics();
+            loadRecentOrders();
+            loadAlerts();
+        }
+
+        // Load statistics
+        function loadStatistics() {
+            fetch('/api/dashboard/statistics', {
+                headers: AuthManager.getAuthHeaders()
+            })
+            .then(response => response.json())
+            .then(data => {
+                $('#totalPatients').text(data.totalPatients || 0);
+                $('#pendingOrders').text(data.pendingOrders || 0);
+                $('#completedTests').text(data.completedTests || 0);
+                $('#criticalResults').text(data.criticalResults || 0);
+            })
+            .catch(error => {
+                console.error('Error loading statistics:', error);
+                // Set default values on error
+                $('#totalPatients').text('0');
+                $('#pendingOrders').text('0');
+                $('#completedTests').text('0');
+                $('#criticalResults').text('0');
+            });
+        }
+
+        // Load recent orders
+        function loadRecentOrders() {
+            fetch('/api/dashboard/recent-orders', {
+                headers: AuthManager.getAuthHeaders()
+            })
+            .then(response => response.json())
+            .then(data => {
+                const tbody = $('#recentOrdersTable tbody');
+                
+                if (data.orders && data.orders.length > 0) {
+                    const rows = data.orders.map(order => `
+                        <tr>
+                            <td><strong>${order.orderNumber}</strong></td>
+                            <td>${order.patient ? `${order.patient.firstName} ${order.patient.lastName}` : 'N/A'}</td>
+                            <td>${order.tests ? order.tests.length : 0} test(s)</td>
+                            <td>
+                                <span class="badge badge-${getStatusBadgeClass(order.status)}">
+                                    ${capitalizeFirst(order.status)}
+                                </span>
+                            </td>
+                            <td>${formatDate(order.createdAt)}</td>
+                        </tr>
+                    `).join('');
+                    tbody.html(rows);
+                } else {
+                    tbody.html('<tr><td colspan="5" class="text-center text-muted">No recent orders</td></tr>');
+                }
+            })
+            .catch(error => {
+                console.error('Error loading recent orders:', error);
+                $('#recentOrdersTable tbody').html('<tr><td colspan="5" class="text-center text-danger">Failed to load orders</td></tr>');
+            });
+        }
+
+        // Load alerts
+        function loadAlerts() {
+            fetch('/api/dashboard/alerts', {
+                headers: AuthManager.getAuthHeaders()
+            })
+            .then(response => response.json())
+            .then(data => {
+                const container = $('#alertsContainer');
+                
+                if (data.alerts && data.alerts.length > 0) {
+                    const alertsHtml = data.alerts.map(alert => `
+                        <div class="alert alert-${alert.type}">
+                            <i class="fas fa-${getAlertIcon(alert.type)}"></i>
+                            ${alert.message}
+                        </div>
+                    `).join('');
+                    container.html(alertsHtml);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading alerts:', error);
+            });
+        }
+
+        // Set up event handlers
+        function setupEventHandlers() {
+            // Refresh dashboard data every 5 minutes
+            setInterval(loadDashboardData, 5 * 60 * 1000);
+            
+            // Manual refresh button (if exists)
+            $('#refreshDashboard').on('click', function() {
+                loadDashboardData();
+                showNotification('Dashboard refreshed', 'success');
+            });
+        }
+
+        // Utility functions
+        function getStatusBadgeClass(status) {
+            const classes = {
+                'pending': 'warning',
+                'completed': 'success',
+                'cancelled': 'danger',
+                'processing': 'info'
+            };
+            return classes[status] || 'secondary';
+        }
+
+        function getAlertIcon(type) {
+            const icons = {
+                'info': 'info-circle',
+                'warning': 'exclamation-triangle',
+                'danger': 'exclamation-circle',
+                'success': 'check-circle'
+            };
+            return icons[type] || 'info-circle';
+        }
+
+        function capitalizeFirst(str) {
+            if (!str) return '';
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-US');
+        }
+
+        function showNotification(message, type) {
+            if (typeof showAlert === 'function') {
+                showAlert(type, message);
+            } else {
+                console.log(`${type.toUpperCase()}: ${message}`);
+            }
+        }
+    </script>
 </body>
 </html>

@@ -147,6 +147,10 @@ app.get('/reports', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'reports.html'));
 });
 
+app.get('/navbar.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'navbar.html'));
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);

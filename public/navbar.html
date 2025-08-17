@@ -1,0 +1,663 @@
+<!-- Shared Navigation Component -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/dashboard">
+            <i class="fas fa-flask"></i>
+            Laboratory Information System
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item" data-page="dashboard">
+                    <a class="nav-link" href="/dashboard">
+                        <i class="fas fa-chart-pie"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item" data-page="patients">
+                    <a class="nav-link" href="/patients">
+                        <i class="fas fa-users"></i> Patients
+                    </a>
+                </li>
+                <li class="nav-item" data-page="tests">
+                    <a class="nav-link" href="/tests">
+                        <i class="fas fa-vial"></i> Tests
+                    </a>
+                </li>
+                <li class="nav-item" data-page="orders">
+                    <a class="nav-link" href="/orders">
+                        <i class="fas fa-clipboard-list"></i> Orders
+                    </a>
+                </li>
+                <li class="nav-item" data-page="results">
+                    <a class="nav-link" href="/results">
+                        <i class="fas fa-chart-line"></i> Results
+                    </a>
+                </li>
+                <li class="nav-item" data-page="reports">
+                    <a class="nav-link" href="/reports">
+                        <i class="fas fa-file-medical"></i> Reports
+                    </a>
+                </li>
+            </ul>
+            
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="userName">User</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#profileModal">
+                            <i class="fas fa-user"></i> Profile
+                        </a>
+                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#settingsModal">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Profile Modal -->
+<div class="modal fade" id="profileModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Profile</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="profileForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="profileFirstName">First Name</label>
+                                <input type="text" class="form-control" id="profileFirstName">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="profileLastName">Last Name</label>
+                                <input type="text" class="form-control" id="profileLastName">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="profileEmail">Email</label>
+                        <input type="email" class="form-control" id="profileEmail">
+                    </div>
+                    <div class="form-group">
+                        <label for="profilePhone">Phone</label>
+                        <input type="tel" class="form-control" id="profilePhone">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="profileRole">Role</label>
+                                <input type="text" class="form-control" id="profileRole" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="profileDepartment">Department</label>
+                                <input type="text" class="form-control" id="profileDepartment" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="updateProfile()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal fade" id="settingsModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Settings</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Settings Navigation Tabs -->
+                <ul class="nav nav-tabs" id="settingsTabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="user-tab" data-toggle="tab" href="#userSettings" role="tab">
+                            <i class="fas fa-user-cog"></i> User Preferences
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="lab-tab" data-toggle="tab" href="#labSettings" role="tab">
+                            <i class="fas fa-building"></i> Laboratory Settings
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="tab-content mt-3" id="settingsTabContent">
+                    <!-- User Preferences Tab -->
+                    <div class="tab-pane fade show active" id="userSettings" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-palette"></i> Interface</h6>
+                                <div class="form-group">
+                                    <label for="themeSelect">Theme</label>
+                                    <select class="form-control" id="themeSelect">
+                                        <option value="light">Light</option>
+                                        <option value="dark">Dark</option>
+                                    </select>
+                                    <small class="form-text text-muted">Choose your preferred interface theme</small>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="notificationsEnabled">
+                                        <label class="form-check-label" for="notificationsEnabled">
+                                            Enable notifications
+                                        </label>
+                                    </div>
+                                    <small class="form-text text-muted">Receive alerts for critical results and system updates</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-info-circle"></i> Help</h6>
+                                <div class="alert alert-info">
+                                    <strong>User Preferences</strong><br>
+                                    These settings are stored locally in your browser and only affect your personal interface experience.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Laboratory Settings Tab -->
+                    <div class="tab-pane fade" id="labSettings" role="tabpanel">
+                        <form id="laboratoryForm">
+                            <div class="row">
+                                <!-- Laboratory Information -->
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-hospital"></i> Laboratory Information</h6>
+                                    
+                                    <div class="form-group">
+                                        <label for="labName">Laboratory Name *</label>
+                                        <input type="text" class="form-control" id="labName" placeholder="e.g., Matrix Medical Laboratory">
+                                        <small class="form-text text-muted">This will appear in the navigation bar</small>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="labDirector">Lab Director *</label>
+                                        <input type="text" class="form-control" id="labDirector" placeholder="e.g., Dr. John Smith, MD">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="cliaNumber">CLIA Number</label>
+                                        <input type="text" class="form-control" id="cliaNumber" placeholder="e.g., 05D1234567">
+                                        <small class="form-text text-muted">Clinical Laboratory Improvement Amendments</small>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="npiNumber">NPI Number</label>
+                                        <input type="text" class="form-control" id="npiNumber" placeholder="e.g., 1234567890">
+                                        <small class="form-text text-muted">National Provider Identifier</small>
+                                    </div>
+                                </div>
+                                
+                                <!-- Contact Information -->
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-map-marker-alt"></i> Contact Information</h6>
+                                    
+                                    <div class="form-group">
+                                        <label for="labAddress">Laboratory Address</label>
+                                        <textarea class="form-control" id="labAddress" rows="3" placeholder="123 Medical Center Drive&#10;Suite 100&#10;Los Angeles, CA 90210"></textarea>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="labPhone">Phone Number *</label>
+                                                <input type="tel" class="form-control" id="labPhone" placeholder="(555) 123-4567">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="labFax">Fax Number</label>
+                                                <input type="tel" class="form-control" id="labFax" placeholder="(555) 123-4568">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="labEmail">Laboratory Email</label>
+                                        <input type="email" class="form-control" id="labEmail" placeholder="info@matrixlab.com">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="labWebsite">Website</label>
+                                        <input type="url" class="form-control" id="labWebsite" placeholder="https://www.matrixlab.com">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Logo Upload Section -->
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <h6><i class="fas fa-image"></i> Laboratory Logo</h6>
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-8">
+                                                    <div class="form-group">
+                                                        <label for="labLogo">Upload Logo</label>
+                                                        <input type="file" class="form-control-file" id="labLogo" accept="image/*">
+                                                        <small class="form-text text-muted">
+                                                            Recommended: PNG or SVG format, max 2MB, optimal size 200x60px
+                                                        </small>
+                                                    </div>
+                                                    <button type="button" class="btn btn-outline-danger btn-sm" id="removeLogo" style="display: none;">
+                                                        <i class="fas fa-trash"></i> Remove Logo
+                                                    </button>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="text-center">
+                                                        <div id="logoPreview" class="border rounded p-3" style="min-height: 100px; background-color: #f8f9fa;">
+                                                            <i class="fas fa-image text-muted" style="font-size: 2rem;"></i><br>
+                                                            <small class="text-muted">Logo Preview</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="saveAllSettings()">
+                    <i class="fas fa-save"></i> Save All Settings
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Navigation JavaScript
+$(document).ready(function() {
+    // Set active navigation item based on current page
+    setActiveNavItem();
+    
+    // Update user name in navigation
+    updateNavbarUser();
+    
+    // Initialize profile modal when shown - EXPLICIT BINDING
+    $('#profileModal').off('show.bs.modal').on('show.bs.modal', function() {
+        console.log('🔄 Profile modal opening - initializing data...');
+        initializeProfileModal();
+    });
+    
+    // Initialize settings modal when shown - EXPLICIT BINDING  
+    $('#settingsModal').off('show.bs.modal').on('show.bs.modal', function() {
+        console.log('🔄 Settings modal opening - initializing data...');
+        initializeSettingsModal();
+    });
+    
+    // Also try to initialize immediately when navbar loads
+    setTimeout(() => {
+        if (typeof AuthManager !== 'undefined') {
+            console.log('🔄 Setting up modal initializers...');
+            // Force rebind the events
+            $('#profileModal').off('show.bs.modal').on('show.bs.modal', function() {
+                console.log('🔄 Profile modal event triggered');
+                initializeProfileModal();
+            });
+        }
+    }, 200);
+});
+
+// Set active navigation item based on current page
+function setActiveNavItem() {
+    const currentPath = window.location.pathname;
+    let activePage = 'dashboard'; // default
+    
+    if (currentPath.includes('/patients')) activePage = 'patients';
+    else if (currentPath.includes('/tests')) activePage = 'tests';
+    else if (currentPath.includes('/orders')) activePage = 'orders';
+    else if (currentPath.includes('/results')) activePage = 'results';
+    else if (currentPath.includes('/reports')) activePage = 'reports';
+    
+    // Remove active class from all nav items
+    $('.nav-item').removeClass('active');
+    
+    // Add active class to current page nav item
+    $(`.nav-item[data-page="${activePage}"]`).addClass('active');
+}
+
+// Update user name in navigation
+function updateNavbarUser() {
+    if (typeof AuthManager !== 'undefined') {
+        const user = AuthManager.getUser();
+        if (user && user.firstName && user.lastName) {
+            const userNameElement = document.getElementById('userName');
+            if (userNameElement) {
+                userNameElement.textContent = `${user.firstName} ${user.lastName}`;
+                console.log('✅ Updated navbar user name:', `${user.firstName} ${user.lastName}`);
+            }
+        } else {
+            console.log('⚠️ User data not available for navbar update');
+        }
+    } else {
+        console.log('⚠️ AuthManager not available for navbar update');
+    }
+}
+
+// Initialize profile modal with user data
+function initializeProfileModal() {
+    if (typeof AuthManager !== 'undefined') {
+        const user = AuthManager.getUser();
+        if (user) {
+            document.getElementById('profileFirstName').value = user.firstName || '';
+            document.getElementById('profileLastName').value = user.lastName || '';
+            document.getElementById('profileEmail').value = user.email || '';
+            document.getElementById('profilePhone').value = user.phone || '';
+            document.getElementById('profileRole').value = (user.role || '').replace('_', ' ').toUpperCase();
+            document.getElementById('profileDepartment').value = (user.department || '').toUpperCase();
+            
+            console.log('✅ Profile modal initialized with user data');
+        } else {
+            console.log('⚠️ No user data available for profile modal');
+        }
+    }
+}
+
+// Initialize settings modal
+function initializeSettingsModal() {
+    // Load saved user settings
+    const theme = localStorage.getItem('app_theme') || 'light';
+    const notifications = localStorage.getItem('app_notifications') !== 'false';
+    
+    document.getElementById('themeSelect').value = theme;
+    document.getElementById('notificationsEnabled').checked = notifications;
+    
+    // Load laboratory settings
+    initializeLaboratorySettings();
+    
+    console.log('✅ Settings modal initialized');
+}
+
+// Initialize laboratory settings
+function initializeLaboratorySettings() {
+    console.log('🔄 Loading laboratory settings...');
+    
+    // Load laboratory settings from localStorage
+    const labSettings = JSON.parse(localStorage.getItem('lab_settings') || '{}');
+    
+    // Populate form fields
+    if (document.getElementById('labName')) document.getElementById('labName').value = labSettings.name || '';
+    if (document.getElementById('labDirector')) document.getElementById('labDirector').value = labSettings.director || '';
+    if (document.getElementById('cliaNumber')) document.getElementById('cliaNumber').value = labSettings.cliaNumber || '';
+    if (document.getElementById('npiNumber')) document.getElementById('npiNumber').value = labSettings.npiNumber || '';
+    if (document.getElementById('labAddress')) document.getElementById('labAddress').value = labSettings.address || '';
+    if (document.getElementById('labPhone')) document.getElementById('labPhone').value = labSettings.phone || '';
+    if (document.getElementById('labFax')) document.getElementById('labFax').value = labSettings.fax || '';
+    if (document.getElementById('labEmail')) document.getElementById('labEmail').value = labSettings.email || '';
+    if (document.getElementById('labWebsite')) document.getElementById('labWebsite').value = labSettings.website || '';
+    
+    // Load logo if exists
+    if (labSettings.logo) {
+        displayLogoPreview(labSettings.logo);
+    }
+    
+    console.log('✅ Laboratory settings loaded');
+}
+
+// Save all settings (user + laboratory)
+function saveAllSettings() {
+    console.log('🔄 Saving all settings...');
+    
+    // Save user settings
+    const theme = document.getElementById('themeSelect').value;
+    const notifications = document.getElementById('notificationsEnabled').checked;
+    
+    localStorage.setItem('app_theme', theme);
+    localStorage.setItem('app_notifications', notifications);
+    
+    // Save laboratory settings
+    const labSettings = {
+        name: document.getElementById('labName').value.trim(),
+        director: document.getElementById('labDirector').value.trim(),
+        cliaNumber: document.getElementById('cliaNumber').value.trim(),
+        npiNumber: document.getElementById('npiNumber').value.trim(),
+        address: document.getElementById('labAddress').value.trim(),
+        phone: document.getElementById('labPhone').value.trim(),
+        fax: document.getElementById('labFax').value.trim(),
+        email: document.getElementById('labEmail').value.trim(),
+        website: document.getElementById('labWebsite').value.trim(),
+        logo: localStorage.getItem('lab_logo') || null
+    };
+    
+    // Validate required fields
+    const requiredFields = ['name', 'director', 'phone'];
+    const missingFields = requiredFields.filter(field => !labSettings[field]);
+    
+    if (missingFields.length > 0) {
+        alert(`Please fill in the required fields: ${missingFields.join(', ')}`);
+        return;
+    }
+    
+    // Save to localStorage
+    localStorage.setItem('lab_settings', JSON.stringify(labSettings));
+    
+    // Apply theme immediately
+    applyTheme(theme);
+    
+    // Update navbar with new lab name
+    updateNavbarLabName();
+    
+    $('#settingsModal').modal('hide');
+    
+    if (typeof showAlert === 'function') {
+        showAlert('success', 'Settings saved successfully! Laboratory name updated in navigation.');
+    } else {
+        alert('Settings saved successfully!');
+    }
+    
+    console.log('✅ All settings saved:', { theme, notifications, labSettings });
+}
+
+// Update navbar with laboratory name
+function updateNavbarLabName() {
+    const labSettings = JSON.parse(localStorage.getItem('lab_settings') || '{}');
+    const navbarBrand = document.querySelector('.navbar-brand');
+    
+    if (navbarBrand && labSettings.name) {
+        // Update the text but keep the icon
+        const icon = '<i class="fas fa-flask"></i>';
+        navbarBrand.innerHTML = `${icon} ${labSettings.name}`;
+        console.log('✅ Navbar updated with lab name:', labSettings.name);
+    }
+}
+
+// Handle logo upload
+function handleLogoUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Validate file
+    if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+    }
+    
+    if (file.size > 2 * 1024 * 1024) { // 2MB
+        alert('File size must be less than 2MB');
+        return;
+    }
+    
+    // Read file as base64
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const logoData = e.target.result;
+        
+        // Store logo
+        localStorage.setItem('lab_logo', logoData);
+        
+        // Display preview
+        displayLogoPreview(logoData);
+        
+        console.log('✅ Logo uploaded and stored');
+    };
+    
+    reader.readAsDataURL(file);
+}
+
+// Display logo preview
+function displayLogoPreview(logoData) {
+    const preview = document.getElementById('logoPreview');
+    const removeBtn = document.getElementById('removeLogo');
+    
+    if (preview && logoData) {
+        preview.innerHTML = `<img src="${logoData}" alt="Lab Logo" style="max-width: 100%; max-height: 80px;">`;
+        if (removeBtn) removeBtn.style.display = 'inline-block';
+    }
+}
+
+// Remove logo
+function removeLogo() {
+    localStorage.removeItem('lab_logo');
+    
+    const preview = document.getElementById('logoPreview');
+    const removeBtn = document.getElementById('removeLogo');
+    const fileInput = document.getElementById('labLogo');
+    
+    if (preview) {
+        preview.innerHTML = `
+            <i class="fas fa-image text-muted" style="font-size: 2rem;"></i><br>
+            <small class="text-muted">Logo Preview</small>
+        `;
+    }
+    
+    if (removeBtn) removeBtn.style.display = 'none';
+    if (fileInput) fileInput.value = '';
+    
+    console.log('✅ Logo removed');
+}
+
+// Update profile function
+function updateProfile() {
+    const profileData = {
+        firstName: document.getElementById('profileFirstName').value,
+        lastName: document.getElementById('profileLastName').value,
+        email: document.getElementById('profileEmail').value,
+        phone: document.getElementById('profilePhone').value
+    };
+
+    if (typeof AuthManager !== 'undefined') {
+        fetch('/api/auth/profile', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                ...AuthManager.getAuthHeaders()
+            },
+            body: JSON.stringify(profileData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.user) {
+                // Update stored user data
+                localStorage.setItem('user', JSON.stringify(data.user));
+                
+                // Update navbar
+                updateNavbarUser();
+                
+                $('#profileModal').modal('hide');
+                
+                // Show success message
+                if (typeof showAlert === 'function') {
+                    showAlert('success', 'Profile updated successfully');
+                } else {
+                    alert('Profile updated successfully');
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error updating profile:', error);
+            if (typeof showAlert === 'function') {
+                showAlert('error', 'Failed to update profile');
+            } else {
+                alert('Failed to update profile');
+            }
+        });
+    }
+}
+
+// Save settings function
+function saveSettings() {
+    const theme = document.getElementById('themeSelect').value;
+    const notifications = document.getElementById('notificationsEnabled').checked;
+    
+    // Save to localStorage
+    localStorage.setItem('app_theme', theme);
+    localStorage.setItem('app_notifications', notifications);
+    
+    // Apply theme immediately
+    applyTheme(theme);
+    
+    $('#settingsModal').modal('hide');
+    
+    if (typeof showAlert === 'function') {
+        showAlert('success', 'Settings saved successfully');
+    } else {
+        alert('Settings saved successfully');
+    }
+    
+    console.log('✅ Settings saved:', { theme, notifications });
+}
+
+// Apply theme function
+function applyTheme(theme) {
+    if (theme === 'dark') {
+        document.body.classList.add('dark-theme');
+    } else {
+        document.body.classList.remove('dark-theme');
+    }
+}
+
+// Apply saved theme on page load
+$(document).ready(function() {
+    const savedTheme = localStorage.getItem('app_theme') || 'light';
+    applyTheme(savedTheme);
+    
+    // Auto-update navbar user when navbar loads
+    setTimeout(function() {
+        if (typeof AuthManager !== 'undefined') {
+            const user = AuthManager.getUser();
+            if (user && user.firstName && user.lastName) {
+                const userNameElement = document.getElementById('userName');
+                if (userNameElement) {
+                    userNameElement.textContent = `${user.firstName} ${user.lastName}`;
+                    console.log('🎯 Navbar auto-updated user:', `${user.firstName} ${user.lastName}`);
+                }
+            }
+        }
+    }, 100);
+});
+</script>
