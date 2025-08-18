@@ -6,159 +6,12 @@
     <title>Laboratory Settings - Laboratory Information System</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body {
-            padding-top: 70px;
-            background-color: #f8f9fa;
-        }
-        
-        .main-content {
-            padding: 20px;
-        }
-        
-        .settings-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 2rem;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-        }
-        
-        .settings-card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            margin-bottom: 2rem;
-        }
-        
-        .settings-card .card-header {
-            background: #f8f9fa;
-            border-bottom: 2px solid #dee2e6;
-            padding: 1rem 1.5rem;
-            font-weight: 600;
-        }
-        
-        .settings-card .card-body {
-            padding: 1.5rem;
-        }
-        
-        .logo-preview {
-            max-width: 300px;
-            max-height: 150px;
-            border: 2px dashed #dee2e6;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            background: #f8f9fa;
-        }
-        
-        .logo-preview img {
-            max-width: 100%;
-            max-height: 100px;
-            object-fit: contain;
-        }
-        
-        .logo-upload-area {
-            border: 2px dashed #007bff;
-            border-radius: 10px;
-            padding: 30px;
-            text-align: center;
-            background: #f0f8ff;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .logo-upload-area:hover {
-            background: #e6f3ff;
-            border-color: #0056b3;
-        }
-        
-        .logo-upload-area.dragover {
-            background: #cce5ff;
-            border-color: #004085;
-        }
-        
-        .form-section {
-            margin-bottom: 2rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid #dee2e6;
-        }
-        
-        .form-section:last-child {
-            border-bottom: none;
-        }
-        
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-        }
-        
-        .section-title i {
-            margin-right: 0.5rem;
-            color: #667eea;
-        }
-        
-        .required::after {
-            content: ' *';
-            color: #dc3545;
-        }
-        
-        .info-box {
-            background: #e7f3ff;
-            border-left: 4px solid #007bff;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 0 5px 5px 0;
-        }
-        
-        .info-box i {
-            color: #007bff;
-            margin-right: 0.5rem;
-        }
-        
-        .btn-save {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            color: white;
-            padding: 0.75rem 2rem;
-            font-weight: 600;
-            border-radius: 5px;
-            transition: all 0.3s;
-        }
-        
-        .btn-save:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-            color: white;
-        }
-        
-        .operating-hours-table {
-            margin-top: 1rem;
-        }
-        
-        .operating-hours-table th {
-            background: #f8f9fa;
-            font-weight: 600;
-        }
-        
-        .time-input {
-            width: 100px;
-        }
-        
-        .alert-container {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            z-index: 9999;
-            max-width: 400px;
-        }
-    </style>
+    <link href="css/settings.css" rel="stylesheet">
 </head>
 <body>
+    <!-- Include Navbar -->
+    <div id="navbar-container"></div>
+    
     <!-- Alert Container -->
     <div id="alertContainer" class="alert-container"></div>
 
@@ -214,15 +67,82 @@
                                         <option value="Ph.D.">Ph.D.</option>
                                         <option value="M.D., Ph.D.">M.D., Ph.D.</option>
                                         <option value="D.O.">D.O.</option>
-                                        <option value="">None</option>
+                                        <option value="Dr.">Dr.</option>
                                     </select>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label class="required">First Name</label>
+                                    <input type="text" class="form-control" id="directorFirstName" 
+                                           name="labDirector.firstName" placeholder="Enter first name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label class="required">Last Name</label>
+                                    <input type="text" class="form-control" id="directorLastName" 
+                                           name="labDirector.lastName" placeholder="Enter last name" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information Card -->
+            <div class="card settings-card">
+                <div class="card-header">
+                    <i class="fas fa-address-book"></i> Contact Information
+                </div>
+                <div class="card-body">
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-map-marker-alt"></i> Address
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label class="required">Street Address</label>
+                                    <input type="text" class="form-control" id="addressStreet" 
+                                           name="address.street" placeholder="Enter street address" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Suite/Unit</label>
+                                    <input type="text" class="form-control" id="addressSuite" 
+                                           name="address.suite" placeholder="Suite, unit, etc.">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="required">City</label>
+                                    <input type="text" class="form-control" id="addressCity" 
+                                           name="address.city" placeholder="Enter city" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
+                                    <label class="required">State</label>
+                                    <input type="text" class="form-control" id="addressState" 
+                                           name="address.state" placeholder="ST" maxlength="2" required>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="required">ZIP Code</label>
+                                    <input type="text" class="form-control" id="addressZip" 
+                                           name="address.zipCode" placeholder="12345" pattern="[0-9]{5}(-[0-9]{4})?" required>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
                                     <label>Country</label>
-                                    <input type="text" class="form-control" id="country" name="address.country" 
-                                           value="USA" placeholder="USA">
+                                    <input type="text" class="form-control" id="addressCountry" 
+                                           name="address.country" value="USA">
                                 </div>
                             </div>
                         </div>
@@ -230,57 +150,51 @@
 
                     <div class="form-section">
                         <div class="section-title">
-                            <i class="fas fa-phone"></i> Phone & Fax
+                            <i class="fas fa-phone"></i> Phone & Communication
                         </div>
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="required">Main Phone</label>
-                                    <input type="tel" class="form-control" id="phoneMain" name="phone.main" 
-                                           placeholder="(555) 123-4567" required>
+                                    <input type="tel" class="form-control" id="phoneMain" 
+                                           name="phone.main" placeholder="(555) 123-4567" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>Toll-Free Phone</label>
-                                    <input type="tel" class="form-control" id="phoneTollFree" name="phone.toll_free" 
-                                           placeholder="1-800-555-1234">
+                                    <label>Fax</label>
+                                    <input type="tel" class="form-control" id="fax" 
+                                           name="fax" placeholder="(555) 123-4568">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="required">Fax</label>
-                                    <input type="tel" class="form-control" id="fax" name="fax" 
-                                           placeholder="(555) 123-4568" required>
+                                    <label>Emergency Contact</label>
+                                    <input type="tel" class="form-control" id="phoneEmergency" 
+                                           name="phone.emergency" placeholder="(555) 911-0000">
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <div class="section-title">
-                            <i class="fas fa-envelope"></i> Email Addresses
                         </div>
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>General Email</label>
-                                    <input type="email" class="form-control" id="emailGeneral" name="email.general" 
-                                           placeholder="info@laboratory.com">
+                                    <input type="email" class="form-control" id="emailGeneral" 
+                                           name="email.general" placeholder="info@laboratory.com">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Results Email</label>
-                                    <input type="email" class="form-control" id="emailResults" name="email.results" 
-                                           placeholder="results@laboratory.com">
+                                    <input type="email" class="form-control" id="emailResults" 
+                                           name="email.results" placeholder="results@laboratory.com">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Billing Email</label>
-                                    <input type="email" class="form-control" id="emailBilling" name="email.billing" 
-                                           placeholder="billing@laboratory.com">
+                                    <input type="email" class="form-control" id="emailBilling" 
+                                           name="email.billing" placeholder="billing@laboratory.com">
                                 </div>
                             </div>
                         </div>
@@ -288,56 +202,75 @@
                 </div>
             </div>
 
-            <!-- Logo & Branding Card -->
+            <!-- Regulatory Information Card -->
             <div class="card settings-card">
                 <div class="card-header">
-                    <i class="fas fa-image"></i> Logo & Branding
+                    <i class="fas fa-certificate"></i> Regulatory Information
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="section-title">
-                                <i class="fas fa-upload"></i> Laboratory Logo
-                            </div>
-                            <div class="logo-upload-area" id="logoUploadArea">
-                                <i class="fas fa-cloud-upload-alt fa-3x mb-3" style="color: #007bff;"></i>
-                                <h5>Click to upload or drag and drop</h5>
-                                <p class="text-muted mb-0">Supported formats: JPG, PNG, GIF, SVG</p>
-                                <p class="text-muted">Maximum file size: 5MB</p>
-                                <p class="text-muted">Recommended dimensions: 300x100 pixels</p>
-                                <input type="file" id="logoFile" accept="image/*" style="display: none;">
+                            <div class="form-group">
+                                <label class="required">CLIA Number</label>
+                                <input type="text" class="form-control" id="cliaNumber" 
+                                       name="cliaNumber" placeholder="12D1234567" maxlength="10" required>
+                                <small class="form-text text-muted">Clinical Laboratory Improvement Amendments number</small>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="section-title">
-                                <i class="fas fa-eye"></i> Current Logo
-                            </div>
-                            <div class="logo-preview" id="logoPreview">
-                                <div id="noLogoMessage" class="text-muted">
-                                    <i class="fas fa-image fa-3x mb-3"></i>
-                                    <p>No logo uploaded</p>
-                                </div>
-                                <div id="currentLogo" style="display: none;">
-                                    <img id="logoImage" src="" alt="Laboratory Logo">
-                                    <div class="mt-3">
-                                        <button type="button" class="btn btn-sm btn-danger" id="removeLogo">
-                                            <i class="fas fa-trash"></i> Remove Logo
-                                        </button>
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <label class="required">NPI Number</label>
+                                <input type="text" class="form-control" id="npiNumber" 
+                                       name="npiNumber" placeholder="1234567890" maxlength="10" required>
+                                <small class="form-text text-muted">National Provider Identifier</small>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Submit Button -->
-            <div class="text-right">
-                <button type="button" class="btn btn-secondary mr-2" onclick="window.location.href='/dashboard'">
-                    <i class="fas fa-times"></i> Cancel
-                </button>
-                <button type="submit" class="btn btn-save">
-                    <i class="fas fa-save"></i> Save Settings
+            <!-- Logo Upload Card -->
+            <div class="card settings-card">
+                <div class="card-header">
+                    <i class="fas fa-image"></i> Laboratory Logo
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="logo-preview" id="logoUploadArea">
+                                <div id="noLogoMessage">
+                                    <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
+                                    <p class="mb-0">Click to upload logo</p>
+                                    <small class="text-muted">PNG, JPG, SVG up to 5MB</small>
+                                </div>
+                                <div id="currentLogo" style="display: none;">
+                                    <img id="logoImage" src="" alt="Laboratory Logo">
+                                    <div class="mt-2">
+                                        <button type="button" class="btn btn-sm btn-danger" id="removeLogo">
+                                            <i class="fas fa-trash"></i> Remove
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="file" id="logoFile" accept="image/*" style="display: none;">
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Logo Guidelines</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success"></i> Recommended size: 300x150 pixels</li>
+                                <li><i class="fas fa-check text-success"></i> Formats: PNG (preferred), JPG, SVG</li>
+                                <li><i class="fas fa-check text-success"></i> Maximum file size: 5MB</li>
+                                <li><i class="fas fa-check text-success"></i> Transparent background recommended</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Button -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-save btn-lg">
+                    <i class="fas fa-save"></i> Save Laboratory Settings
                 </button>
             </div>
         </form>
@@ -346,97 +279,137 @@
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/navbar-loader.js"></script>
+    <script src="/js/auth.js"></script>
+    
     <script>
         let currentLogoUrl = null;
 
-        // Document ready
         $(document).ready(function() {
-            // Check authentication
-            if (!AuthManager.isAuthenticated()) {
-                window.location.href = '/login';
-                return;
-            }
-
-            // Check if user is admin
-            const user = AuthManager.getUser();
-            if (user.role !== 'admin') {
-                showAlert('error', 'Access denied. Admin privileges required.');
-                setTimeout(() => {
-                    window.location.href = '/dashboard';
-                }, 2000);
-                return;
-            }
-
+            console.log('🚀 Settings page initializing...');
+            
             // Load navbar
             loadNavbar();
-
-            // Load current settings
+            
+            // Check authorization
+            checkAuthorization();
+            
+            // Load existing settings
             loadSettings();
-
+            
             // Setup event handlers
             setupEventHandlers();
+            
+            // Load logo if exists
+            loadLogo();
         });
 
-        // Load current settings
+        // Load navbar
+        function loadNavbar() {
+            $('#navbar-container').load('/navbar.html', function(response, status, xhr) {
+                if (status === "error") {
+                    console.error("Error loading navbar:", xhr.status, xhr.statusText);
+                } else {
+                    console.log('✅ Navbar loaded successfully');
+                }
+            });
+        }
+
+        // Check if user is authorized (admin only)
+        function checkAuthorization() {
+            if (typeof AuthManager !== 'undefined') {
+                const user = AuthManager.getUser();
+                if (!user || user.role !== 'admin') {
+                    alert('Access denied. Administrator privileges required for Laboratory Settings.');
+                    window.location.href = '/dashboard';
+                    return;
+                }
+                console.log('✅ Admin authorization confirmed');
+            } else {
+                console.warn('⚠️ AuthManager not available - allowing access for debugging');
+            }
+        }
+
+        // Load existing settings
         async function loadSettings() {
             try {
+                console.log('📥 Loading existing settings...');
+                
+                if (typeof AuthManager === 'undefined') {
+                    console.warn('⚠️ AuthManager not available');
+                    return;
+                }
+
                 const response = await fetch('/api/settings', {
                     headers: AuthManager.getAuthHeaders()
                 });
 
                 if (response.ok) {
                     const data = await response.json();
-                    if (data.settings) {
-                        populateForm(data.settings);
+                    const settings = data.settings;
+                    
+                    if (settings) {
+                        console.log('📋 Populating form with existing settings');
+                        populateForm(settings);
+                    } else {
+                        console.log('📋 No existing settings found - using defaults');
                     }
+                } else {
+                    console.error('❌ Failed to load settings:', response.status);
                 }
-
-                // Load logo separately
-                loadLogo();
             } catch (error) {
-                console.error('Error loading settings:', error);
-                showAlert('error', 'Failed to load settings');
+                console.error('❌ Error loading settings:', error);
             }
         }
 
         // Populate form with settings data
         function populateForm(settings) {
-            // Basic Information
+            // Basic info
             $('#labName').val(settings.labName || '');
             $('#taxId').val(settings.taxId || '');
-
-            // Director Information
-            $('#directorTitle').val(settings.labDirector?.title || 'M.D.');
-            $('#directorFirstName').val(settings.labDirector?.firstName || '');
-            $('#directorLastName').val(settings.labDirector?.lastName || '');
-            $('#directorLicense').val(settings.labDirector?.licenseNumber || '');
-
+            
+            // Director info
+            if (settings.labDirector) {
+                $('#directorTitle').val(settings.labDirector.title || 'M.D.');
+                $('#directorFirstName').val(settings.labDirector.firstName || '');
+                $('#directorLastName').val(settings.labDirector.lastName || '');
+            }
+            
+            // Address
+            if (settings.address) {
+                $('#addressStreet').val(settings.address.street || '');
+                $('#addressSuite').val(settings.address.suite || '');
+                $('#addressCity').val(settings.address.city || '');
+                $('#addressState').val(settings.address.state || '');
+                $('#addressZip').val(settings.address.zipCode || '');
+                $('#addressCountry').val(settings.address.country || 'USA');
+            }
+            
+            // Phone and communication
+            if (settings.phone) {
+                $('#phoneMain').val(settings.phone.main || '');
+                $('#phoneEmergency').val(settings.phone.emergency || '');
+            }
+            $('#fax').val(settings.fax || '');
+            
+            // Email
+            if (settings.email) {
+                $('#emailGeneral').val(settings.email.general || '');
+                $('#emailResults').val(settings.email.results || '');
+                $('#emailBilling').val(settings.email.billing || '');
+            }
+            
             // Regulatory
             $('#cliaNumber').val(settings.cliaNumber || '');
             $('#npiNumber').val(settings.npiNumber || '');
-
-            // Address
-            $('#street').val(settings.address?.street || '');
-            $('#suite').val(settings.address?.suite || '');
-            $('#city').val(settings.address?.city || '');
-            $('#state').val(settings.address?.state || '');
-            $('#zipCode').val(settings.address?.zipCode || '');
-            $('#country').val(settings.address?.country || 'USA');
-
-            // Contact
-            $('#phoneMain').val(settings.phone?.main || '');
-            $('#phoneTollFree').val(settings.phone?.toll_free || '');
-            $('#fax').val(settings.fax || '');
-            $('#emailGeneral').val(settings.email?.general || '');
-            $('#emailResults').val(settings.email?.results || '');
-            $('#emailBilling').val(settings.email?.billing || '');
+            
+            console.log('✅ Form populated with settings data');
         }
 
         // Load logo
         async function loadLogo() {
             try {
+                if (typeof AuthManager === 'undefined') return;
+
                 const response = await fetch('/api/settings/logo', {
                     headers: AuthManager.getAuthHeaders()
                 });
@@ -446,10 +419,13 @@
                     if (data.url) {
                         displayLogo(data.url);
                         currentLogoUrl = data.url;
+                        console.log('🖼️ Logo loaded successfully');
                     }
+                } else if (response.status !== 404) {
+                    console.error('❌ Error loading logo:', response.status);
                 }
             } catch (error) {
-                console.error('Error loading logo:', error);
+                console.error('❌ Error loading logo:', error);
             }
         }
 
@@ -462,30 +438,15 @@
 
         // Setup event handlers
         function setupEventHandlers() {
+            // Form submission
+            $('#settingsForm').on('submit', function(e) {
+                e.preventDefault();
+                saveSettings();
+            });
+
             // Logo upload area click
             $('#logoUploadArea').on('click', function() {
                 $('#logoFile').click();
-            });
-
-            // Drag and drop
-            $('#logoUploadArea').on('dragover', function(e) {
-                e.preventDefault();
-                $(this).addClass('dragover');
-            });
-
-            $('#logoUploadArea').on('dragleave', function(e) {
-                e.preventDefault();
-                $(this).removeClass('dragover');
-            });
-
-            $('#logoUploadArea').on('drop', function(e) {
-                e.preventDefault();
-                $(this).removeClass('dragover');
-                
-                const files = e.originalEvent.dataTransfer.files;
-                if (files.length > 0) {
-                    handleLogoUpload(files[0]);
-                }
             });
 
             // File input change
@@ -496,143 +457,59 @@
             });
 
             // Remove logo button
-            $('#removeLogo').on('click', function() {
+            $('#removeLogo').on('click', function(e) {
+                e.stopPropagation();
                 if (confirm('Are you sure you want to remove the logo?')) {
                     removeLogo();
                 }
             });
 
-            // Form submission
-            $('#settingsForm').on('submit', function(e) {
-                e.preventDefault();
-                saveSettings();
-            });
-
-            // Format phone inputs
-            $('input[type="tel"]').on('input', function() {
-                let value = $(this).val().replace(/\D/g, '');
-                if (value.length >= 10) {
-                    value = value.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
-                    $(this).val(value);
-                }
-            });
-
-            // Uppercase state code
-            $('#state').on('input', function() {
-                $(this).val($(this).val().toUpperCase());
-            });
-
-            // Uppercase CLIA number
-            $('#cliaNumber').on('input', function() {
-                $(this).val($(this).val().toUpperCase());
-            });
-        }
-
-        // Handle logo upload
-        async function handleLogoUpload(file) {
-            // Validate file type
-            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/svg+xml'];
-            if (!allowedTypes.includes(file.type)) {
-                showAlert('error', 'Please upload a valid image file (JPG, PNG, GIF, or SVG)');
-                return;
-            }
-
-            // Validate file size (5MB)
-            if (file.size > 5 * 1024 * 1024) {
-                showAlert('error', 'File size must be less than 5MB');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('logo', file);
-
-            try {
-                const response = await fetch('/api/settings/logo', {
-                    method: 'POST',
-                    headers: AuthManager.getAuthHeaders(),
-                    body: formData
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    displayLogo(data.logo.url);
-                    currentLogoUrl = data.logo.url;
-                    showAlert('success', 'Logo uploaded successfully');
-                    
-                    // Update navbar logo if it exists
-                    updateNavbarLogo(data.logo.url);
-                } else {
-                    const error = await response.json();
-                    showAlert('error', error.message || 'Failed to upload logo');
-                }
-            } catch (error) {
-                console.error('Upload error:', error);
-                showAlert('error', 'Failed to upload logo');
-            }
-        }
-
-        // Remove logo
-        async function removeLogo() {
-            try {
-                const response = await fetch('/api/settings/logo', {
-                    method: 'DELETE',
-                    headers: AuthManager.getAuthHeaders()
-                });
-
-                if (response.ok) {
-                    $('#currentLogo').hide();
-                    $('#noLogoMessage').show();
-                    $('#logoImage').attr('src', '');
-                    currentLogoUrl = null;
-                    showAlert('success', 'Logo removed successfully');
-                    
-                    // Reset navbar to default text
-                    resetNavbarLogo();
-                } else {
-                    const error = await response.json();
-                    showAlert('error', error.message || 'Failed to remove logo');
-                }
-            } catch (error) {
-                console.error('Remove error:', error);
-                showAlert('error', 'Failed to remove logo');
-            }
+            console.log('✅ Event handlers setup complete');
         }
 
         // Save settings
         async function saveSettings() {
-            // Collect form data
-            const formData = {
-                labName: $('#labName').val(),
-                taxId: $('#taxId').val(),
-                labDirector: {
-                    title: $('#directorTitle').val(),
-                    firstName: $('#directorFirstName').val(),
-                    lastName: $('#directorLastName').val(),
-                    licenseNumber: $('#directorLicense').val()
-                },
-                address: {
-                    street: $('#street').val(),
-                    suite: $('#suite').val(),
-                    city: $('#city').val(),
-                    state: $('#state').val(),
-                    zipCode: $('#zipCode').val(),
-                    country: $('#country').val() || 'USA'
-                },
-                cliaNumber: $('#cliaNumber').val(),
-                npiNumber: $('#npiNumber').val(),
-                phone: {
-                    main: $('#phoneMain').val(),
-                    toll_free: $('#phoneTollFree').val()
-                },
-                fax: $('#fax').val(),
-                email: {
-                    general: $('#emailGeneral').val(),
-                    results: $('#emailResults').val(),
-                    billing: $('#emailBilling').val()
-                }
-            };
-
             try {
+                console.log('💾 Saving settings...');
+                
+                if (typeof AuthManager === 'undefined') {
+                    showAlert('error', 'Authentication manager not available');
+                    return;
+                }
+
+                // Collect form data
+                const formData = {
+                    labName: $('#labName').val().trim(),
+                    taxId: $('#taxId').val().trim(),
+                    labDirector: {
+                        title: $('#directorTitle').val(),
+                        firstName: $('#directorFirstName').val().trim(),
+                        lastName: $('#directorLastName').val().trim()
+                    },
+                    address: {
+                        street: $('#addressStreet').val().trim(),
+                        suite: $('#addressSuite').val().trim(),
+                        city: $('#addressCity').val().trim(),
+                        state: $('#addressState').val().trim().toUpperCase(),
+                        zipCode: $('#addressZip').val().trim(),
+                        country: $('#addressCountry').val().trim()
+                    },
+                    phone: {
+                        main: $('#phoneMain').val().trim(),
+                        emergency: $('#phoneEmergency').val().trim()
+                    },
+                    fax: $('#fax').val().trim(),
+                    email: {
+                        general: $('#emailGeneral').val().trim(),
+                        results: $('#emailResults').val().trim(),
+                        billing: $('#emailBilling').val().trim()
+                    },
+                    cliaNumber: $('#cliaNumber').val().trim().toUpperCase(),
+                    npiNumber: $('#npiNumber').val().trim()
+                };
+
+                console.log('📋 Form data collected:', formData);
+
                 const response = await fetch('/api/settings', {
                     method: 'PUT',
                     headers: {
@@ -643,13 +520,12 @@
                 });
 
                 if (response.ok) {
-                    const data = await response.json();
-                    showAlert('success', 'Settings saved successfully');
-                    
-                    // Update navbar with new lab name
-                    updateNavbarLabName(formData.labName);
+                    const result = await response.json();
+                    console.log('✅ Settings saved successfully:', result);
+                    showAlert('success', 'Laboratory settings saved successfully');
                 } else {
                     const error = await response.json();
+                    console.error('❌ Save failed:', error);
                     if (error.errors) {
                         const messages = error.errors.map(e => e.msg).join('<br>');
                         showAlert('error', messages);
@@ -658,39 +534,95 @@
                     }
                 }
             } catch (error) {
-                console.error('Save error:', error);
+                console.error('❌ Save error:', error);
                 showAlert('error', 'Failed to save settings');
             }
         }
 
-        // Update navbar with logo
-        function updateNavbarLogo(logoUrl) {
-            const navbarBrand = $('.navbar-brand');
-            if (navbarBrand.length && logoUrl) {
-                navbarBrand.html(`<img src="${logoUrl}" alt="Lab Logo" style="height: 40px; max-width: 200px; object-fit: contain;">`);
+        // Handle logo upload
+        async function handleLogoUpload(file) {
+            try {
+                console.log('🖼️ Uploading logo:', file.name);
+
+                // Validate file
+                if (!file.type.startsWith('image/')) {
+                    showAlert('error', 'Please select an image file');
+                    return;
+                }
+
+                if (file.size > 5 * 1024 * 1024) {
+                    showAlert('error', 'File size must be less than 5MB');
+                    return;
+                }
+
+                if (typeof AuthManager === 'undefined') {
+                    showAlert('error', 'Authentication manager not available');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('logo', file);
+
+                const response = await fetch('/api/settings/logo', {
+                    method: 'POST',
+                    headers: AuthManager.getAuthHeaders(),
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('✅ Logo uploaded successfully:', result);
+                    displayLogo(result.logo.url);
+                    currentLogoUrl = result.logo.url;
+                    showAlert('success', 'Logo uploaded successfully');
+                } else {
+                    const error = await response.json();
+                    console.error('❌ Logo upload failed:', error);
+                    showAlert('error', error.message || 'Failed to upload logo');
+                }
+            } catch (error) {
+                console.error('❌ Logo upload error:', error);
+                showAlert('error', 'Failed to upload logo');
             }
         }
 
-        // Reset navbar to default
-        function resetNavbarLogo() {
-            const navbarBrand = $('.navbar-brand');
-            if (navbarBrand.length) {
-                const labName = $('#labName').val() || 'Laboratory Information System';
-                navbarBrand.html(`<i class="fas fa-flask"></i> ${labName}`);
-            }
-        }
+        // Remove logo
+        async function removeLogo() {
+            try {
+                console.log('🗑️ Removing logo...');
 
-        // Update navbar lab name
-        function updateNavbarLabName(labName) {
-            const navbarBrand = $('.navbar-brand');
-            if (navbarBrand.length && !currentLogoUrl) {
-                navbarBrand.html(`<i class="fas fa-flask"></i> ${labName}`);
+                if (typeof AuthManager === 'undefined') {
+                    showAlert('error', 'Authentication manager not available');
+                    return;
+                }
+
+                const response = await fetch('/api/settings/logo', {
+                    method: 'DELETE',
+                    headers: AuthManager.getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    console.log('✅ Logo removed successfully');
+                    $('#currentLogo').hide();
+                    $('#noLogoMessage').show();
+                    currentLogoUrl = null;
+                    showAlert('success', 'Logo removed successfully');
+                } else {
+                    const error = await response.json();
+                    console.error('❌ Logo removal failed:', error);
+                    showAlert('error', error.message || 'Failed to remove logo');
+                }
+            } catch (error) {
+                console.error('❌ Logo removal error:', error);
+                showAlert('error', 'Failed to remove logo');
             }
         }
 
         // Show alert
         function showAlert(type, message) {
             const alertClass = type === 'error' ? 'danger' : type;
+            const alertContainer = document.getElementById('alertContainer');
+            
             const alertHtml = `
                 <div class="alert alert-${alertClass} alert-dismissible fade show" role="alert">
                     ${message}
@@ -700,8 +632,9 @@
                 </div>
             `;
             
-            $('#alertContainer').html(alertHtml);
+            alertContainer.innerHTML = alertHtml;
             
+            // Auto-dismiss after 5 seconds
             setTimeout(() => {
                 $('.alert').alert('close');
             }, 5000);
@@ -709,105 +642,3 @@
     </script>
 </body>
 </html>
-                                    <label class="required">First Name</label>
-                                    <input type="text" class="form-control" id="directorFirstName" 
-                                           name="labDirector.firstName" required>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="required">Last Name</label>
-                                    <input type="text" class="form-control" id="directorLastName" 
-                                           name="labDirector.lastName" required>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>License Number</label>
-                                    <input type="text" class="form-control" id="directorLicense" 
-                                           name="labDirector.licenseNumber" placeholder="Professional license #">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <div class="section-title">
-                            <i class="fas fa-clipboard-check"></i> Regulatory Information
-                        </div>
-                        <div class="info-box">
-                            <i class="fas fa-info-circle"></i>
-                            CLIA Number must be exactly 10 characters (letters and numbers only).
-                            NPI Number must be exactly 10 digits.
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="required">CLIA Number</label>
-                                    <input type="text" class="form-control text-uppercase" id="cliaNumber" 
-                                           name="cliaNumber" pattern="[A-Z0-9]{10}" maxlength="10" 
-                                           placeholder="Example: 01D0123456" required>
-                                    <small class="form-text text-muted">Clinical Laboratory Improvement Amendments certification</small>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="required">NPI Number</label>
-                                    <input type="text" class="form-control" id="npiNumber" name="npiNumber" 
-                                           pattern="\d{10}" maxlength="10" placeholder="Example: 1234567890" required>
-                                    <small class="form-text text-muted">National Provider Identifier</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Contact Information Card -->
-            <div class="card settings-card">
-                <div class="card-header">
-                    <i class="fas fa-address-card"></i> Contact Information
-                </div>
-                <div class="card-body">
-                    <div class="form-section">
-                        <div class="section-title">
-                            <i class="fas fa-map-marker-alt"></i> Laboratory Address
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="required">Street Address</label>
-                                    <input type="text" class="form-control" id="street" name="address.street" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Suite/Unit</label>
-                                    <input type="text" class="form-control" id="suite" name="address.suite" 
-                                           placeholder="Optional">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="required">City</label>
-                                    <input type="text" class="form-control" id="city" name="address.city" required>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label class="required">State</label>
-                                    <input type="text" class="form-control text-uppercase" id="state" name="address.state" 
-                                           maxlength="2" pattern="[A-Z]{2}" placeholder="CA" required>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="required">ZIP Code</label>
-                                    <input type="text" class="form-control" id="zipCode" name="address.zipCode" 
-                                           pattern="\d{5}(-\d{4})?" placeholder="12345" required>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">

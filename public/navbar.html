@@ -60,6 +60,7 @@
                             <i class="fas fa-user"></i> Profile
                         </a>
                         <a class="dropdown-item" href="#" id="settingsMenuItem" onclick="handleSettingsClick(event)">
+                        <a class="dropdown-item" href="/settings">
                             <i class="fas fa-cog"></i> Settings
                         </a>
                         <div class="dropdown-divider"></div>
@@ -518,18 +519,5 @@ function saveUserSettings() {
     }
 }
 
-// Apply theme function
-function applyTheme(theme) {
-    if (theme === 'dark') {
-        document.body.classList.add('dark-theme');
-    } else {
-        document.body.classList.remove('dark-theme');
-    }
-}
 
-// Apply saved theme on page load
-$(document).ready(function() {
-    const savedTheme = localStorage.getItem('app_theme') || 'light';
-    applyTheme(savedTheme);
-});
 </script>
