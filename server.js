@@ -21,6 +21,7 @@ const resultRoutes = require('./routes/results');
 const reportRoutes = require('./routes/reports');
 const userRoutes = require('./routes/users');
 const dashboardRoutes = require('./routes/dashboard');
+const settingsRoutes = require('./routes/settings');
 
 // Security middleware - disabled CSP for development
 app.use(helmet({
@@ -113,6 +114,7 @@ app.use('/api/results', resultRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // Serve HTML pages
 app.get('/', (req, res) => {
@@ -147,8 +149,8 @@ app.get('/reports', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'reports.html'));
 });
 
-app.get('/navbar.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'navbar.html'));
+app.get('/settings', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'settings.html'));
 });
 
 // Error handling middleware
