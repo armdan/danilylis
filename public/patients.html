@@ -250,7 +250,7 @@
             </div>
 
             <h6 class="mb-3 text-primary">Emergency Contact</h6>
-            <div class="row g-3">
+            <div class="row g-3 mb-4">
               <div class="col-md-6">
                 <label class="form-label">Contact Name</label>
                 <input type="text" class="form-control" id="emergencyContactName">
@@ -263,6 +263,123 @@
                 <label class="form-label">Relationship</label>
                 <input type="text" class="form-control" id="emergencyContactRelationship" 
                        placeholder="e.g., Spouse, Parent, Sibling">
+              </div>
+            </div>
+
+            <!-- Insurance Information -->
+            <h6 class="mb-3 text-primary">Primary Insurance</h6>
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <label class="form-label">Insurance Provider</label>
+                <input type="text" class="form-control" id="primaryInsuranceProvider" 
+                       placeholder="e.g., Blue Cross Blue Shield">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Plan Name</label>
+                <input type="text" class="form-control" id="primaryInsurancePlanName">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Policy Number</label>
+                <input type="text" class="form-control" id="primaryInsurancePolicyNumber">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Group Number</label>
+                <input type="text" class="form-control" id="primaryInsuranceGroupNumber">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Subscriber ID</label>
+                <input type="text" class="form-control" id="primaryInsuranceSubscriberId">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Subscriber Name</label>
+                <input type="text" class="form-control" id="primaryInsuranceSubscriberName" 
+                       placeholder="If different from patient">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Relationship to Subscriber</label>
+                <select class="form-select" id="primaryInsuranceRelationship">
+                  <option value="self">Self</option>
+                  <option value="spouse">Spouse</option>
+                  <option value="child">Child</option>
+                  <option value="parent">Parent</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Effective Date</label>
+                <input type="date" class="form-control" id="primaryInsuranceEffectiveDate">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Copay Amount</label>
+                <input type="number" class="form-control" id="primaryInsuranceCopay" 
+                       min="0" step="0.01" placeholder="0.00">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Deductible</label>
+                <input type="number" class="form-control" id="primaryInsuranceDeductible" 
+                       min="0" step="0.01" placeholder="0.00">
+              </div>
+            </div>
+
+            <!-- Medicare/Medicaid -->
+            <h6 class="mb-3 text-primary">Medicare/Medicaid</h6>
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="hasMedicare">
+                  <label class="form-check-label" for="hasMedicare">
+                    Patient has Medicare
+                  </label>
+                </div>
+                <input type="text" class="form-control mt-2" id="medicareNumber" 
+                       placeholder="Medicare Number" style="display:none;">
+              </div>
+              <div class="col-md-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="hasMedicaid">
+                  <label class="form-check-label" for="hasMedicaid">
+                    Patient has Medicaid
+                  </label>
+                </div>
+                <input type="text" class="form-control mt-2" id="medicaidNumber" 
+                       placeholder="Medicaid Number" style="display:none;">
+              </div>
+            </div>
+
+            <!-- Billing Preferences -->
+            <h6 class="mb-3 text-primary">Billing Preferences</h6>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Preferred Payment Method</label>
+                <select class="form-select" id="preferredPaymentMethod">
+                  <option value="insurance">Insurance</option>
+                  <option value="self-pay">Self Pay</option>
+                  <option value="payment-plan">Payment Plan</option>
+                  <option value="credit-card">Credit Card</option>
+                  <option value="cash">Cash</option>
+                  <option value="check">Check</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Billing Email</label>
+                <input type="email" class="form-control" id="billingEmail" 
+                       placeholder="For statements and invoices">
+              </div>
+              <div class="col-md-6">
+                <div class="form-check mt-4">
+                  <input class="form-check-input" type="checkbox" id="paperlessBilling">
+                  <label class="form-check-label" for="paperlessBilling">
+                    Paperless Billing (Email only)
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-check mt-4">
+                  <input class="form-check-input" type="checkbox" id="isGuarantor">
+                  <label class="form-check-label" for="isGuarantor">
+                    Patient is the guarantor
+                  </label>
+                </div>
               </div>
             </div>
           </form>
@@ -393,6 +510,17 @@
         // Clear filters
         document.getElementById('clearFiltersBtn').addEventListener('click', () => {
           this.clearFilters();
+        });
+
+        // Medicare/Medicaid checkboxes
+        document.getElementById('hasMedicare').addEventListener('change', (e) => {
+          document.getElementById('medicareNumber').style.display = 
+            e.target.checked ? 'block' : 'none';
+        });
+
+        document.getElementById('hasMedicaid').addEventListener('change', (e) => {
+          document.getElementById('medicaidNumber').style.display = 
+            e.target.checked ? 'block' : 'none';
         });
       },
 
@@ -528,6 +656,38 @@
               name: document.getElementById('emergencyContactName').value || undefined,
               phone: document.getElementById('emergencyContactPhone').value || undefined,
               relationship: document.getElementById('emergencyContactRelationship').value || undefined
+            },
+            billing: {
+              primaryInsurance: {
+                provider: document.getElementById('primaryInsuranceProvider').value || undefined,
+                planName: document.getElementById('primaryInsurancePlanName').value || undefined,
+                policyNumber: document.getElementById('primaryInsurancePolicyNumber').value || undefined,
+                groupNumber: document.getElementById('primaryInsuranceGroupNumber').value || undefined,
+                subscriberId: document.getElementById('primaryInsuranceSubscriberId').value || undefined,
+                subscriberName: document.getElementById('primaryInsuranceSubscriberName').value || undefined,
+                subscriberRelationship: document.getElementById('primaryInsuranceRelationship').value || 'self',
+                effectiveDate: document.getElementById('primaryInsuranceEffectiveDate').value || undefined,
+                copayAmount: parseFloat(document.getElementById('primaryInsuranceCopay').value) || undefined,
+                deductible: parseFloat(document.getElementById('primaryInsuranceDeductible').value) || undefined
+              },
+              medicare: {
+                hasMedicare: document.getElementById('hasMedicare').checked,
+                medicareNumber: document.getElementById('hasMedicare').checked ? 
+                  document.getElementById('medicareNumber').value || undefined : undefined
+              },
+              medicaid: {
+                hasMedicaid: document.getElementById('hasMedicaid').checked,
+                medicaidNumber: document.getElementById('hasMedicaid').checked ? 
+                  document.getElementById('medicaidNumber').value || undefined : undefined
+              },
+              billingPreferences: {
+                preferredPaymentMethod: document.getElementById('preferredPaymentMethod').value,
+                billingEmail: document.getElementById('billingEmail').value || undefined,
+                paperlessBilling: document.getElementById('paperlessBilling').checked
+              },
+              guarantor: {
+                isPatientGuarantor: document.getElementById('isGuarantor').checked
+              }
             }
           };
 
@@ -537,6 +697,9 @@
           }
           if (!Object.values(patientData.emergencyContact).some(v => v)) {
             delete patientData.emergencyContact;
+          }
+          if (!Object.values(patientData.billing.primaryInsurance).some(v => v && v !== 'self')) {
+            delete patientData.billing.primaryInsurance;
           }
 
           const isEdit = this.currentPatientId !== null;
@@ -605,6 +768,57 @@
             document.getElementById('emergencyContactRelationship').value = patient.emergencyContact.relationship || '';
           }
 
+          // Billing and Insurance
+          if (patient.billing) {
+            // Primary Insurance
+            if (patient.billing.primaryInsurance) {
+              const pi = patient.billing.primaryInsurance;
+              document.getElementById('primaryInsuranceProvider').value = pi.provider || '';
+              document.getElementById('primaryInsurancePlanName').value = pi.planName || '';
+              document.getElementById('primaryInsurancePolicyNumber').value = pi.policyNumber || '';
+              document.getElementById('primaryInsuranceGroupNumber').value = pi.groupNumber || '';
+              document.getElementById('primaryInsuranceSubscriberId').value = pi.subscriberId || '';
+              document.getElementById('primaryInsuranceSubscriberName').value = pi.subscriberName || '';
+              document.getElementById('primaryInsuranceRelationship').value = pi.subscriberRelationship || 'self';
+              if (pi.effectiveDate) {
+                document.getElementById('primaryInsuranceEffectiveDate').value = pi.effectiveDate.split('T')[0];
+              }
+              document.getElementById('primaryInsuranceCopay').value = pi.copayAmount || '';
+              document.getElementById('primaryInsuranceDeductible').value = pi.deductible || '';
+            }
+
+            // Medicare
+            if (patient.billing.medicare) {
+              document.getElementById('hasMedicare').checked = patient.billing.medicare.hasMedicare || false;
+              if (patient.billing.medicare.hasMedicare) {
+                document.getElementById('medicareNumber').value = patient.billing.medicare.medicareNumber || '';
+                document.getElementById('medicareNumber').style.display = 'block';
+              }
+            }
+
+            // Medicaid
+            if (patient.billing.medicaid) {
+              document.getElementById('hasMedicaid').checked = patient.billing.medicaid.hasMedicaid || false;
+              if (patient.billing.medicaid.hasMedicaid) {
+                document.getElementById('medicaidNumber').value = patient.billing.medicaid.medicaidNumber || '';
+                document.getElementById('medicaidNumber').style.display = 'block';
+              }
+            }
+
+            // Billing Preferences
+            if (patient.billing.billingPreferences) {
+              const bp = patient.billing.billingPreferences;
+              document.getElementById('preferredPaymentMethod').value = bp.preferredPaymentMethod || 'insurance';
+              document.getElementById('billingEmail').value = bp.billingEmail || '';
+              document.getElementById('paperlessBilling').checked = bp.paperlessBilling || false;
+            }
+
+            // Guarantor
+            if (patient.billing.guarantor) {
+              document.getElementById('isGuarantor').checked = patient.billing.guarantor.isPatientGuarantor || true;
+            }
+          }
+
           this.patientModal.show();
 
         } catch (error) {
@@ -627,10 +841,26 @@
           const data = await response.json();
           const patient = data.patient;
 
+          // Get insurance status
+          let insuranceStatus = 'Self-Pay';
+          let insuranceDetails = '';
+          if (patient.billing) {
+            if (patient.billing.primaryInsurance?.provider) {
+              insuranceStatus = patient.billing.primaryInsurance.provider;
+              insuranceDetails = `Policy: ${patient.billing.primaryInsurance.policyNumber || 'N/A'}`;
+            } else if (patient.billing.medicare?.hasMedicare) {
+              insuranceStatus = 'Medicare';
+              insuranceDetails = `Medicare #: ${patient.billing.medicare.medicareNumber || 'N/A'}`;
+            } else if (patient.billing.medicaid?.hasMedicaid) {
+              insuranceStatus = 'Medicaid';
+              insuranceDetails = `Medicaid #: ${patient.billing.medicaid.medicaidNumber || 'N/A'}`;
+            }
+          }
+
           const detailsHtml = `
             <div class="row">
               <div class="col-md-6">
-                <h6 class="text-primary mb-3">Personal Information</h6>
+                <h6 class="text-primary mb-3"><i class="fas fa-user me-2"></i>Personal Information</h6>
                 <table class="table table-sm">
                   <tr><td class="fw-bold">Patient ID:</td><td>${patient.patientId}</td></tr>
                   <tr><td class="fw-bold">Name:</td><td>${patient.firstName} ${patient.lastName}</td></tr>
@@ -648,7 +878,7 @@
                 </table>
               </div>
               <div class="col-md-6">
-                <h6 class="text-primary mb-3">Address</h6>
+                <h6 class="text-primary mb-3"><i class="fas fa-map-marker-alt me-2"></i>Address</h6>
                 <table class="table table-sm">
                   <tr><td class="fw-bold">Street:</td><td>${patient.address?.street || 'Not provided'}</td></tr>
                   <tr><td class="fw-bold">City:</td><td>${patient.address?.city || 'Not provided'}</td></tr>
@@ -656,7 +886,7 @@
                   <tr><td class="fw-bold">ZIP:</td><td>${patient.address?.zipCode || 'Not provided'}</td></tr>
                 </table>
                 
-                <h6 class="text-primary mb-3 mt-4">Emergency Contact</h6>
+                <h6 class="text-primary mb-3 mt-4"><i class="fas fa-phone-alt me-2"></i>Emergency Contact</h6>
                 <table class="table table-sm">
                   <tr><td class="fw-bold">Name:</td><td>${patient.emergencyContact?.name || 'Not provided'}</td></tr>
                   <tr><td class="fw-bold">Phone:</td><td>${patient.emergencyContact?.phone ? 
@@ -668,14 +898,61 @@
             </div>
             
             <div class="row mt-4">
-              <div class="col-12">
-                <h6 class="text-primary mb-3">Account Information</h6>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3"><i class="fas fa-file-medical me-2"></i>Insurance Information</h6>
+                <table class="table table-sm">
+                  <tr><td class="fw-bold">Coverage:</td><td>
+                    <span class="badge bg-${insuranceStatus === 'Self-Pay' ? 'warning' : 'info'}">
+                      ${insuranceStatus}
+                    </span>
+                  </td></tr>
+                  ${insuranceDetails ? `<tr><td class="fw-bold">Details:</td><td>${insuranceDetails}</td></tr>` : ''}
+                  ${patient.billing?.primaryInsurance ? `
+                    <tr><td class="fw-bold">Group #:</td><td>${patient.billing.primaryInsurance.groupNumber || 'N/A'}</td></tr>
+                    <tr><td class="fw-bold">Copay:</td><td>${patient.billing.primaryInsurance.copayAmount || 0}</td></tr>
+                    <tr><td class="fw-bold">Deductible:</td><td>${patient.billing.primaryInsurance.deductible || 0}</td></tr>
+                  ` : ''}
+                  <tr><td class="fw-bold">Payment Method:</td><td>
+                    ${patient.billing?.billingPreferences?.preferredPaymentMethod || 'Insurance'}
+                  </td></tr>
+                </table>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3"><i class="fas fa-info-circle me-2"></i>Account Information</h6>
                 <table class="table table-sm">
                   <tr><td class="fw-bold">Created:</td><td>${this.formatDateTime(patient.createdAt)}</td></tr>
                   <tr><td class="fw-bold">Created By:</td><td>${patient.createdBy ? 
                     `${patient.createdBy.firstName} ${patient.createdBy.lastName}` : 'System'}</td></tr>
                   <tr><td class="fw-bold">Last Updated:</td><td>${this.formatDateTime(patient.updatedAt)}</td></tr>
+                  ${patient.billing?.billingPreferences?.accountBalance ? `
+                    <tr><td class="fw-bold">Balance:</td><td>
+                      <span class="text-${patient.billing.billingPreferences.accountBalance > 0 ? 'danger' : 'success'}">
+                        ${patient.billing.billingPreferences.accountBalance.toFixed(2)}
+                      </span>
+                    </td></tr>
+                  ` : ''}
                 </table>
+              </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mt-4">
+              <div class="col-12">
+                <h6 class="text-primary mb-3"><i class="fas fa-tasks me-2"></i>Quick Actions</h6>
+                <div class="btn-group" role="group">
+                  <button type="button" class="btn btn-outline-primary" onclick="PatientManager.viewPatientOrders('${patient._id}')">
+                    <i class="fas fa-clipboard-list me-2"></i>View Orders
+                  </button>
+                  <button type="button" class="btn btn-outline-success" onclick="window.location.href='/orders?newOrder=true&patient=${patient._id}'">
+                    <i class="fas fa-plus me-2"></i>New Order
+                  </button>
+                  <button type="button" class="btn btn-outline-info" onclick="window.location.href='/results?patient=${patient._id}'">
+                    <i class="fas fa-vial me-2"></i>View Results
+                  </button>
+                  <button type="button" class="btn btn-outline-warning" onclick="window.print()">
+                    <i class="fas fa-print me-2"></i>Print Details
+                  </button>
+                </div>
               </div>
             </div>
           `;

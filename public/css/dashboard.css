@@ -95,7 +95,7 @@ body {
 .stat-title {
     font-size: 0.9rem;
     font-weight: 600;
-    color: #6c757d;
+    color: #000000;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 0.5rem;
@@ -104,7 +104,7 @@ body {
 .stat-number {
     font-size: 2rem;
     font-weight: 700;
-    color: #495057;
+    color: #000000;
 }
 
 .stat-icon {
