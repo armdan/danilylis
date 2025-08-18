@@ -1,361 +1,831 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patients - Laboratory Information System</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="css/dashboard.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patients - Laboratory Information System</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link href="css/dashboard.css" rel="stylesheet">
+
+  <style>
+    /* Custom styles for patients page */
+    .main-content {
+      padding: 20px;
+      min-height: calc(100vh - 64px);
+    }
+    .page-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+    }
+    .filter-card {
+      border: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      border-radius: 10px;
+    }
+    .table-card {
+      border: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      border-radius: 10px;
+    }
+    .btn-action-group {
+      display: flex;
+      gap: 0.25rem;
+    }
+    .patient-badge {
+      font-size: 0.875rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+    }
+    .search-input-group {
+      position: relative;
+    }
+    .search-input-group .form-control {
+      padding-right: 2.5rem;
+    }
+    .search-input-group .btn-search {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      border: none;
+      background: transparent;
+      color: #6c757d;
+      padding: 0 1rem;
+      z-index: 10;
+    }
+    .search-input-group .btn-search:hover {
+      color: #667eea;
+    }
+  </style>
 </head>
 <body>
-    <!-- Navigation will be loaded here by navbar-loader.js -->
+  <!-- Navbar will be injected here by navbar-loader.js -->
 
-    <!-- Main Content -->
-    <div class="container-fluid main-content">
-        <div class="row">
-            <div class="col-12">
-                <!-- Page Header -->
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2>
-                        <i class="fas fa-users text-primary"></i>
-                        Patient Management
-                    </h2>
-                    <button class="btn btn-primary" onclick="showAddPatientModal()">
-                        <i class="fas fa-plus"></i> Add New Patient
-                    </button>
-                </div>
-
-                <!-- Search and Filters -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="searchInput">Search Patients</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="searchInput" placeholder="Name, ID, Phone, Email...">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-outline-secondary" type="button" onclick="searchPatients()">
-                                                <i class="fas fa-search"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label for="genderFilter">Gender</label>
-                                    <select class="form-control" id="genderFilter" onchange="filterPatients()">
-                                        <option value="">All</option>
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
-                                        <option value="other">Other</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label for="statusFilter">Status</label>
-                                    <select class="form-control" id="statusFilter" onchange="filterPatients()">
-                                        <option value="">All</option>
-                                        <option value="true">Active</option>
-                                        <option value="false">Inactive</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label for="limitSelect">Show</label>
-                                    <select class="form-control" id="limitSelect" onchange="filterPatients()">
-                                        <option value="10">10</option>
-                                        <option value="25">25</option>
-                                        <option value="50">50</option>
-                                        <option value="100">100</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label>&nbsp;</label>
-                                    <div>
-                                        <button class="btn btn-secondary btn-block" onclick="clearFilters()">
-                                            <i class="fas fa-times"></i> Clear
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Alert Container -->
-                <div id="alertContainer"></div>
-
-                <!-- Patients Table -->
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-list"></i> Patient List
-                            <span id="patientCount" class="badge badge-primary ml-2">0</span>
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Patient ID</th>
-                                        <th>Name</th>
-                                        <th>Date of Birth</th>
-                                        <th>Gender</th>
-                                        <th>Phone</th>
-                                        <th>Email</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="patientsTableBody">
-                                    <tr id="loadingRow">
-                                        <td colspan="8" class="text-center">
-                                            <i class="fas fa-spinner fa-spin"></i> Loading patients...
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Pagination -->
-                        <nav aria-label="Patient pagination">
-                            <ul class="pagination justify-content-center" id="pagination">
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <!-- Main Content -->
+  <div class="container-fluid main-content">
+    <!-- Page Header -->
+    <div class="page-header d-flex justify-content-between align-items-center">
+      <div>
+        <h2 class="mb-0">
+          <i class="fas fa-users me-2"></i>Patient Management
+        </h2>
+        <p class="mb-0 opacity-90">Manage patient records and information</p>
+      </div>
+      <button class="btn btn-light" id="addPatientBtn">
+        <i class="fas fa-plus me-2"></i>Add New Patient
+      </button>
     </div>
 
-    <!-- Add/Edit Patient Modal -->
-    <div class="modal fade" id="patientModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="patientModalTitle">Add New Patient</h5>
-                    <button type="button" class="close" data-dismiss="modal">
-                        <span>&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="patientForm">
-                        <input type="hidden" id="patientId">
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="firstName">First Name *</label>
-                                    <input type="text" class="form-control" id="firstName" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="lastName">Last Name *</label>
-                                    <input type="text" class="form-control" id="lastName" required>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="dateOfBirth">Date of Birth *</label>
-                                    <input type="date" class="form-control" id="dateOfBirth" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="gender">Gender *</label>
-                                    <select class="form-control" id="gender" required>
-                                        <option value="">Select Gender</option>
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
-                                        <option value="other">Other</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="phone">Phone Number *</label>
-                                    <input type="tel" class="form-control" id="phone" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="email">Email</label>
-                                    <input type="email" class="form-control" id="email">
-                                </div>
-                            </div>
-                        </div>
-
-                        <h6 class="mt-4 mb-3">Address Information</h6>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="street">Street Address</label>
-                                    <input type="text" class="form-control" id="street">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="city">City</label>
-                                    <input type="text" class="form-control" id="city">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="state">State</label>
-                                    <input type="text" class="form-control" id="state">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="zipCode">ZIP Code</label>
-                                    <input type="text" class="form-control" id="zipCode">
-                                </div>
-                            </div>
-                        </div>
-
-                        <h6 class="mt-4 mb-3">Emergency Contact</h6>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="emergencyContactName">Contact Name</label>
-                                    <input type="text" class="form-control" id="emergencyContactName">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="emergencyContactPhone">Contact Phone</label>
-                                    <input type="tel" class="form-control" id="emergencyContactPhone">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="emergencyContactRelationship">Relationship</label>
-                                    <input type="text" class="form-control" id="emergencyContactRelationship" placeholder="e.g., Spouse, Parent, Sibling">
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="savePatient()">
-                        <i class="fas fa-save"></i> Save Patient
-                    </button>
-                </div>
+    <!-- Search and Filters -->
+    <div class="card filter-card mb-4">
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">Search Patients</label>
+            <div class="search-input-group">
+              <input type="text" class="form-control" id="searchInput" 
+                     placeholder="Name, ID, Phone, Email...">
+              <button class="btn-search" type="button" id="searchBtn">
+                <i class="fas fa-search"></i>
+              </button>
             </div>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Gender</label>
+            <select class="form-select" id="genderFilter">
+              <option value="">All</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Status</label>
+            <select class="form-select" id="statusFilter">
+              <option value="">All</option>
+              <option value="true">Active</option>
+              <option value="false">Inactive</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Show</label>
+            <select class="form-select" id="limitSelect">
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">&nbsp;</label>
+            <button class="btn btn-secondary w-100" id="clearFiltersBtn">
+              <i class="fas fa-times me-2"></i>Clear
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
-    <!-- Patient Details Modal -->
-    <div class="modal fade" id="patientDetailsModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Patient Details</h5>
-                    <button type="button" class="close" data-dismiss="modal">
-                        <span>&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="patientDetailsContent">
-                    <!-- Patient details will be loaded here -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="editPatientFromDetails()">
-                        <i class="fas fa-edit"></i> Edit Patient
-                    </button>
-                </div>
-            </div>
+    <!-- Alert Container -->
+    <div id="alertContainer"></div>
+
+    <!-- Patients Table -->
+    <div class="card table-card">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+          <i class="fas fa-list me-2"></i>Patient List
+          <span class="badge bg-primary ms-2" id="patientCount">0</span>
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Patient ID</th>
+                <th>Name</th>
+                <th>Date of Birth</th>
+                <th>Gender</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="patientsTableBody">
+              <tr>
+                <td colspan="8" class="text-center py-4">
+                  <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                  Loading patients...
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Patient pagination">
+          <ul class="pagination justify-content-center" id="pagination"></ul>
+        </nav>
+      </div>
     </div>
+  </div>
 
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
-    <script src="js/navbar-loader.js"></script>
-    <script src="js/auth.js"></script>
-
-    <script>
-        // Initialize patients page
-        $(document).ready(function() {
-            console.log('🔄 Patients page loading...');
+  <!-- Add/Edit Patient Modal -->
+  <div class="modal fade" id="patientModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="patientModalTitle">Add New Patient</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="patientForm" class="needs-validation" novalidate>
+            <input type="hidden" id="patientId">
             
-            // Load navbar first, then initialize page
-            loadNavbar(function() {
-                console.log('✅ Navbar loaded, checking auth...');
-                
-                // Check authentication
-                if (!checkAuth()) {
-                    console.log('❌ Authentication failed');
-                    return;
-                }
-                
-                console.log('✅ Authentication passed');
-                
-                // Set up event handlers and load data first
-                setupEventHandlers();
-                
-                // Load initial patients data
-                console.log('🔄 Loading initial patients...');
-                loadPatients(1);
-                
-                console.log('✅ Patients page initialization complete');
+            <h6 class="mb-3 text-primary">Personal Information</h6>
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <label class="form-label">First Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="firstName" required>
+                <div class="invalid-feedback">First name is required</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Last Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="lastName" required>
+                <div class="invalid-feedback">Last name is required</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Date of Birth <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" id="dateOfBirth" required>
+                <div class="invalid-feedback">Date of birth is required</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Gender <span class="text-danger">*</span></label>
+                <select class="form-select" id="gender" required>
+                  <option value="">Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+                <div class="invalid-feedback">Please select a gender</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Phone Number <span class="text-danger">*</span></label>
+                <input type="tel" class="form-control" id="phone" required>
+                <div class="invalid-feedback">Phone number is required</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" id="email">
+              </div>
+            </div>
 
-                // Update navbar user name AFTER everything is loaded
-                setTimeout(function() {
-                    console.log('🔄 Attempting to update navbar user...');
-                    if (typeof forceUpdateNavbarUser === 'function') {
-                        forceUpdateNavbarUser();
-                    } else {
-                        // Fallback
-                        const user = AuthManager.getUser();
-                        const userNameElement = document.getElementById('userName');
-                        if (user && userNameElement) {
-                            userNameElement.textContent = `${user.firstName} ${user.lastName}`;
-                            console.log('✅ Fallback navbar update successful');
-                        }
-                    }
-                }, 500); // Wait 500ms for navbar to fully render
-            });
+            <h6 class="mb-3 text-primary">Address Information</h6>
+            <div class="row g-3 mb-4">
+              <div class="col-12">
+                <label class="form-label">Street Address</label>
+                <input type="text" class="form-control" id="street">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">City</label>
+                <input type="text" class="form-control" id="city">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">State</label>
+                <input type="text" class="form-control" id="state">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">ZIP Code</label>
+                <input type="text" class="form-control" id="zipCode">
+              </div>
+            </div>
+
+            <h6 class="mb-3 text-primary">Emergency Contact</h6>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Contact Name</label>
+                <input type="text" class="form-control" id="emergencyContactName">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Contact Phone</label>
+                <input type="tel" class="form-control" id="emergencyContactPhone">
+              </div>
+              <div class="col-12">
+                <label class="form-label">Relationship</label>
+                <input type="text" class="form-control" id="emergencyContactRelationship" 
+                       placeholder="e.g., Spouse, Parent, Sibling">
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="savePatientBtn">
+            <i class="fas fa-save me-2"></i>Save Patient
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Patient Details Modal -->
+  <div class="modal fade" id="patientDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Patient Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="patientDetailsContent">
+          <!-- Patient details will be loaded here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="editFromDetailsBtn">
+            <i class="fas fa-edit me-2"></i>Edit Patient
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts in correct order -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/navbar-loader.js"></script>
+
+  <!-- Page-specific script -->
+  <script>
+    // Patient Management System
+    const PatientManager = {
+      currentPage: 1,
+      currentPatientId: null,
+      patientModal: null,
+      detailsModal: null,
+
+      init() {
+        // Check authentication
+        if (!this.checkAuth()) return;
+
+        // Initialize Bootstrap modals
+        this.patientModal = new bootstrap.Modal(document.getElementById('patientModal'));
+        this.detailsModal = new bootstrap.Modal(document.getElementById('patientDetailsModal'));
+
+        // Setup event handlers
+        this.setupEventHandlers();
+
+        // Load initial data
+        this.loadPatients(1);
+
+        // Ensure navbar shows correct user
+        this.ensureNavbarUpdate();
+      },
+
+      checkAuth() {
+        if (typeof AuthManager === 'undefined' || !AuthManager.isAuthenticated()) {
+          console.log('Not authenticated, redirecting to login...');
+          window.location.href = '/login';
+          return false;
+        }
+        return true;
+      },
+
+      ensureNavbarUpdate() {
+        const updateNavbar = () => {
+          const user = AuthManager.getUser();
+          if (user) {
+            const userNameEl = document.getElementById('userName');
+            if (userNameEl) {
+              const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username || 'User';
+              userNameEl.textContent = fullName;
+            }
+          }
+        };
+
+        // Try multiple times to ensure navbar is loaded
+        updateNavbar();
+        setTimeout(updateNavbar, 100);
+        setTimeout(updateNavbar, 500);
+        setTimeout(updateNavbar, 1000);
+      },
+
+      setupEventHandlers() {
+        // Add patient button
+        document.getElementById('addPatientBtn').addEventListener('click', () => {
+          this.showAddPatientModal();
         });
 
-        // Set up event handlers
-        function setupEventHandlers() {
-            // Enter key search
-            $('#searchInput').on('keypress', function(e) {
-                if (e.which === 13) {
-                    searchPatients();
-                }
-            });
-            
-            // Filter change handlers
-            $('#genderFilter, #statusFilter, #limitSelect').on('change', function() {
-                filterPatients();
-            });
-            
-            console.log('✅ Event handlers set up');
+        // Save patient button
+        document.getElementById('savePatientBtn').addEventListener('click', () => {
+          this.savePatient();
+        });
+
+        // Edit from details button
+        document.getElementById('editFromDetailsBtn').addEventListener('click', () => {
+          this.editPatientFromDetails();
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        
+        searchBtn.addEventListener('click', () => this.searchPatients());
+        searchInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') this.searchPatients();
+        });
+
+        // Filter handlers
+        ['genderFilter', 'statusFilter', 'limitSelect'].forEach(id => {
+          document.getElementById(id).addEventListener('change', () => {
+            this.filterPatients();
+          });
+        });
+
+        // Clear filters
+        document.getElementById('clearFiltersBtn').addEventListener('click', () => {
+          this.clearFilters();
+        });
+      },
+
+      showAddPatientModal() {
+        this.currentPatientId = null;
+        document.getElementById('patientModalTitle').textContent = 'Add New Patient';
+        document.getElementById('patientForm').reset();
+        document.getElementById('patientForm').classList.remove('was-validated');
+        this.patientModal.show();
+      },
+
+      async loadPatients(page = 1) {
+        try {
+          const limit = document.getElementById('limitSelect').value;
+          const search = document.getElementById('searchInput').value;
+          const gender = document.getElementById('genderFilter').value;
+          const isActive = document.getElementById('statusFilter').value;
+
+          let url = `/api/patients?page=${page}&limit=${limit}`;
+          if (search) url += `&search=${encodeURIComponent(search)}`;
+          if (gender) url += `&gender=${gender}`;
+          if (isActive !== '') url += `&isActive=${isActive}`;
+
+          const response = await fetch(url, {
+            headers: AuthManager.getAuthHeaders()
+          });
+
+          if (!response.ok) {
+            if (response.status === 401) {
+              AuthManager.logout();
+              return;
+            }
+            throw new Error(`Failed to load patients: ${response.status}`);
+          }
+
+          const data = await response.json();
+          this.displayPatients(data.patients);
+          this.updatePagination(data.pagination);
+          this.updatePatientCount(data.pagination.total);
+          this.currentPage = page;
+
+        } catch (error) {
+          console.error('Error loading patients:', error);
+          this.showAlert('danger', 'Failed to load patients');
         }
-    </script>
+      },
+
+      displayPatients(patients) {
+        const tbody = document.getElementById('patientsTableBody');
+        
+        if (patients.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="8" class="text-center text-muted py-4">
+                <i class="fas fa-users me-2"></i>No patients found
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = patients.map(patient => {
+          const genderBadgeClass = {
+            male: 'primary',
+            female: 'info',
+            other: 'secondary'
+          }[patient.gender] || 'secondary';
+
+          return `
+            <tr>
+              <td><strong>${patient.patientId || 'N/A'}</strong></td>
+              <td><strong>${patient.firstName} ${patient.lastName}</strong></td>
+              <td>${this.formatDate(patient.dateOfBirth)}</td>
+              <td>
+                <span class="badge bg-${genderBadgeClass} patient-badge">
+                  ${this.capitalize(patient.gender)}
+                </span>
+              </td>
+              <td><a href="tel:${patient.phone}" class="text-decoration-none">${patient.phone}</a></td>
+              <td>${patient.email ? 
+                `<a href="mailto:${patient.email}" class="text-decoration-none">${patient.email}</a>` : 
+                '<span class="text-muted">-</span>'}</td>
+              <td>
+                <span class="badge bg-${patient.isActive ? 'success' : 'secondary'} patient-badge">
+                  ${patient.isActive ? 'Active' : 'Inactive'}
+                </span>
+              </td>
+              <td>
+                <div class="btn-action-group">
+                  <button class="btn btn-sm btn-outline-primary" onclick="PatientManager.viewPatientDetails('${patient._id}')" 
+                          title="View Details">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-success" onclick="PatientManager.editPatient('${patient._id}')" 
+                          title="Edit">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-info" onclick="PatientManager.viewPatientOrders('${patient._id}')" 
+                          title="View Orders">
+                    <i class="fas fa-clipboard-list"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      },
+
+      async savePatient() {
+        const form = document.getElementById('patientForm');
+        
+        // Bootstrap 5 validation
+        if (!form.checkValidity()) {
+          form.classList.add('was-validated');
+          return;
+        }
+
+        try {
+          const patientData = {
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            dateOfBirth: document.getElementById('dateOfBirth').value,
+            gender: document.getElementById('gender').value,
+            phone: document.getElementById('phone').value,
+            email: document.getElementById('email').value || undefined,
+            address: {
+              street: document.getElementById('street').value || undefined,
+              city: document.getElementById('city').value || undefined,
+              state: document.getElementById('state').value || undefined,
+              zipCode: document.getElementById('zipCode').value || undefined
+            },
+            emergencyContact: {
+              name: document.getElementById('emergencyContactName').value || undefined,
+              phone: document.getElementById('emergencyContactPhone').value || undefined,
+              relationship: document.getElementById('emergencyContactRelationship').value || undefined
+            }
+          };
+
+          // Clean up empty objects
+          if (!Object.values(patientData.address).some(v => v)) {
+            delete patientData.address;
+          }
+          if (!Object.values(patientData.emergencyContact).some(v => v)) {
+            delete patientData.emergencyContact;
+          }
+
+          const isEdit = this.currentPatientId !== null;
+          const url = isEdit ? `/api/patients/${this.currentPatientId}` : '/api/patients';
+          const method = isEdit ? 'PUT' : 'POST';
+
+          const response = await fetch(url, {
+            method: method,
+            headers: {
+              'Content-Type': 'application/json',
+              ...AuthManager.getAuthHeaders()
+            },
+            body: JSON.stringify(patientData)
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to save patient');
+          }
+
+          this.patientModal.hide();
+          this.showAlert('success', isEdit ? 'Patient updated successfully' : 'Patient created successfully');
+          this.loadPatients(this.currentPage);
+
+        } catch (error) {
+          console.error('Error saving patient:', error);
+          this.showAlert('danger', error.message);
+        }
+      },
+
+      async editPatient(patientId) {
+        try {
+          const response = await fetch(`/api/patients/${patientId}`, {
+            headers: AuthManager.getAuthHeaders()
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to load patient');
+          }
+
+          const data = await response.json();
+          const patient = data.patient;
+
+          // Populate form
+          this.currentPatientId = patientId;
+          document.getElementById('patientModalTitle').textContent = 'Edit Patient';
+          document.getElementById('firstName').value = patient.firstName;
+          document.getElementById('lastName').value = patient.lastName;
+          document.getElementById('dateOfBirth').value = patient.dateOfBirth.split('T')[0];
+          document.getElementById('gender').value = patient.gender;
+          document.getElementById('phone').value = patient.phone;
+          document.getElementById('email').value = patient.email || '';
+          
+          // Address
+          if (patient.address) {
+            document.getElementById('street').value = patient.address.street || '';
+            document.getElementById('city').value = patient.address.city || '';
+            document.getElementById('state').value = patient.address.state || '';
+            document.getElementById('zipCode').value = patient.address.zipCode || '';
+          }
+
+          // Emergency contact
+          if (patient.emergencyContact) {
+            document.getElementById('emergencyContactName').value = patient.emergencyContact.name || '';
+            document.getElementById('emergencyContactPhone').value = patient.emergencyContact.phone || '';
+            document.getElementById('emergencyContactRelationship').value = patient.emergencyContact.relationship || '';
+          }
+
+          this.patientModal.show();
+
+        } catch (error) {
+          console.error('Error loading patient:', error);
+          this.showAlert('danger', 'Failed to load patient details');
+        }
+      },
+
+      async viewPatientDetails(patientId) {
+        try {
+          this.currentPatientId = patientId;
+          const response = await fetch(`/api/patients/${patientId}`, {
+            headers: AuthManager.getAuthHeaders()
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to load patient details');
+          }
+
+          const data = await response.json();
+          const patient = data.patient;
+
+          const detailsHtml = `
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Personal Information</h6>
+                <table class="table table-sm">
+                  <tr><td class="fw-bold">Patient ID:</td><td>${patient.patientId}</td></tr>
+                  <tr><td class="fw-bold">Name:</td><td>${patient.firstName} ${patient.lastName}</td></tr>
+                  <tr><td class="fw-bold">Date of Birth:</td><td>${this.formatDate(patient.dateOfBirth)}</td></tr>
+                  <tr><td class="fw-bold">Age:</td><td>${this.calculateAge(patient.dateOfBirth)} years</td></tr>
+                  <tr><td class="fw-bold">Gender:</td><td>${this.capitalize(patient.gender)}</td></tr>
+                  <tr><td class="fw-bold">Phone:</td><td><a href="tel:${patient.phone}">${patient.phone}</a></td></tr>
+                  <tr><td class="fw-bold">Email:</td><td>${patient.email ? 
+                    `<a href="mailto:${patient.email}">${patient.email}</a>` : 'Not provided'}</td></tr>
+                  <tr><td class="fw-bold">Status:</td><td>
+                    <span class="badge bg-${patient.isActive ? 'success' : 'secondary'}">
+                      ${patient.isActive ? 'Active' : 'Inactive'}
+                    </span>
+                  </td></tr>
+                </table>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Address</h6>
+                <table class="table table-sm">
+                  <tr><td class="fw-bold">Street:</td><td>${patient.address?.street || 'Not provided'}</td></tr>
+                  <tr><td class="fw-bold">City:</td><td>${patient.address?.city || 'Not provided'}</td></tr>
+                  <tr><td class="fw-bold">State:</td><td>${patient.address?.state || 'Not provided'}</td></tr>
+                  <tr><td class="fw-bold">ZIP:</td><td>${patient.address?.zipCode || 'Not provided'}</td></tr>
+                </table>
+                
+                <h6 class="text-primary mb-3 mt-4">Emergency Contact</h6>
+                <table class="table table-sm">
+                  <tr><td class="fw-bold">Name:</td><td>${patient.emergencyContact?.name || 'Not provided'}</td></tr>
+                  <tr><td class="fw-bold">Phone:</td><td>${patient.emergencyContact?.phone ? 
+                    `<a href="tel:${patient.emergencyContact.phone}">${patient.emergencyContact.phone}</a>` : 
+                    'Not provided'}</td></tr>
+                  <tr><td class="fw-bold">Relationship:</td><td>${patient.emergencyContact?.relationship || 'Not provided'}</td></tr>
+                </table>
+              </div>
+            </div>
+            
+            <div class="row mt-4">
+              <div class="col-12">
+                <h6 class="text-primary mb-3">Account Information</h6>
+                <table class="table table-sm">
+                  <tr><td class="fw-bold">Created:</td><td>${this.formatDateTime(patient.createdAt)}</td></tr>
+                  <tr><td class="fw-bold">Created By:</td><td>${patient.createdBy ? 
+                    `${patient.createdBy.firstName} ${patient.createdBy.lastName}` : 'System'}</td></tr>
+                  <tr><td class="fw-bold">Last Updated:</td><td>${this.formatDateTime(patient.updatedAt)}</td></tr>
+                </table>
+              </div>
+            </div>
+          `;
+
+          document.getElementById('patientDetailsContent').innerHTML = detailsHtml;
+          this.detailsModal.show();
+
+        } catch (error) {
+          console.error('Error loading patient details:', error);
+          this.showAlert('danger', 'Failed to load patient details');
+        }
+      },
+
+      editPatientFromDetails() {
+        this.detailsModal.hide();
+        setTimeout(() => {
+          this.editPatient(this.currentPatientId);
+        }, 300);
+      },
+
+      viewPatientOrders(patientId) {
+        window.location.href = `/orders?patient=${patientId}`;
+      },
+
+      searchPatients() {
+        this.currentPage = 1;
+        this.loadPatients(1);
+      },
+
+      filterPatients() {
+        this.currentPage = 1;
+        this.loadPatients(1);
+      },
+
+      clearFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('genderFilter').value = '';
+        document.getElementById('statusFilter').value = '';
+        document.getElementById('limitSelect').value = '10';
+        this.loadPatients(1);
+      },
+
+      updatePagination(pagination) {
+        const paginationEl = document.getElementById('pagination');
+        
+        if (pagination.pages <= 1) {
+          paginationEl.innerHTML = '';
+          return;
+        }
+
+        let html = '';
+        
+        // Previous button
+        html += `
+          <li class="page-item ${pagination.current === 1 ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="PatientManager.loadPatients(${pagination.current - 1}); return false;">
+              Previous
+            </a>
+          </li>
+        `;
+
+        // Page numbers
+        for (let i = 1; i <= pagination.pages; i++) {
+          if (i === pagination.current) {
+            html += `<li class="page-item active"><span class="page-link">${i}</span></li>`;
+          } else if (i === 1 || i === pagination.pages || 
+                     (i >= pagination.current - 2 && i <= pagination.current + 2)) {
+            html += `
+              <li class="page-item">
+                <a class="page-link" href="#" onclick="PatientManager.loadPatients(${i}); return false;">${i}</a>
+              </li>
+            `;
+          } else if (i === pagination.current - 3 || i === pagination.current + 3) {
+            html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+          }
+        }
+
+        // Next button
+        html += `
+          <li class="page-item ${pagination.current === pagination.pages ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="PatientManager.loadPatients(${pagination.current + 1}); return false;">
+              Next
+            </a>
+          </li>
+        `;
+
+        paginationEl.innerHTML = html;
+      },
+
+      updatePatientCount(total) {
+        document.getElementById('patientCount').textContent = total;
+      },
+
+      showAlert(type, message) {
+        const alertContainer = document.getElementById('alertContainer');
+        const alertId = 'alert-' + Date.now();
+        
+        const alertHtml = `
+          <div id="${alertId}" class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        `;
+        
+        alertContainer.innerHTML = alertHtml;
+        
+        // Auto-dismiss after 5 seconds
+        setTimeout(() => {
+          const alertEl = document.getElementById(alertId);
+          if (alertEl) {
+            const bsAlert = bootstrap.Alert.getOrCreateInstance(alertEl);
+            bsAlert.close();
+          }
+        }, 5000);
+      },
+
+      // Utility functions
+      formatDate(dateString) {
+        return new Date(dateString).toLocaleDateString('en-US');
+      },
+
+      formatDateTime(dateString) {
+        return new Date(dateString).toLocaleString('en-US');
+      },
+
+      calculateAge(birthDate) {
+        const today = new Date();
+        const birth = new Date(birthDate);
+        let age = today.getFullYear() - birth.getFullYear();
+        const monthDiff = today.getMonth() - birth.getMonth();
+        
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+          age--;
+        }
+        
+        return age;
+      },
+
+      capitalize(str) {
+        if (!str) return 'Unknown';
+        return str.charAt(0).toUpperCase() + str.slice(1);
+      }
+    };
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => PatientManager.init());
+    } else {
+      PatientManager.init();
+    }
+  </script>
 </body>
 </html>

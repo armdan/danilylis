@@ -1,523 +1,69 @@
-<!-- Shared Navigation Component with Laboratory Settings Support -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/dashboard" id="navbarBrand">
-            <i class="fas fa-flask"></i>
-            <span id="labNameText">Laboratory Information System</span>
-        </a>
-        
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item" data-page="dashboard">
-                    <a class="nav-link" href="/dashboard">
-                        <i class="fas fa-chart-pie"></i> Dashboard
-                    </a>
-                </li>
-                <li class="nav-item" data-page="patients">
-                    <a class="nav-link" href="/patients">
-                        <i class="fas fa-users"></i> Patients
-                    </a>
-                </li>
-                <li class="nav-item" data-page="tests">
-                    <a class="nav-link" href="/tests">
-                        <i class="fas fa-vial"></i> Tests
-                    </a>
-                </li>
-                <li class="nav-item" data-page="orders">
-                    <a class="nav-link" href="/orders">
-                        <i class="fas fa-clipboard-list"></i> Orders
-                    </a>
-                </li>
-                <li class="nav-item" data-page="results">
-                    <a class="nav-link" href="/results">
-                        <i class="fas fa-chart-line"></i> Results
-                    </a>
-                </li>
-                <li class="nav-item" data-page="reports">
-                    <a class="nav-link" href="/reports">
-                        <i class="fas fa-file-medical"></i> Reports
-                    </a>
-                </li>
-                <li class="nav-item" data-page="settings" id="settingsNavItem" style="display: none;">
-                    <a class="nav-link" href="/settings">
-                        <i class="fas fa-cog"></i> Settings
-                    </a>
-                </li>
-            </ul>
-            
-            <ul class="navbar-nav">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
-                        <i class="fas fa-user-circle"></i>
-                        <span id="userName">User</span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#profileModal">
-                            <i class="fas fa-user"></i> Profile
-                        </a>
-                        <a class="dropdown-item" href="#" id="settingsMenuItem" onclick="handleSettingsClick(event)">
-                        <a class="dropdown-item" href="/settings">
-                            <i class="fas fa-cog"></i> Settings
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#" onclick="logout()">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </a>
-                    </div>
-                </li>
-            </ul>
-        </div>
+<!-- public/navbar.html -->
+<nav id="app-navbar" class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+  <div class="container-fluid">
+    <!-- LEFT: Logo + Lab name -->
+    <a class="navbar-brand d-flex align-items-center gap-2" href="/dashboard" id="navbarBrand">
+      <img id="navbarLogo" alt="Lab Logo" style="height:28px;width:auto;display:none;" />
+      <i id="navbarFallbackIcon" class="fas fa-flask"></i>
+      <span id="labNameText">Laboratory Information System</span>
+    </a>
+
+    <!-- Toggler (Bootstrap 5) -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Links + RIGHT user menu -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <!-- Left side links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item" data-page="dashboard">
+          <a class="nav-link" href="/dashboard">
+            <i class="fas fa-chart-pie me-1"></i> Dashboard
+          </a>
+        </li>
+        <li class="nav-item" data-page="patients">
+          <a class="nav-link" href="/patients"><i class="fas fa-users me-1"></i> Patients</a>
+        </li>
+        <li class="nav-item" data-page="tests">
+          <a class="nav-link" href="/tests"><i class="fas fa-vial me-1"></i> Tests</a>
+        </li>
+        <li class="nav-item" data-page="orders">
+          <a class="nav-link" href="/orders"><i class="fas fa-clipboard-list me-1"></i> Orders</a>
+        </li>
+        <li class="nav-item" data-page="results">
+          <a class="nav-link" href="/results"><i class="fas fa-chart-line me-1"></i> Results</a>
+        </li>
+        <li class="nav-item" data-page="reports">
+          <a class="nav-link" href="/reports"><i class="fas fa-file-medical me-1"></i> Reports</a>
+        </li>
+
+        <!-- Settings is revealed to admins by JS -->
+        <li class="nav-item" data-page="settings" id="settingsNavItem" style="display:none;">
+          <a class="nav-link" href="/settings"><i class="fas fa-cog me-1"></i> Settings</a>
+        </li>
+      </ul>
+
+      <!-- RIGHT: user dropdown -->
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item dropdown">
+          <a id="userMenuToggle" class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#"
+             role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-user-circle"></i>
+            <span id="userName">User</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="/profile"><i class="fas fa-id-badge me-2"></i>Profile</a></li>
+            <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog me-2"></i>Settings</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><button class="dropdown-item" id="logoutBtn" type="button"><i class="fas fa-sign-out-alt me-2"></i>Logout</button></li>
+          </ul>
+        </li>
+      </ul>
     </div>
+  </div>
 </nav>
 
-<!-- Profile Modal -->
-<div class="modal fade" id="profileModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Update Profile</h5>
-                <button type="button" class="close" data-dismiss="modal">
-                    <span>&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="profileForm">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="profileFirstName">First Name</label>
-                                <input type="text" class="form-control" id="profileFirstName">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="profileLastName">Last Name</label>
-                                <input type="text" class="form-control" id="profileLastName">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="profileEmail">Email</label>
-                        <input type="email" class="form-control" id="profileEmail">
-                    </div>
-                    <div class="form-group">
-                        <label for="profilePhone">Phone</label>
-                        <input type="tel" class="form-control" id="profilePhone">
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="profileRole">Role</label>
-                                <input type="text" class="form-control" id="profileRole" readonly>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="profileDepartment">Department</label>
-                                <input type="text" class="form-control" id="profileDepartment" readonly>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="updateProfile()">Save Changes</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Settings Modal (for non-admin users) -->
-<div class="modal fade" id="settingsModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Application Settings</h5>
-                <button type="button" class="close" data-dismiss="modal">
-                    <span>&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <!-- User Preferences -->
-                    <div class="col-md-6">
-                        <h6><i class="fas fa-user-cog"></i> User Preferences</h6>
-                        <div class="form-group">
-                            <label for="themeSelect">Theme</label>
-                            <select class="form-control" id="themeSelect">
-                                <option value="light">Light</option>
-                                <option value="dark">Dark</option>
-                            </select>
-                            <small class="form-text text-muted">Choose your preferred interface theme</small>
-                        </div>
-                        <div class="form-group">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="notificationsEnabled">
-                                <label class="form-check-label" for="notificationsEnabled">
-                                    Enable notifications
-                                </label>
-                            </div>
-                            <small class="form-text text-muted">Receive alerts for critical results and system updates</small>
-                        </div>
-                    </div>
-                    
-                    <!-- Laboratory Settings Preview -->
-                    <div class="col-md-6">
-                        <h6><i class="fas fa-building"></i> Laboratory Information</h6>
-                        <div id="labSettingsPreview">
-                            <div class="alert alert-info">
-                                <i class="fas fa-spinner fa-spin"></i> Loading laboratory information...
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="saveUserSettings()">
-                    <i class="fas fa-save"></i> Save Settings
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
-/* Additional navbar styles for logo */
-.navbar-brand img {
-    height: 40px;
-    max-width: 200px;
-    object-fit: contain;
-}
-
-.navbar-brand {
-    display: flex;
-    align-items: center;
-}
-</style>
-
-<script>
-// Navigation JavaScript with Laboratory Settings support
-$(document).ready(function() {
-    // Set active navigation item based on current page
-    setActiveNavItem();
-    
-    // Update user name in navigation
-    updateNavbarUser();
-    
-    // Load laboratory settings and update navbar
-    loadLabSettingsForNavbar();
-    
-    // Check if user is admin and show/hide settings in nav
-    checkAdminAccess();
-    
-    // Initialize profile modal
-    $('#profileModal').on('show.bs.modal', function() {
-        console.log('Profile modal opening');
-        initializeProfileModal();
-    });
-    
-    // Initialize settings modal
-    $('#settingsModal').on('show.bs.modal', function() {
-        console.log('Settings modal opening');
-        initializeSettingsModal();
-        loadLabSettingsPreview();
-    });
-    
-    // Settings menu item click handler - use delegated event for dynamic content
-    $(document).on('click', '#settingsMenuItem', function(e) {
-        e.preventDefault();
-        console.log('Settings menu clicked');
-        
-        if (typeof AuthManager !== 'undefined') {
-            const user = AuthManager.getUser();
-            console.log('User role:', user ? user.role : 'no user');
-            
-            if (user && user.role === 'admin') {
-                // For admin, go directly to lab settings page
-                window.location.href = '/settings';
-            } else {
-                // For other users, open the modal
-                $('#settingsModal').modal('show');
-            }
-        } else {
-            console.log('AuthManager not available');
-            $('#settingsModal').modal('show');
-        }
-        return false;
-    });
-    
-    // Also bind logout function properly
-    window.logout = function() {
-        if (confirm('Are you sure you want to logout?')) {
-            AuthManager.logout();
-        }
-    };
-});
-
-// Global function for settings click (available before document ready)
-function handleSettingsClick(event) {
-    event.preventDefault();
-    console.log('Settings clicked - using global handler');
-    
-    if (typeof AuthManager !== 'undefined') {
-        const user = AuthManager.getUser();
-        console.log('User:', user);
-        
-        if (user && user.role === 'admin') {
-            // For admin, go directly to lab settings page
-            window.location.href = '/settings';
-        } else {
-            // For other users, open the modal
-            $('#settingsModal').modal('show');
-        }
-    } else {
-        // Fallback - show modal
-        console.log('AuthManager not available, showing modal');
-        $('#settingsModal').modal('show');
-    }
-    return false;
-}
-
-// Set active navigation item based on current page
-function setActiveNavItem() {
-    const currentPath = window.location.pathname;
-    let activePage = 'dashboard'; // default
-    
-    if (currentPath.includes('/patients')) activePage = 'patients';
-    else if (currentPath.includes('/tests')) activePage = 'tests';
-    else if (currentPath.includes('/orders')) activePage = 'orders';
-    else if (currentPath.includes('/results')) activePage = 'results';
-    else if (currentPath.includes('/reports')) activePage = 'reports';
-    else if (currentPath.includes('/settings')) activePage = 'settings';
-    
-    // Remove active class from all nav items
-    $('.nav-item').removeClass('active');
-    
-    // Add active class to current page nav item
-    $(`.nav-item[data-page="${activePage}"]`).addClass('active');
-}
-
-// Update user name in navigation
-function updateNavbarUser() {
-    if (typeof AuthManager !== 'undefined') {
-        const user = AuthManager.getUser();
-        if (user && user.firstName && user.lastName) {
-            const userNameElement = document.getElementById('userName');
-            if (userNameElement) {
-                userNameElement.textContent = `${user.firstName} ${user.lastName}`;
-            }
-        }
-    }
-}
-
-// Check admin access and show settings in nav if admin
-function checkAdminAccess() {
-    if (typeof AuthManager !== 'undefined') {
-        const user = AuthManager.getUser();
-        if (user && user.role === 'admin') {
-            $('#settingsNavItem').show();
-        }
-    }
-}
-
-// Load laboratory settings and update navbar
-async function loadLabSettingsForNavbar() {
-    try {
-        // First try to load logo
-        const logoResponse = await fetch('/api/settings/logo', {
-            headers: AuthManager.getAuthHeaders()
-        });
-        
-        if (logoResponse.ok) {
-            const logoData = await logoResponse.json();
-            if (logoData.url) {
-                // Display logo in navbar
-                $('#navbarBrand').html(`
-                    <img src="${logoData.url}" alt="Laboratory Logo">
-                `);
-            }
-        }
-        
-        // Then load lab name
-        const settingsResponse = await fetch('/api/settings', {
-            headers: AuthManager.getAuthHeaders()
-        });
-        
-        if (settingsResponse.ok) {
-            const data = await settingsResponse.json();
-            if (data.settings && data.settings.labName) {
-                // If no logo, update text
-                if (!$('#navbarBrand img').length) {
-                    $('#labNameText').text(data.settings.labName);
-                }
-                // Store lab name for later use
-                localStorage.setItem('labName', data.settings.labName);
-            }
-        }
-    } catch (error) {
-        console.error('Error loading lab settings:', error);
-    }
-}
-
-// Load lab settings preview for settings modal
-async function loadLabSettingsPreview() {
-    try {
-        const response = await fetch('/api/settings', {
-            headers: AuthManager.getAuthHeaders()
-        });
-        
-        if (response.ok) {
-            const data = await response.json();
-            const settings = data.settings;
-            
-            if (settings && settings.labName) {
-                const previewHtml = `
-                    <div class="card">
-                        <div class="card-body">
-                            <h6 class="card-title">${settings.labName}</h6>
-                            <p class="card-text mb-1">
-                                <small class="text-muted">Director:</small> 
-                                ${settings.labDirector ? `${settings.labDirector.firstName} ${settings.labDirector.lastName}` : 'Not configured'}
-                            </p>
-                            <p class="card-text mb-1">
-                                <small class="text-muted">CLIA:</small> 
-                                ${settings.cliaNumber || 'Not configured'}
-                            </p>
-                            <p class="card-text mb-1">
-                                <small class="text-muted">NPI:</small> 
-                                ${settings.npiNumber || 'Not configured'}
-                            </p>
-                            <p class="card-text mb-1">
-                                <small class="text-muted">Phone:</small> 
-                                ${settings.phone?.main || 'Not configured'}
-                            </p>
-                            <p class="card-text">
-                                <small class="text-muted">Address:</small> 
-                                ${settings.address ? `${settings.address.city}, ${settings.address.state}` : 'Not configured'}
-                            </p>
-                        </div>
-                    </div>
-                `;
-                $('#labSettingsPreview').html(previewHtml);
-            } else {
-                $('#labSettingsPreview').html(`
-                    <div class="alert alert-warning">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        Laboratory settings have not been configured yet.
-                    </div>
-                `);
-            }
-        }
-    } catch (error) {
-        console.error('Error loading settings preview:', error);
-        $('#labSettingsPreview').html(`
-            <div class="alert alert-danger">
-                <i class="fas fa-exclamation-circle"></i>
-                Unable to load laboratory settings
-            </div>
-        `);
-    }
-}
-
-// Initialize profile modal with user data
-function initializeProfileModal() {
-    if (typeof AuthManager !== 'undefined') {
-        const user = AuthManager.getUser();
-        if (user) {
-            document.getElementById('profileFirstName').value = user.firstName || '';
-            document.getElementById('profileLastName').value = user.lastName || '';
-            document.getElementById('profileEmail').value = user.email || '';
-            document.getElementById('profilePhone').value = user.phone || '';
-            document.getElementById('profileRole').value = (user.role || '').replace('_', ' ').toUpperCase();
-            document.getElementById('profileDepartment').value = (user.department || '').toUpperCase();
-        }
-    }
-}
-
-// Initialize settings modal
-function initializeSettingsModal() {
-    // Load saved settings from localStorage
-    const theme = localStorage.getItem('app_theme') || 'light';
-    const notifications = localStorage.getItem('app_notifications') !== 'false';
-    
-    document.getElementById('themeSelect').value = theme;
-    document.getElementById('notificationsEnabled').checked = notifications;
-}
-
-// Update profile function
-function updateProfile() {
-    const profileData = {
-        firstName: document.getElementById('profileFirstName').value,
-        lastName: document.getElementById('profileLastName').value,
-        email: document.getElementById('profileEmail').value,
-        phone: document.getElementById('profilePhone').value
-    };
-
-    if (typeof AuthManager !== 'undefined') {
-        fetch('/api/auth/profile', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                ...AuthManager.getAuthHeaders()
-            },
-            body: JSON.stringify(profileData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.user) {
-                // Update stored user data
-                localStorage.setItem('user', JSON.stringify(data.user));
-                
-                // Update navbar
-                updateNavbarUser();
-                
-                $('#profileModal').modal('hide');
-                
-                // Show success message
-                if (typeof showAlert === 'function') {
-                    showAlert('success', 'Profile updated successfully');
-                } else {
-                    alert('Profile updated successfully');
-                }
-            }
-        })
-        .catch(error => {
-            console.error('Error updating profile:', error);
-            if (typeof showAlert === 'function') {
-                showAlert('error', 'Failed to update profile');
-            } else {
-                alert('Failed to update profile');
-            }
-        });
-    }
-}
-
-// Save user settings function
-function saveUserSettings() {
-    const theme = document.getElementById('themeSelect').value;
-    const notifications = document.getElementById('notificationsEnabled').checked;
-    
-    // Save to localStorage
-    localStorage.setItem('app_theme', theme);
-    localStorage.setItem('app_notifications', notifications);
-    
-    // Apply theme immediately
-    applyTheme(theme);
-    
-    $('#settingsModal').modal('hide');
-    
-    if (typeof showAlert === 'function') {
-        showAlert('success', 'Settings saved successfully');
-    } else {
-        alert('Settings saved successfully');
-    }
-}
-
-
-</script>
+<!-- Spacer so content isn't hidden under fixed-top navbar -->
+<div style="height:64px"></div>
