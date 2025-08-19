@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medical Offices - Laboratory Information System</title>
+  
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    body { padding-top: 70px; }
+    .main-content { padding: 20px; }
+    .card { margin-bottom: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .table-actions { white-space: nowrap; }
+    .status-badge { padding: 5px 10px; border-radius: 15px; font-size: 0.85em; }
+    .status-active { background-color: #d4edda; color: #155724; }
+    .status-inactive { background-color: #f8d7da; color: #721c24; }
+    .status-suspended { background-color: #fff3cd; color: #856404; }
+    .status-pending { background-color: #cce5ff; color: #004085; }
+    .search-controls { display: flex; gap: 10px; margin-bottom: 20px; }
+    .office-details { padding: 15px; background: #f8f9fa; border-radius: 5px; }
+    .doctor-count { background: #e7f3ff; padding: 5px 10px; border-radius: 15px; font-size: 0.9em; }
+    .org-badge { background: #f0f0f0; padding: 3px 8px; border-radius: 10px; font-size: 0.85em; }
+    .operating-hours-table { font-size: 0.9em; }
+    .operating-hours-table td { padding: 5px; }
+  </style>
+</head>
+<body>
+  <!-- Navbar placeholder -->
+  <div id="navbar-placeholder"></div>
+
+  <div class="container-fluid main-content">
+    <!-- Page Header -->
+    <div class="row mb-4">
+      <div class="col-md-12">
+        <h2><i class="fas fa-hospital me-2"></i>Medical Offices (Clients)</h2>
+        <p class="text-muted">Manage medical offices, clinics, and healthcare facilities</p>
+      </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+      <div class="col-md-3">
+        <div class="card bg-primary text-white">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-0">Total Offices</h6>
+                <h3 class="mb-0" id="totalOffices">0</h3>
+              </div>
+              <i class="fas fa-hospital fa-2x opacity-50"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card bg-success text-white">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-0">Active</h6>
+                <h3 class="mb-0" id="activeOffices">0</h3>
+              </div>
+              <i class="fas fa-check-circle fa-2x opacity-50"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card bg-info text-white">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-0">Total Doctors</h6>
+                <h3 class="mb-0" id="totalDoctors">0</h3>
+              </div>
+              <i class="fas fa-user-md fa-2x opacity-50"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card bg-warning text-white">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-0">Pending</h6>
+                <h3 class="mb-0" id="pendingOffices">0</h3>
+              </div>
+              <i class="fas fa-clock fa-2x opacity-50"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search and Add Controls -->
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="search-controls">
+              <input type="text" id="searchInput" class="form-control" placeholder="Search by name, code, city, or contact...">
+              <select id="organizationFilter" class="form-select" style="width: 250px;">
+                <option value="">All Organizations</option>
+              </select>
+              <select id="statusFilter" class="form-select" style="width: 150px;">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="suspended">Suspended</option>
+                <option value="pending">Pending</option>
+              </select>
+              <button class="btn btn-primary" onclick="searchOffices()">
+                <i class="fas fa-search"></i> Search
+              </button>
+            </div>
+          </div>
+          <div class="col-md-4 text-end">
+            <button class="btn btn-success" onclick="showAddOfficeModal()">
+              <i class="fas fa-plus"></i> Add Medical Office
+            </button>
+            <button class="btn btn-outline-secondary" onclick="exportOffices()">
+              <i class="fas fa-download"></i> Export
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Medical Offices List -->
+    <div class="card">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Office Name</th>
+                <th>Organization</th>
+                <th>Contact Person</th>
+                <th>Location</th>
+                <th>Doctors</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="officesTableBody">
+              <!-- Offices will be loaded here -->
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- Pagination -->
+        <nav>
+          <ul class="pagination justify-content-center" id="pagination">
+            <!-- Pagination will be loaded here -->
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Medical Office Modal -->
+  <div class="modal fade" id="officeModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalTitle">Add Medical Office</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="officeForm">
+            <input type="hidden" id="officeId">
+            
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs mb-3" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#basicInfo">Basic Information</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#contactInfo">Contact Details</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#businessInfo">Business Information</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#operatingHours">Operating Hours</a>
+              </li>
+            </ul>
+
+            <!-- Tab content -->
+            <div class="tab-content">
+              <!-- Basic Information Tab -->
+              <div class="tab-pane fade show active" id="basicInfo">
+                <div class="row mb-3">
+                  <div class="col-md-8">
+                    <label class="form-label">Medical Office Name *</label>
+                    <input type="text" class="form-control" id="officeName" required>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Office Code</label>
+                    <input type="text" class="form-control" id="officeCode" placeholder="Auto-generated">
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label">Organization</label>
+                    <select class="form-select" id="organization">
+                      <option value="">Independent Office</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" id="officeStatus">
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                      <option value="suspended">Suspended</option>
+                      <option value="pending">Pending</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Address -->
+                <h6 class="mb-3">Office Address</h6>
+                <div class="row mb-3">
+                  <div class="col-md-8">
+                    <label class="form-label">Street Address *</label>
+                    <input type="text" class="form-control" id="street" required>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Suite/Unit</label>
+                    <input type="text" class="form-control" id="suite">
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-md-5">
+                    <label class="form-label">City *</label>
+                    <input type="text" class="form-control" id="city" required>
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">State *</label>
+                    <input type="text" class="form-control" id="state" maxlength="2" required>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">ZIP Code *</label>
+                    <input type="text" class="form-control" id="zipCode" pattern="^\d{5}(-\d{4})?$" required>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Contact Details Tab -->
+              <div class="tab-pane fade" id="contactInfo">
+                <h6 class="mb-3">Phone Numbers</h6>
+                <div class="row mb-3">
+                  <div class="col-md-4">
+                    <label class="form-label">Main Phone *</label>
+                    <input type="tel" class="form-control" id="phoneMain" required>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Billing Phone</label>
+                    <input type="tel" class="form-control" id="phoneBilling">
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Emergency Phone</label>
+                    <input type="tel" class="form-control" id="phoneEmergency">
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label">Fax</label>
+                    <input type="tel" class="form-control" id="fax">
+                  </div>
+                </div>
+
+                <h6 class="mb-3">Email Addresses</h6>
+                <div class="row mb-3">
+                  <div class="col-md-4">
+                    <label class="form-label">General Email *</label>
+                    <input type="email" class="form-control" id="emailGeneral" required>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Billing Email</label>
+                    <input type="email" class="form-control" id="emailBilling">
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Results Email</label>
+                    <input type="email" class="form-control" id="emailResults">
+                  </div>
+                </div>
+
+                <h6 class="mb-3">Contact Person</h6>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label">Contact Name *</label>
+                    <input type="text" class="form-control" id="contactPersonName" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Title</label>
+                    <input type="text" class="form-control" id="contactPersonTitle">
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-md-4">
+                    <label class="form-label">Contact Phone</label>
+                    <input type="tel" class="form-control" id="contactPersonPhone">
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Contact Email</label>
+                    <input type="email" class="form-control" id="contactPersonEmail">
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Preferred Contact Method</label>
+                    <select class="form-select" id="preferredContactMethod">
+                      <option value="phone">Phone</option>
+                      <option value="email">Email</option>
+                      <option value="fax">Fax</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Business Information Tab -->
+              <div class="tab-pane fade" id="businessInfo">
+                <div class="row mb-3">
+                  <div class="col-md-4">
+                    <label class="form-label">NPI Number</label>
+                    <input type="text" class="form-control" id="npiNumber" pattern="^\d{10}$">
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Tax ID</label>
+                    <input type="text" class="form-control" id="taxId">
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">License Number</label>
+                    <input type="text" class="form-control" id="licenseNumber">
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label">Billing Type</label>
+                    <select class="form-select" id="billingType">
+                      <option value="both">Both (Direct & Insurance)</option>
+                      <option value="direct">Direct Billing Only</option>
+                      <option value="insurance">Insurance Only</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Payment Terms</label>
+                    <select class="form-select" id="paymentTerms">
+                      <option value="net30">Net 30</option>
+                      <option value="net60">Net 60</option>
+                      <option value="net90">Net 90</option>
+                      <option value="immediate">Immediate</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label">Result Delivery Preference</label>
+                    <select class="form-select" id="resultDeliveryPreference">
+                      <option value="email">Email</option>
+                      <option value="fax">Fax</option>
+                      <option value="portal">Portal</option>
+                      <option value="mail">Mail</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Critical Value Notification</label>
+                    <select class="form-select" id="criticalNotificationMethod">
+                      <option value="phone">Phone</option>
+                      <option value="email">Email</option>
+                      <option value="both">Both</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Special Instructions</label>
+                  <textarea class="form-control" id="specialInstructions" rows="2"></textarea>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Internal Notes</label>
+                  <textarea class="form-control" id="internalNotes" rows="2"></textarea>
+                </div>
+              </div>
+
+              <!-- Operating Hours Tab -->
+              <div class="tab-pane fade" id="operatingHours">
+                <table class="table operating-hours-table">
+                  <thead>
+                    <tr>
+                      <th>Day</th>
+                      <th>Open Time</th>
+                      <th>Close Time</th>
+                      <th>Closed</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Monday</td>
+                      <td><input type="time" class="form-control" id="mondayOpen" value="08:00"></td>
+                      <td><input type="time" class="form-control" id="mondayClose" value="17:00"></td>
+                      <td><input type="checkbox" class="form-check-input" id="mondayClosed"></td>
+                    </tr>
+                    <tr>
+                      <td>Tuesday</td>
+                      <td><input type="time" class="form-control" id="tuesdayOpen" value="08:00"></td>
+                      <td><input type="time" class="form-control" id="tuesdayClose" value="17:00"></td>
+                      <td><input type="checkbox" class="form-check-input" id="tuesdayClosed"></td>
+                    </tr>
+                    <tr>
+                      <td>Wednesday</td>
+                      <td><input type="time" class="form-control" id="wednesdayOpen" value="08:00"></td>
+                      <td><input type="time" class="form-control" id="wednesdayClose" value="17:00"></td>
+                      <td><input type="checkbox" class="form-check-input" id="wednesdayClosed"></td>
+                    </tr>
+                    <tr>
+                      <td>Thursday</td>
+                      <td><input type="time" class="form-control" id="thursdayOpen" value="08:00"></td>
+                      <td><input type="time" class="form-control" id="thursdayClose" value="17:00"></td>
+                      <td><input type="checkbox" class="form-check-input" id="thursdayClosed"></td>
+                    </tr>
+                    <tr>
+                      <td>Friday</td>
+                      <td><input type="time" class="form-control" id="fridayOpen" value="08:00"></td>
+                      <td><input type="time" class="form-control" id="fridayClose" value="17:00"></td>
+                      <td><input type="checkbox" class="form-check-input" id="fridayClosed"></td>
+                    </tr>
+                    <tr>
+                      <td>Saturday</td>
+                      <td><input type="time" class="form-control" id="saturdayOpen" value="09:00"></td>
+                      <td><input type="time" class="form-control" id="saturdayClose" value="13:00"></td>
+                      <td><input type="checkbox" class="form-check-input" id="saturdayClosed" checked></td>
+                    </tr>
+                    <tr>
+                      <td>Sunday</td>
+                      <td><input type="time" class="form-control" id="sundayOpen"></td>
+                      <td><input type="time" class="form-control" id="sundayClose"></td>
+                      <td><input type="checkbox" class="form-check-input" id="sundayClosed" checked></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="saveOffice()">Save Medical Office</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- View Office Details Modal -->
+  <div class="modal fade" id="viewOfficeModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Medical Office Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="officeDetails">
+          <!-- Details will be loaded here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- At the bottom of organizations.html, medical-offices.html, doctors.html -->
+<!-- Put this at the VERY BOTTOM of medical-offices.html, remove ALL other script tags -->
+
+<!-- Replace everything from the first <script> tag to </body> with this: -->
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Load auth.js first to set up AuthManager -->
+<script src="/js/auth.js"></script>
+
+<!-- Auth check and setup -->
+<script>
+  // Check authentication using AuthManager
+  if (!AuthManager.isAuthenticated()) {
+    window.location.href = '/login';
+  } else {
+    // Set up jQuery AJAX defaults with auth headers
+    $.ajaxSetup({
+      headers: AuthManager.getAuthHeaders()
+    });
+  }
+</script>
+
+<!-- Load navbar after auth is confirmed -->
+<script src="/js/navbar-loader.js"></script>
+
+<!-- Medical Offices Page Specific Functions -->
+<script>
+  // Variables for medical offices page
+  let currentPage = 1;
+  const limit = 10;
+
+  $(document).ready(function() {
+    loadOffices();
+    loadStatistics();
+    loadOrganizations();
+  });
+
+function loadStatistics() {
+  $.get('/api/medical-offices?limit=100')  // Changed from 1000 to 100
+    .done(function(response) {
+      const offices = response.medicalOffices || [];
+      $('#totalOffices').text(offices.length);
+      $('#activeOffices').text(offices.filter(o => o.status === 'active').length);
+      $('#pendingOffices').text(offices.filter(o => o.status === 'pending').length);
+      
+      let totalDoctorCount = 0;
+      offices.forEach(office => {
+        totalDoctorCount += office.doctorCount || 0;
+      });
+      $('#totalDoctors').text(totalDoctorCount);
+      
+      // If we got 100 results, there might be more - get the actual total from pagination
+      if (response.pagination && response.pagination.total) {
+        $('#totalOffices').text(response.pagination.total);
+      }
+    })
+    .fail(function(xhr) {
+      console.error('Failed to load statistics:', xhr.status, xhr.responseText);
+      // Set default values on error
+      $('#totalOffices').text('0');
+      $('#activeOffices').text('0');
+      $('#pendingOffices').text('0');
+      $('#totalDoctors').text('0');
+    });
+}
+
+// Also fix the loadOrganizations function in medical-offices.html:
+
+function loadOrganizations() {
+  $.get('/api/organizations?limit=100')  // Changed from 1000 to 100
+    .done(function(response) {
+      const select = $('#organizationFilter, #organization');
+      select.empty();
+      select.append('<option value="">All Organizations</option>');
+      if (response.organizations) {
+        response.organizations.forEach(org => {
+          select.append(`<option value="${org._id}">${org.name}</option>`);
+        });
+      }
+    })
+    .fail(function(xhr) {
+      console.error('Failed to load organizations:', xhr.status, xhr.responseText);
+      // Keep the default "All Organizations" option on error
+    });
+}
+
+  function loadOffices(page = 1) {
+    currentPage = page;
+    const search = $('#searchInput').val();
+    const status = $('#statusFilter').val();
+    const organization = $('#organizationFilter').val();
+    
+    let url = `/api/medical-offices?page=${page}&limit=${limit}`;
+    if (search) url += `&search=${encodeURIComponent(search)}`;
+    if (status) url += `&status=${status}`;
+    if (organization) url += `&organization=${organization}`;
+
+    $.get(url)
+      .done(function(response) {
+        displayOffices(response.medicalOffices || []);
+        displayPagination(response.pagination || {});
+      })
+      .fail(function(xhr) {
+        console.error('Failed to load medical offices');
+        $('#officesTableBody').html('<tr><td colspan="8" class="text-center">Failed to load medical offices</td></tr>');
+      });
+  }
+
+  function displayOffices(offices) {
+    const tbody = $('#officesTableBody');
+    tbody.empty();
+
+    if (!offices || offices.length === 0) {
+      tbody.append(`
+        <tr>
+          <td colspan="8" class="text-center py-4">
+            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+            <p class="text-muted">No medical offices found</p>
+          </td>
+        </tr>
+      `);
+      return;
+    }
+
+    offices.forEach(office => {
+      const statusClass = `status-${office.status}`;
+      const orgBadge = office.organization ? 
+        `<span class="org-badge">${office.organization.name}</span>` : 
+        '<span class="text-muted">Independent</span>';
+      
+      const row = `
+        <tr>
+          <td><strong>${office.officeCode || ''}</strong></td>
+          <td>
+            <div>
+              <strong>${office.name || ''}</strong>
+            </div>
+          </td>
+          <td>${orgBadge}</td>
+          <td>
+            <div>
+              ${office.contactPerson ? office.contactPerson.name : ''}
+              ${office.contactPerson && office.contactPerson.title ? `<br><small class="text-muted">${office.contactPerson.title}</small>` : ''}
+              ${office.contactPerson && office.contactPerson.phone ? `<br><small><i class="fas fa-phone"></i> ${office.contactPerson.phone}</small>` : ''}
+            </div>
+          </td>
+          <td>
+            <small>
+              ${office.address ? `
+                ${office.address.street}${office.address.suite ? ', ' + office.address.suite : ''}<br>
+                ${office.address.city}, ${office.address.state} ${office.address.zipCode}
+              ` : ''}
+            </small>
+          </td>
+          <td>
+            <span class="doctor-count">
+              <i class="fas fa-user-md"></i> ${office.doctorCount || 0}
+            </span>
+          </td>
+          <td>
+            <span class="status-badge ${statusClass}">
+              ${office.status ? office.status.charAt(0).toUpperCase() + office.status.slice(1) : ''}
+            </span>
+          </td>
+          <td class="table-actions">
+            <button class="btn btn-sm btn-info" onclick="viewOffice('${office._id}')" title="View">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button class="btn btn-sm btn-warning" onclick="editOffice('${office._id}')" title="Edit">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="deleteOffice('${office._id}')" title="Delete">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      `;
+      tbody.append(row);
+    });
+  }
+
+  function displayPagination(pagination) {
+    const paginationEl = $('#pagination');
+    paginationEl.empty();
+
+    if (!pagination || pagination.pages <= 1) return;
+
+    if (pagination.current > 1) {
+      paginationEl.append(`
+        <li class="page-item">
+          <a class="page-link" href="#" onclick="loadOffices(${pagination.current - 1}); return false;">Previous</a>
+        </li>
+      `);
+    }
+
+    for (let i = 1; i <= Math.min(pagination.pages, 10); i++) {
+      paginationEl.append(`
+        <li class="page-item ${pagination.current === i ? 'active' : ''}">
+          <a class="page-link" href="#" onclick="loadOffices(${i}); return false;">${i}</a>
+        </li>
+      `);
+    }
+
+    if (pagination.current < pagination.pages) {
+      paginationEl.append(`
+        <li class="page-item">
+          <a class="page-link" href="#" onclick="loadOffices(${pagination.current + 1}); return false;">Next</a>
+        </li>
+      `);
+    }
+  }
+
+  function searchOffices() {
+    loadOffices(1);
+  }
+
+  function showAddOfficeModal() {
+    $('#modalTitle').text('Add Medical Office');
+    $('#officeForm')[0].reset();
+    $('#officeId').val('');
+    $('#officeModal').modal('show');
+  }
+
+  function editOffice(id) {
+    $.get(`/api/medical-offices/${id}`)
+      .done(function(response) {
+        const office = response.medicalOffice;
+        $('#modalTitle').text('Edit Medical Office');
+        $('#officeId').val(office._id);
+        
+        // Basic Info
+        $('#officeName').val(office.name);
+        $('#officeCode').val(office.officeCode);
+        $('#organization').val(office.organization?._id || '');
+        $('#officeStatus').val(office.status);
+        $('#street').val(office.address ? office.address.street : '');
+        $('#suite').val(office.address ? office.address.suite : '');
+        $('#city').val(office.address ? office.address.city : '');
+        $('#state').val(office.address ? office.address.state : '');
+        $('#zipCode').val(office.address ? office.address.zipCode : '');
+        
+        // Contact Info
+        $('#phoneMain').val(office.phone ? office.phone.main : '');
+        $('#phoneBilling').val(office.phone ? office.phone.billing : '');
+        $('#phoneEmergency').val(office.phone ? office.phone.emergency : '');
+        $('#fax').val(office.fax);
+        $('#emailGeneral').val(office.email ? office.email.general : '');
+        $('#emailBilling').val(office.email ? office.email.billing : '');
+        $('#emailResults').val(office.email ? office.email.results : '');
+        $('#contactPersonName').val(office.contactPerson ? office.contactPerson.name : '');
+        $('#contactPersonTitle').val(office.contactPerson ? office.contactPerson.title : '');
+        $('#contactPersonPhone').val(office.contactPerson ? office.contactPerson.phone : '');
+        $('#contactPersonEmail').val(office.contactPerson ? office.contactPerson.email : '');
+        $('#preferredContactMethod').val(office.contactPerson ? office.contactPerson.preferredContactMethod : 'phone');
+        
+        // Business Info
+        $('#npiNumber').val(office.npiNumber);
+        $('#taxId').val(office.taxId);
+        $('#licenseNumber').val(office.licenseNumber);
+        $('#billingType').val(office.billingType);
+        $('#paymentTerms').val(office.paymentTerms);
+        $('#resultDeliveryPreference').val(office.resultDeliveryPreference);
+        $('#criticalNotificationMethod').val(office.criticalValueNotification?.method || 'phone');
+        $('#specialInstructions').val(office.specialInstructions);
+        $('#internalNotes').val(office.internalNotes);
+        
+        // Operating Hours
+        if (office.operatingHours) {
+          ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].forEach(day => {
+            if (office.operatingHours[day]) {
+              $(`#${day}Open`).val(office.operatingHours[day].open);
+              $(`#${day}Close`).val(office.operatingHours[day].close);
+              $(`#${day}Closed`).prop('checked', office.operatingHours[day].closed);
+            }
+          });
+        }
+        
+        $('#officeModal').modal('show');
+      })
+      .fail(function(xhr) {
+        alert('Failed to load office details');
+      });
+  }
+// Replace the saveOffice function in medical-offices.html with this:
+
+function saveOffice() {
+  const id = $('#officeId').val();
+  
+  // Generate office code if not provided
+  let officeCode = $('#officeCode').val().trim();
+  if (!officeCode) {
+    // Generate code from office name (e.g., "City Medical Center" -> "CMC-001")
+    const nameParts = $('#officeName').val().trim().split(' ');
+    const initials = nameParts.map(word => word.charAt(0).toUpperCase()).join('');
+    const timestamp = Date.now().toString().slice(-4); // Last 4 digits of timestamp
+    officeCode = `${initials}-${timestamp}`;
+  }
+  
+  const data = {
+    name: $('#officeName').val(),
+    officeCode: officeCode,  // Now always has a value
+    organization: $('#organization').val() || null,
+    status: $('#officeStatus').val() || 'active',
+    address: {
+      street: $('#street').val(),
+      suite: $('#suite').val(),
+      city: $('#city').val(),
+      state: $('#state').val().toUpperCase(),
+      zipCode: $('#zipCode').val()
+    },
+    phone: {
+      main: $('#phoneMain').val(),
+      billing: $('#phoneBilling').val(),
+      emergency: $('#phoneEmergency').val()
+    },
+    fax: $('#fax').val(),
+    email: {
+      general: $('#emailGeneral').val(),
+      billing: $('#emailBilling').val(),
+      results: $('#emailResults').val()
+    },
+    contactPerson: {
+      name: $('#contactPersonName').val(),
+      title: $('#contactPersonTitle').val(),
+      phone: $('#contactPersonPhone').val(),
+      email: $('#contactPersonEmail').val(),
+      preferredContactMethod: $('#preferredContactMethod').val()
+    },
+    npiNumber: $('#npiNumber').val(),
+    taxId: $('#taxId').val(),
+    licenseNumber: $('#licenseNumber').val(),
+    billingType: $('#billingType').val() || 'both',
+    paymentTerms: $('#paymentTerms').val() || 'net30',
+    resultDeliveryPreference: $('#resultDeliveryPreference').val() || 'email',
+    criticalValueNotification: {
+      enabled: true,
+      method: $('#criticalNotificationMethod').val() || 'phone'
+    },
+    specialInstructions: $('#specialInstructions').val(),
+    internalNotes: $('#internalNotes').val(),
+    operatingHours: {}
+  };
+
+  // Collect operating hours
+  ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].forEach(day => {
+    data.operatingHours[day] = {
+      open: $(`#${day}Open`).val() || '08:00',
+      close: $(`#${day}Close`).val() || '17:00',
+      closed: $(`#${day}Closed`).is(':checked')
+    };
+  });
+
+  // Remove empty optional fields
+  if (!data.fax) delete data.fax;
+  if (!data.address.suite) delete data.address.suite;
+  if (!data.contactPerson.title) delete data.contactPerson.title;
+  if (!data.npiNumber) delete data.npiNumber;
+  if (!data.taxId) delete data.taxId;
+  if (!data.licenseNumber) delete data.licenseNumber;
+  if (!data.specialInstructions) delete data.specialInstructions;
+  if (!data.internalNotes) delete data.internalNotes;
+  if (!data.phone.billing) delete data.phone.billing;
+  if (!data.phone.emergency) delete data.phone.emergency;
+  if (!data.email.billing) delete data.email.billing;
+  if (!data.email.results) delete data.email.results;
+  if (!data.contactPerson.phone) delete data.contactPerson.phone;
+  if (!data.contactPerson.email) delete data.contactPerson.email;
+
+  console.log('Saving medical office with data:', JSON.stringify(data, null, 2));
+
+  const url = id ? `/api/medical-offices/${id}` : '/api/medical-offices';
+  const method = id ? 'PUT' : 'POST';
+
+  $.ajax({
+    url: url,
+    method: method,
+    contentType: 'application/json',
+    data: JSON.stringify(data),
+    success: function(response) {
+      $('#officeModal').modal('hide');
+      loadOffices(currentPage);
+      loadStatistics();
+      alert('Medical office saved successfully');
+    },
+    error: function(xhr) {
+      console.error('Save failed:', xhr.status, xhr.responseText);
+      
+      let errorMessage = 'Failed to save medical office';
+      
+      if (xhr.responseJSON) {
+        if (xhr.responseJSON.message) {
+          errorMessage = xhr.responseJSON.message;
+        } else if (xhr.responseJSON.error) {
+          errorMessage = xhr.responseJSON.error;
+        } else if (xhr.responseJSON.errors && Array.isArray(xhr.responseJSON.errors)) {
+          const errors = xhr.responseJSON.errors.map(err => 
+            `${err.param || err.field || 'Field'}: ${err.msg || err.message}`
+          );
+          errorMessage = 'Validation errors:\n' + errors.join('\n');
+        }
+      }
+      
+      // If it's a duplicate code error, generate a new one
+      if (errorMessage.includes('duplicate') && errorMessage.includes('officeCode')) {
+        alert('Office code already exists. Please enter a unique code or leave blank for auto-generation.');
+        $('#officeCode').focus();
+        return;
+      }
+      
+      alert('Error: ' + errorMessage);
+    }
+  });
+}
+
+// Also fix the saveDoctor function in doctors.html to handle validation better:
+
+function saveDoctor() {
+  const id = $('#doctorId').val();
+  const secondarySpecs = $('#secondarySpecialties').val();
+  
+  // Validate required fields first
+  const requiredFields = [
+    { id: 'firstName', name: 'First Name' },
+    { id: 'lastName', name: 'Last Name' },
+    { id: 'npiNumber', name: 'NPI Number' },
+    { id: 'primarySpecialty', name: 'Primary Specialty' },
+    { id: 'phoneOffice', name: 'Office Phone' },
+    { id: 'emailPrimary', name: 'Primary Email' }
+  ];
+
+  for (let field of requiredFields) {
+    const value = $(`#${field.id}`).val();
+    if (!value || value.trim() === '') {
+      alert(`${field.name} is required`);
+      $(`#${field.id}`).focus();
+      return;
+    }
+  }
+
+  // Validate NPI (10 digits)
+  const npi = $('#npiNumber').val().trim();
+  if (!/^\d{10}$/.test(npi)) {
+    alert('NPI Number must be exactly 10 digits');
+    $('#npiNumber').focus();
+    return;
+  }
+
+  // Validate email
+  const email = $('#emailPrimary').val().trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    alert('Please enter a valid primary email address');
+    $('#emailPrimary').focus();
+    return;
+  }
+  
+  const data = {
+    title: $('#doctorTitle').val() || 'MD',
+    firstName: $('#firstName').val().trim(),
+    middleName: $('#middleName').val().trim(),
+    lastName: $('#lastName').val().trim(),
+    suffix: $('#suffix').val().trim(),
+    npiNumber: npi,
+    licenseNumber: $('#licenseNumber').val().trim(),
+    licenseState: $('#licenseState').val().trim().toUpperCase(),
+    deaNumber: $('#deaNumber').val().trim(),
+    primarySpecialty: $('#primarySpecialty').val().trim(),
+    secondarySpecialties: secondarySpecs ? secondarySpecs.split(',').map(s => s.trim()).filter(s => s) : [],
+    phone: {
+      office: $('#phoneOffice').val().trim(),
+      mobile: $('#phoneMobile').val().trim(),
+      emergency: $('#phoneEmergency').val().trim()
+    },
+    email: {
+      primary: email,
+      secondary: $('#emailSecondary').val().trim()
+    },
+    fax: $('#doctorFax').val().trim(),
+    medicalOffices: $('#medicalOffices').val() || [],
+    primaryOffice: $('#primaryOffice').val() || null,
+    preferences: {
+      resultNotification: {
+        critical: $('#criticalNotification').val() || 'phone',
+        abnormal: $('#abnormalNotification').val() || 'email',
+        normal: $('#normalNotification').val() || 'none'
+      },
+      preferredContactTime: {
+        start: $('#contactTimeStart').val(),
+        end: $('#contactTimeEnd').val()
+      }
+    },
+    status: $('#doctorStatus').val() || 'active',
+    notes: $('#doctorNotes').val().trim(),
+    specialInstructions: $('#specialInstructions').val().trim(),
+    signatureOnFile: $('#signatureOnFile').is(':checked'),
+    credentialingDate: $('#credentialingDate').val(),
+    recredentialingDate: $('#recredentialingDate').val()
+  };
+
+  // Remove empty optional fields
+  if (!data.middleName) delete data.middleName;
+  if (!data.suffix) delete data.suffix;
+  if (!data.licenseNumber) delete data.licenseNumber;
+  if (!data.licenseState) delete data.licenseState;
+  if (!data.deaNumber) delete data.deaNumber;
+  if (!data.phone.mobile) delete data.phone.mobile;
+  if (!data.phone.emergency) delete data.phone.emergency;
+  if (!data.email.secondary) delete data.email.secondary;
+  if (!data.fax) delete data.fax;
+  if (!data.notes) delete data.notes;
+  if (!data.specialInstructions) delete data.specialInstructions;
+  if (!data.credentialingDate) delete data.credentialingDate;
+  if (!data.recredentialingDate) delete data.recredentialingDate;
+  if (!data.preferences.preferredContactTime.start) delete data.preferences.preferredContactTime.start;
+  if (!data.preferences.preferredContactTime.end) delete data.preferences.preferredContactTime.end;
+
+  console.log('Saving doctor with data:', JSON.stringify(data, null, 2));
+
+  const url = id ? `/api/doctors/${id}` : '/api/doctors';
+  const method = id ? 'PUT' : 'POST';
+
+  $.ajax({
+    url: url,
+    method: method,
+    contentType: 'application/json',
+    data: JSON.stringify(data),
+    success: function(response) {
+      $('#doctorModal').modal('hide');
+      loadDoctors(currentPage);
+      loadStatistics();
+      alert('Doctor saved successfully');
+    },
+    error: function(xhr) {
+      console.error('Save failed:', xhr.status, xhr.responseText);
+      
+      let errorMessage = 'Failed to save doctor';
+      
+      if (xhr.responseJSON) {
+        if (xhr.responseJSON.message) {
+          errorMessage = xhr.responseJSON.message;
+        } else if (xhr.responseJSON.error) {
+          errorMessage = xhr.responseJSON.error;
+        } else if (xhr.responseJSON.errors && Array.isArray(xhr.responseJSON.errors)) {
+          const errors = xhr.responseJSON.errors.map(err => 
+            `${err.param || err.field || 'Field'}: ${err.msg || err.message}`
+          );
+          errorMessage = 'Validation errors:\n' + errors.join('\n');
+        }
+      }
+      
+      alert('Error: ' + errorMessage);
+    }
+  });
+}
+
+  function viewOffice(id) {
+    $.get(`/api/medical-offices/${id}`)
+      .done(function(response) {
+        const office = response.medicalOffice;
+        const doctors = response.doctors || [];
+        
+        let doctorsList = '';
+        if (doctors.length > 0) {
+          doctorsList = '<h6 class="mt-3">Associated Doctors:</h6><ul>';
+          doctors.forEach(doc => {
+            doctorsList += `<li>${doc.title} ${doc.firstName} ${doc.lastName} - ${doc.primarySpecialty} (NPI: ${doc.npiNumber})</li>`;
+          });
+          doctorsList += '</ul>';
+        }
+
+        const details = `
+          <div class="office-details">
+            <h5>${office.name}</h5>
+            <p class="text-muted">Code: ${office.officeCode}</p>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <h6>Organization:</h6>
+                <p>${office.organization ? office.organization.name : 'Independent'}</p>
+                
+                <h6>Address:</h6>
+                <p>
+                  ${office.address ? `
+                    ${office.address.street}${office.address.suite ? ', ' + office.address.suite : ''}<br>
+                    ${office.address.city}, ${office.address.state} ${office.address.zipCode}
+                  ` : 'Not provided'}
+                </p>
+                
+                <h6>Status:</h6>
+                <p><span class="status-badge status-${office.status}">${office.status ? office.status.toUpperCase() : ''}</span></p>
+              </div>
+              
+              <div class="col-md-6">
+                <h6>Contact Person:</h6>
+                <p>
+                  ${office.contactPerson ? `
+                    ${office.contactPerson.name}${office.contactPerson.title ? ' - ' + office.contactPerson.title : ''}<br>
+                    <i class="fas fa-phone"></i> ${office.contactPerson.phone || 'N/A'}<br>
+                    <i class="fas fa-envelope"></i> ${office.contactPerson.email || 'N/A'}
+                  ` : 'Not provided'}
+                </p>
+                
+                <h6>Main Contact:</h6>
+                <p>
+                  ${office.phone ? `<i class="fas fa-phone"></i> ${office.phone.main}<br>` : ''}
+                  ${office.fax ? `<i class="fas fa-fax"></i> ${office.fax}<br>` : ''}
+                  ${office.email ? `<i class="fas fa-envelope"></i> ${office.email.general}` : ''}
+                </p>
+              </div>
+            </div>
+            
+            ${doctorsList}
+            
+            ${office.specialInstructions ? `<h6 class="mt-3">Special Instructions:</h6><p>${office.specialInstructions}</p>` : ''}
+          </div>
+        `;
+        
+        $('#officeDetails').html(details);
+        $('#viewOfficeModal').modal('show');
+      })
+      .fail(function(xhr) {
+        alert('Failed to load office details');
+      });
+  }
+
+  function deleteOffice(id) {
+    if (confirm('Are you sure you want to deactivate this medical office?')) {
+      $.ajax({
+        url: `/api/medical-offices/${id}`,
+        method: 'DELETE',
+        success: function(response) {
+          loadOffices(currentPage);
+          loadStatistics();
+          alert('Medical office deactivated successfully');
+        },
+        error: function(xhr) {
+          const error = xhr.responseJSON?.message || 'Failed to delete medical office';
+          alert('Error: ' + error);
+        }
+      });
+    }
+  }
+
+function exportOffices() {
+  window.open('/api/medical-offices?limit=100&format=csv', '_blank');  // Changed from 1000
+}
+
+</script>
+</body>
+</html>

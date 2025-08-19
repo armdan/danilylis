@@ -22,6 +22,15 @@ const reportRoutes = require('./routes/reports');
 const userRoutes = require('./routes/users');
 const dashboardRoutes = require('./routes/dashboard');
 const settingsRoutes = require('./routes/settings');
+// NEW ROUTES
+const organizationRoutes = require('./routes/organizations');
+const medicalOfficeRoutes = require('./routes/medicalOffices');
+const doctorRoutes = require('./routes/doctors');
+
+
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
 
 // Security middleware - disabled CSP for development
 app.use(helmet({
@@ -115,6 +124,10 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/settings', settingsRoutes);
+// NEW API ROUTES
+app.use('/api/organizations', organizationRoutes);
+app.use('/api/medical-offices', medicalOfficeRoutes);
+app.use('/api/doctors', doctorRoutes);
 
 // Serve HTML pages
 app.get('/', (req, res) => {
@@ -151,6 +164,19 @@ app.get('/reports', (req, res) => {
 
 app.get('/settings', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'settings.html'));
+});
+
+// NEW HTML PAGES
+app.get('/organizations', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'organizations.html'));
+});
+
+app.get('/medical-offices', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'medical-offices.html'));
+});
+
+app.get('/doctors', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'doctors.html'));
 });
 
 // Error handling middleware
