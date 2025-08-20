@@ -6,12 +6,10 @@
   <title>Dashboard - Laboratory Information System</title>
 
   <!-- Bootstrap 5 CSS -->
-   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font Awesome -->
   
   <!-- Custom CSS -->
-
   <style>
     /* Quick custom styles for dashboard */
     .main-content {
@@ -105,6 +103,33 @@
     .status-online { background: #48bb78; }
     .status-warning { background: #ed8936; }
     .status-offline { background: #fc8181; }
+    .order-quick-card {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border-radius: 10px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: transform 0.3s;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .order-quick-card:hover {
+      transform: translateY(-5px);
+      color: white;
+    }
+    .order-quick-card i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.9;
+    }
+    .order-quick-card h5 {
+      margin-bottom: 0.5rem;
+    }
+    .order-quick-card p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
@@ -117,6 +142,7 @@
       <div class="col-12">
         <div class="welcome-section">
           <h1 class="welcome-title">Welcome back, <span id="welcomeUserName">User</span>!</h1>
+          
         </div>
       </div>
     </div>
@@ -179,93 +205,90 @@
         </div>
       </div>
     </div>
-<!-- ADD THIS HTML ONLY - Insert after line 173 (after closing </div> of statistics cards) -->
-<!-- DO NOT CHANGE ANY JAVASCRIPT - Your existing code is perfect -->
 
-<!-- PCR Test Management Row -->
-<div class="row mb-4">
-  <!-- PCR Tests -->
-  <div class="col-xl-3 col-md-6 mb-4">
-    <div class="card shadow-sm h-100">
-      <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-              PCR Tests
+    <!-- Lab Operations Row -->
+    <div class="row mb-4">
+      <!-- Today's Orders -->
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                  Today's Orders
+                </div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800" id="todayOrders">0</div>
+              </div>
+              <div class="text-gray-300">
+                <i class="fas fa-calendar-day fa-2x"></i>
+              </div>
             </div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">8 Panels</div>
-          </div>
-          <div class="text-gray-300">
-            <i class="fas fa-dna fa-2x"></i>
+            <a href="/orders" class="btn btn-sm btn-primary mt-2">View Orders</a>
           </div>
         </div>
-        <a href="/pcr-tests" class="btn btn-sm btn-primary mt-2">View Tests</a>
       </div>
-    </div>
-  </div>
 
-  <!-- Blood Tests (Coming Soon) -->
-  <div class="col-xl-3 col-md-6 mb-4">
-    <div class="card shadow-sm h-100">
-      <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-              Blood Tests
+      <!-- PCR Tests -->
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                  PCR Tests
+                </div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">8 Panels</div>
+              </div>
+              <div class="text-gray-300">
+                <i class="fas fa-dna fa-2x"></i>
+              </div>
             </div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">Soon</div>
-          </div>
-          <div class="text-gray-300">
-            <i class="fas fa-tint fa-2x"></i>
+            <a href="/pcr-tests" class="btn btn-sm btn-info mt-2">View Tests</a>
           </div>
         </div>
-        <button class="btn btn-sm btn-secondary mt-2" disabled>Coming Soon</button>
       </div>
-    </div>
-  </div>
 
-  <!-- Test Orders Today -->
-  <div class="col-xl-3 col-md-6 mb-4">
-    <div class="card shadow-sm h-100">
-      <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-              Test Orders
+      <!-- Pending Results -->
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                  Pending Results
+                </div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800" id="pendingResults">0</div>
+              </div>
+              <div class="text-gray-300">
+                <i class="fas fa-clock fa-2x"></i>
+              </div>
             </div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">View All</div>
-          </div>
-          <div class="text-gray-300">
-            <i class="fas fa-clipboard-list fa-2x"></i>
+            <a href="/pending-results" class="btn btn-sm btn-warning mt-2">Review</a>
           </div>
         </div>
-        <a href="/orders" class="btn btn-sm btn-success mt-2">Orders</a>
       </div>
-    </div>
-  </div>
 
-  <!-- Test Results -->
-  <div class="col-xl-3 col-md-6 mb-4">
-    <div class="card shadow-sm h-100">
-      <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-              Test Results
+      <!-- Reports -->
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                  Reports
+                </div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">Generate</div>
+              </div>
+              <div class="text-gray-300">
+                <i class="fas fa-file-medical fa-2x"></i>
+              </div>
             </div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">Review</div>
-          </div>
-          <div class="text-gray-300">
-            <i class="fas fa-chart-line fa-2x"></i>
+            <a href="/reports" class="btn btn-sm btn-success mt-2">Reports</a>
           </div>
         </div>
-        <a href="/results" class="btn btn-sm btn-info mt-2">Results</a>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- That's it! No JavaScript changes needed. Your existing DashboardManager code stays exactly as is. -->
     <!-- Charts and Recent Activity -->
     <div class="row">
       <!-- Recent Orders -->
@@ -273,7 +296,12 @@
         <div class="card shadow-sm">
           <div class="card-header bg-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>Recent Orders</h5>
-            <a href="/orders" class="btn btn-sm btn-outline-primary">View All</a>
+            <div>
+              <a href="/orders/new" class="btn btn-sm btn-success me-2">
+                <i class="fas fa-plus"></i> New Order
+              </a>
+              <a href="/orders" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
           </div>
           <div class="card-body">
             <div class="table-responsive">
@@ -284,12 +312,13 @@
                     <th>Patient</th>
                     <th>Tests</th>
                     <th>Status</th>
+                    <th>Priority</th>
                     <th>Date</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td colspan="5" class="text-center py-4">
+                    <td colspan="6" class="text-center py-4">
                       <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
                       Loading recent orders...
                     </td>
@@ -310,13 +339,13 @@
           </div>
           <div class="card-body">
             <div class="quick-actions">
+              <a href="/orders/new" class="quick-action-btn" data-role="admin,doctor,receptionist,lab_technician">
+                <i class="fas fa-plus-circle"></i>
+                <span>New Order</span>
+              </a>
               <a href="/patients" class="quick-action-btn" data-role="admin,doctor,receptionist">
                 <i class="fas fa-user-plus"></i>
                 <span>Add Patient</span>
-              </a>
-              <a href="/orders" class="quick-action-btn" data-role="admin,doctor,receptionist">
-                <i class="fas fa-plus-circle"></i>
-                <span>New Order</span>
               </a>
               <a href="/results" class="quick-action-btn" data-role="admin,lab_technician">
                 <i class="fas fa-flask"></i>
@@ -349,8 +378,8 @@
               </div>
               <div class="status-item">
                 <div class="status-indicator status-warning"></div>
-                <span class="flex-grow-1">Backup System</span>
-                <small class="text-warning">Scheduled</small>
+                <span class="flex-grow-1">Label Printer</span>
+                <small class="text-warning">Ready</small>
               </div>
             </div>
           </div>
@@ -378,9 +407,7 @@
     </div>
   </div>
 
-  <!-- Scripts in correct order -->
-
-<!-- At the bottom of dashboard.html -->
+ <!-- At the bottom of dashboard.html -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -481,6 +508,22 @@
             element.textContent = value;
           }
         });
+        
+        // Update today's orders if available
+        if (data.todayOrders !== undefined) {
+          const todayOrdersEl = document.getElementById('todayOrders');
+          if (todayOrdersEl) {
+            todayOrdersEl.textContent = data.todayOrders;
+          }
+        }
+        
+        // Update pending results if available
+        if (data.pendingResults !== undefined) {
+          const pendingResultsEl = document.getElementById('pendingResults');
+          if (pendingResultsEl) {
+            pendingResultsEl.textContent = data.pendingResults;
+          }
+        }
       },
 
       async loadRecentOrders() {
@@ -505,8 +548,8 @@
         if (orders.length === 0) {
           tbody.innerHTML = `
             <tr>
-              <td colspan="5" class="text-center text-muted py-4">
-                No recent orders found
+              <td colspan="6" class="text-center text-muted py-4">
+                No recent orders found. <a href="/orders/new">Create your first order</a>
               </td>
             </tr>
           `;
@@ -514,11 +557,12 @@
         }
 
         tbody.innerHTML = orders.map(order => `
-          <tr>
+          <tr style="cursor: pointer;" onclick="window.location.href='/orders/${order._id}'">
             <td><strong>${order.orderNumber || 'N/A'}</strong></td>
             <td>${order.patient ? `${order.patient.firstName || ''} ${order.patient.lastName || ''}`.trim() : 'N/A'}</td>
             <td>${order.tests ? order.tests.length : 0} test(s)</td>
             <td>${this.getStatusBadge(order.status)}</td>
+            <td>${this.getPriorityBadge(order.priority)}</td>
             <td>${this.formatDate(order.createdAt)}</td>
           </tr>
         `).join('');
@@ -536,6 +580,19 @@
         const displayStatus = status ? status.charAt(0).toUpperCase() + status.slice(1) : 'Unknown';
         
         return `<span class="badge bg-${badgeClass}">${displayStatus}</span>`;
+      },
+
+      getPriorityBadge(priority) {
+        const badges = {
+          routine: 'secondary',
+          urgent: 'warning',
+          stat: 'danger'
+        };
+        
+        const badgeClass = badges[priority] || 'secondary';
+        const displayPriority = priority ? priority.toUpperCase() : 'ROUTINE';
+        
+        return `<span class="badge bg-${badgeClass}">${displayPriority}</span>`;
       },
 
       async loadAlerts() {
@@ -596,7 +653,9 @@
         return new Date(dateString).toLocaleDateString('en-US', {
           month: 'short',
           day: 'numeric',
-          year: 'numeric'
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
         });
       },
 

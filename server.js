@@ -189,6 +189,24 @@ app.get('/pcr-results', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pcr-results.html'));
 });
 
+// Add these AFTER your existing routes like app.get('/orders', ...)
+
+// Order entry page
+app.get('/orders/new', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'order-entry.html'));
+});
+// All Orders
+app.get('/orders/orders', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'order.html'));
+});
+
+
+// Label printing page
+app.get('/label-print', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'label-print.html'));
+});
+
+
 app.get('/pending-results', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pending-results.html'));
 });

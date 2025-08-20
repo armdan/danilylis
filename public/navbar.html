@@ -95,8 +95,14 @@ data-bs-toggle="dropdown" aria-expanded="false">
 <i class="fas fa-plus-circle me-2 text-success"></i> New Order
 </a>
 </li>
+<li>
+<a class="dropdown-item" href="/pending-results">
+<i class="fas fa-clock me-2 text-warning"></i> Pending Orders
+</a>
+</li>
 <li><hr class="dropdown-divider"></li>
 <!-- Results Section -->
+<li><h6 class="dropdown-header">Results Management</h6></li>
 <li>
 <a class="dropdown-item" href="/results">
 <i class="fas fa-chart-line me-2"></i> All Results
@@ -110,11 +116,7 @@ data-bs-toggle="dropdown" aria-expanded="false">
 <li>
 <a class="dropdown-item" href="/blood-results">
 <i class="fas fa-tint me-2 text-danger"></i> Blood Results
-</a>
-</li>
-<li>
-<a class="dropdown-item" href="/pending-results">
-<i class="fas fa-clock me-2 text-warning"></i> Pending Review
+<small class="text-muted ms-1">(Coming Soon)</small>
 </a>
 </li>
 </ul>
@@ -162,7 +164,7 @@ data-bs-toggle="dropdown" aria-expanded="false">
 </ul>
 </li>
 </ul>
-<!-- RIGHT: user dropdown (KEEPING YOUR EXACT CODE) -->
+<!-- RIGHT: user dropdown -->
 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
 <li class="nav-item dropdown">
 <a id="userMenuToggle" class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#"
@@ -196,6 +198,21 @@ document.addEventListener('DOMContentLoaded', function() {
         pcrConfigItems.forEach(item => {
             item.style.display = 'block';
         });
+        
+        // Show admin dropdown
+        const settingsNavItem = document.getElementById('settingsNavItem');
+        if (settingsNavItem) {
+            settingsNavItem.style.display = 'block';
+        }
+    }
+    
+    // Update user name in navbar
+    if (user.firstName || user.lastName) {
+        const userName = document.getElementById('userName');
+        if (userName) {
+            const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username || 'User';
+            userName.textContent = fullName;
+        }
     }
     
     // Add active class to current page
@@ -210,5 +227,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+    
+    // Handle logout
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function() {
+            if (typeof AuthManager !== 'undefined' && AuthManager.logout) {
+                AuthManager.logout();
+            } else {
+                // Fallback logout
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login';
+            }
+        });
+    }
 });
 </script>

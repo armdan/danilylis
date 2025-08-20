@@ -1,3 +1,4 @@
+// models/Order.js - Updated with correct order number format
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
@@ -37,6 +38,10 @@ const orderSchema = new mongoose.Schema({
     notes: String
   }],
   orderingPhysician: {
+    doctorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Doctor'
+    },
     name: {
       type: String,
       required: true
@@ -45,6 +50,10 @@ const orderSchema = new mongoose.Schema({
     phone: String,
     email: String,
     facility: String
+  },
+  medicalOffice: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'MedicalOffice'
   },
   clinicalInfo: {
     diagnosis: String,
@@ -87,6 +96,15 @@ const orderSchema = new mongoose.Schema({
   collectionDate: Date,
   expectedCompletion: Date,
   actualCompletion: Date,
+  labelPrinted: {
+    type: Boolean,
+    default: false
+  },
+  labelPrintedAt: Date,
+  labelPrintedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -100,27 +118,51 @@ const orderSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Generate order number
+// Generate order number in format: YYMMDD001
 orderSchema.statics.generateOrderNumber = async function() {
   const today = new Date();
-  const year = today.getFullYear();
+  const year = String(today.getFullYear()).slice(-2); // Last 2 digits of year
   const month = String(today.getMonth() + 1).padStart(2, '0');
   const day = String(today.getDate()).padStart(2, '0');
   
-  const prefix = `ORD${year}${month}${day}`;
-  const count = await this.countDocuments({
-    orderNumber: new RegExp(`^${prefix}`)
-  });
+  const prefix = `${year}${month}${day}`;
   
-  return `${prefix}${String(count + 1).padStart(4, '0')}`;
+  // Find the highest order number for today
+  const lastOrder = await this.findOne({
+    orderNumber: new RegExp(`^${prefix}`)
+  }).sort({ orderNumber: -1 });
+  
+  let nextNumber = 1;
+  if (lastOrder) {
+    const lastNumber = parseInt(lastOrder.orderNumber.slice(6));
+    nextNumber = lastNumber + 1;
+  }
+  
+  return `${prefix}${String(nextNumber).padStart(3, '0')}`;
 };
 
 // Calculate total amount
 orderSchema.methods.calculateTotal = async function() {
-  await this.populate('tests.test');
-  this.totalAmount = this.tests.reduce((total, testItem) => {
-    return total + (testItem.test.price || 0);
-  }, 0);
+  const Test = require('./Test');
+  const PCRTest = require('./PCRTest');
+  
+  let total = 0;
+  
+  for (const testItem of this.tests) {
+    // Try regular test first
+    let test = await Test.findById(testItem.test);
+    
+    // If not found, try PCR test
+    if (!test) {
+      test = await PCRTest.findById(testItem.test);
+    }
+    
+    if (test && test.price) {
+      total += test.price;
+    }
+  }
+  
+  this.totalAmount = total;
   return this.totalAmount;
 };
 
@@ -138,6 +180,14 @@ orderSchema.methods.updateStatus = function() {
   } else {
     this.status = 'pending';
   }
+};
+
+// Mark label as printed
+orderSchema.methods.markLabelPrinted = function(userId) {
+  this.labelPrinted = true;
+  this.labelPrintedAt = new Date();
+  this.labelPrintedBy = userId;
+  return this.save();
 };
 
 // Indexes

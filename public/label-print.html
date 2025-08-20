@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Labels - Laboratory Information System</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        /* Label dimensions: 2.25" x 1.25" = 216px x 120px at 96 DPI */
+        /* For Zebra printers, we often use 203 DPI, so adjust accordingly */
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+            
+            .label-container {
+                page-break-after: always;
+            }
+        }
+        
+        /* Screen preview styles */
+        .preview-container {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .controls h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .control-group input,
+        .control-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+        }
+        
+        /* Label styles */
+        .label-preview {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .label-container {
+            width: 216px;  /* 2.25 inches at 96 DPI */
+            height: 120px; /* 1.25 inches at 96 DPI */
+            border: 1px solid #ddd;
+            padding: 8px;
+            margin: 0 auto 10px;
+            position: relative;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            font-size: 10px;
+            line-height: 1.2;
+        }
+        
+        /* Barcode section */
+        .barcode-section {
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        
+        .barcode-section canvas {
+            max-width: 100%;
+            height: 25px;
+        }
+        
+        .order-number {
+            text-align: center;
+            font-size: 9px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        /* Patient info section */
+        .patient-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2px;
+            font-size: 9px;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            margin-right: 4px;
+        }
+        
+        .info-value {
+            flex: 1;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        
+        .test-name {
+            font-weight: bold;
+            font-size: 10px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        
+        .date-time {
+            font-size: 8px;
+            text-align: right;
+            margin-top: 2px;
+        }
+        
+        /* Multiple labels */
+        .labels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 216px);
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        @media screen and (min-width: 768px) {
+            .labels-grid {
+                grid-template-columns: repeat(3, 216px);
+            }
+        }
+        
+        /* Status message */
+        .status-message {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-container no-print">
+        <div class="controls">
+            <h3>Label Printing Settings</h3>
+            
+            <div class="control-group">
+                <label for="copiesPerTest">Copies per Test:</label>
+                <input type="number" id="copiesPerTest" min="1" max="10" value="1">
+            </div>
+            
+            <div class="control-group">
+                <label for="labelFormat">Label Format:</label>
+                <select id="labelFormat">
+                    <option value="standard">Standard (2.25" x 1.25")</option>
+                    <option value="small">Small (2" x 1")</option>
+                    <option value="large">Large (3" x 2")</option>
+                </select>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="printLabels()">
+                    <i class="fas fa-print"></i> Print Labels
+                </button>
+                <button class="btn btn-secondary" onclick="generateTestLabel()">
+                    <i class="fas fa-eye"></i> Preview Test Label
+                </button>
+                <button class="btn btn-secondary" onclick="window.close()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        </div>
+        
+        <div id="statusMessage"></div>
+        
+        <div class="label-preview">
+            <h4 style="margin-bottom: 15px;">Label Preview</h4>
+            <div id="labelsContainer" class="labels-grid"></div>
+        </div>
+    </div>
+    
+    <!-- Print-only container -->
+    <div id="printContainer" style="display: none;"></div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        let orderData = null;
+        
+        // Check authentication first
+        if (typeof AuthManager !== 'undefined' && !AuthManager.isAuthenticated()) {
+            window.location.href = '/login';
+        }
+        
+        // Listen for order data from parent window
+        window.addEventListener('message', function(event) {
+            if (event.origin !== window.location.origin) return;
+            
+            if (event.data.type === 'printLabels' && event.data.order) {
+                orderData = event.data.order;
+                generateLabels();
+            }
+        });
+        
+        // Check if we have order data in URL params (alternative method)
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('orderId');
+        if (orderId) {
+            loadOrderData(orderId);
+        }
+        
+        async function loadOrderData(orderId) {
+            try {
+                // Get auth headers using your AuthManager
+                const authHeaders = typeof AuthManager !== 'undefined' ? 
+                    AuthManager.getAuthHeaders() : {};
+                
+                const response = await fetch(`/api/orders/${orderId}`, {
+                    headers: authHeaders
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    orderData = data.order;
+                    generateLabels();
+                } else {
+                    showStatus('Failed to load order data', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading order:', error);
+                showStatus('Error loading order data', 'error');
+            }
+        }
+        
+        function generateLabels() {
+            if (!orderData) {
+                generateTestLabel();
+                return;
+            }
+            
+            const container = document.getElementById('labelsContainer');
+            const printContainer = document.getElementById('printContainer');
+            const copiesPerTest = parseInt(document.getElementById('copiesPerTest').value) || 1;
+            
+            container.innerHTML = '';
+            printContainer.innerHTML = '';
+            
+            // Generate labels for each test
+            orderData.tests.forEach((testItem, index) => {
+                for (let copy = 0; copy < copiesPerTest; copy++) {
+                    const label = createLabel(testItem, index + 1, copy + 1);
+                    container.appendChild(label.cloneNode(true));
+                    printContainer.appendChild(label.cloneNode(true));
+                }
+            });
+            
+            showStatus(`Generated ${orderData.tests.length * copiesPerTest} label(s)`, 'success');
+        }
+        
+        function createLabel(testItem, testNumber, copyNumber) {
+            const labelDiv = document.createElement('div');
+            labelDiv.className = 'label-container';
+            
+            // Format date
+            const orderDate = new Date(orderData.createdAt || new Date());
+            const formattedDate = `${(orderDate.getMonth() + 1).toString().padStart(2, '0')}/${orderDate.getDate().toString().padStart(2, '0')}/${orderDate.getFullYear()}`;
+            const formattedTime = orderDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            
+            // Get patient name
+            const patientName = orderData.patient ? 
+                `${orderData.patient.lastName}, ${orderData.patient.firstName}` : 
+                'Unknown Patient';
+            
+            // Get doctor name
+            const doctorName = orderData.orderingPhysician?.name || 'Unknown Doctor';
+            
+            // Get test name
+            const testName = testItem.test?.testName || 'Unknown Test';
+            const testCode = testItem.test?.testCode || '';
+            
+            labelDiv.innerHTML = `
+                <div class="barcode-section">
+                    <canvas id="barcode-${testNumber}-${copyNumber}"></canvas>
+                </div>
+                <div class="order-number">${orderData.orderNumber}</div>
+                <div class="patient-info">
+                    <div class="info-row">
+                        <span class="info-value" style="font-weight: bold;">${patientName}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Dr:</span>
+                        <span class="info-value">${doctorName}</span>
+                    </div>
+                    <div class="test-name">${testName}</div>
+                    <div class="info-row">
+                        <span class="info-label">Code:</span>
+                        <span class="info-value">${testCode}</span>
+                    </div>
+                    <div class="date-time">${formattedDate} ${formattedTime}</div>
+                </div>
+            `;
+            
+            // Generate barcode after element is added to DOM
+            setTimeout(() => {
+                const canvas = document.getElementById(`barcode-${testNumber}-${copyNumber}`);
+                if (canvas) {
+                    try {
+                        JsBarcode(canvas, orderData.orderNumber, {
+                            format: "CODE128",
+                            width: 1,
+                            height: 25,
+                            displayValue: false,
+                            margin: 0
+                        });
+                    } catch (error) {
+                        console.error('Error generating barcode:', error);
+                    }
+                }
+            }, 100);
+            
+            return labelDiv;
+        }
+        
+        function generateTestLabel() {
+            // Create sample data for testing
+            const testOrder = {
+                orderNumber: generateTestOrderNumber(),
+                patient: {
+                    firstName: 'John',
+                    lastName: 'Doe'
+                },
+                orderingPhysician: {
+                    name: 'Dr. Smith, MD'
+                },
+                tests: [{
+                    test: {
+                        testName: 'Complete Blood Count',
+                        testCode: 'CBC'
+                    }
+                }],
+                createdAt: new Date()
+            };
+            
+            orderData = testOrder;
+            generateLabels();
+        }
+        
+        function generateTestOrderNumber() {
+            const today = new Date();
+            const year = String(today.getFullYear()).slice(-2);
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const random = String(Math.floor(Math.random() * 999) + 1).padStart(3, '0');
+            return `${year}${month}${day}${random}`;
+        }
+        
+        function printLabels() {
+            const printContainer = document.getElementById('printContainer');
+            
+            if (printContainer.innerHTML === '') {
+                showStatus('No labels to print. Please generate labels first.', 'error');
+                return;
+            }
+            
+            // Show print container for printing
+            printContainer.style.display = 'block';
+            
+            // Print
+            window.print();
+            
+            // Hide print container after printing
+            setTimeout(() => {
+                printContainer.style.display = 'none';
+                
+                // Mark order as printed (if we have real order data)
+                if (orderData && orderData._id) {
+                    markOrderAsPrinted(orderData._id);
+                }
+            }, 1000);
+        }
+        
+        async function markOrderAsPrinted(orderId) {
+            try {
+                const authHeaders = typeof AuthManager !== 'undefined' ? 
+                    { 
+                        ...AuthManager.getAuthHeaders(),
+                        'Content-Type': 'application/json'
+                    } : { 'Content-Type': 'application/json' };
+                
+                await fetch(`/api/orders/${orderId}/label-printed`, {
+                    method: 'PATCH',
+                    headers: authHeaders,
+                    body: JSON.stringify({ printed: true })
+                });
+            } catch (error) {
+                console.error('Error marking order as printed:', error);
+            }
+        }
+        
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.className = `status-message status-${type}`;
+            statusDiv.textContent = message;
+            statusDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Generate test label on load if no order data
+        window.addEventListener('load', () => {
+            if (!orderData && !orderId) {
+                setTimeout(generateTestLabel, 500);
+            }
+        });
+    </script>
+</body>
+</html>
