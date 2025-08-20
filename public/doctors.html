@@ -1035,7 +1035,36 @@ function saveDoctor() {
   }
 
 function exportDoctors() {
-  window.open('/api/doctors?limit=100&format=csv', '_blank');  // Changed from 1000
+  const token = AuthManager.getToken();
+  if (!token) {
+    alert('Authentication required');
+    return;
+  }
+
+  fetch('/api/doctors?limit=100&format=csv', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+  .then(response => {
+    if (!response.ok) throw new Error('Export failed');
+    return response.blob();
+  })
+  .then(blob => {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `doctors_${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  })
+  .catch(error => {
+    console.error('Export error:', error);
+    alert('Failed to export doctors');
+  });
 }
 </script>
 </body>

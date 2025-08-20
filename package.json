@@ -15,7 +15,7 @@
     "mongodb",
     "bootstrap"
   ],
-  "author": "Your Name",
+  "author": "Danily IT Strategies, Inc",
   "license": "MIT",
   "dependencies": {
     "bcryptjs": "^2.4.3",

@@ -12,7 +12,7 @@ const app = express();
 // Trust proxy for rate limiting
 app.set('trust proxy', 1);
 
-// Import routes
+// Import all routes at the top
 const authRoutes = require('./routes/auth');
 const patientRoutes = require('./routes/patients');
 const testRoutes = require('./routes/tests');
@@ -22,15 +22,10 @@ const reportRoutes = require('./routes/reports');
 const userRoutes = require('./routes/users');
 const dashboardRoutes = require('./routes/dashboard');
 const settingsRoutes = require('./routes/settings');
-// NEW ROUTES
 const organizationRoutes = require('./routes/organizations');
 const medicalOfficeRoutes = require('./routes/medicalOffices');
 const doctorRoutes = require('./routes/doctors');
-
-
-app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
-});
+const pcrRoutes = require('./routes/pcrTests');
 
 // Security middleware - disabled CSP for development
 app.use(helmet({
@@ -53,7 +48,7 @@ app.use(limiter);
 // CORS for local development
 app.use(cors());
 
-// Body parsing middleware
+// Body parsing middleware - MUST be before routes
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -124,10 +119,10 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/settings', settingsRoutes);
-// NEW API ROUTES
 app.use('/api/organizations', organizationRoutes);
 app.use('/api/medical-offices', medicalOfficeRoutes);
 app.use('/api/doctors', doctorRoutes);
+app.use('/api/pcr', pcrRoutes);
 
 // Serve HTML pages
 app.get('/', (req, res) => {
@@ -166,7 +161,6 @@ app.get('/settings', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'settings.html'));
 });
 
-// NEW HTML PAGES
 app.get('/organizations', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'organizations.html'));
 });
@@ -177,6 +171,26 @@ app.get('/medical-offices', (req, res) => {
 
 app.get('/doctors', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'doctors.html'));
+});
+
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+
+app.get('/pcr-config', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'pcr-config.html'));
+});
+
+app.get('/pcr-tests', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'pcr-tests.html'));
+});
+
+app.get('/pcr-results', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'pcr-results.html'));
+});
+
+app.get('/pending-results', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'pending-results.html'));
 });
 
 // Error handling middleware

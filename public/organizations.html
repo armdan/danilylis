@@ -701,7 +701,38 @@ function saveOrganization() {
     }
   }
 function exportOrganizations() {
-  window.open('/api/organizations?limit=100&format=csv', '_blank');  // Changed from 1000
+  const token = AuthManager.getToken();
+  if (!token) {
+    alert('Authentication required');
+    return;
+  }
+
+  // Method 1: Create a download link with auth header (using fetch)
+  fetch('/api/organizations?limit=100&format=csv', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+  .then(response => {
+    if (!response.ok) throw new Error('Export failed');
+    return response.blob();
+  })
+  .then(blob => {
+    // Create a download link
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `organizations_${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  })
+  .catch(error => {
+    console.error('Export error:', error);
+    alert('Failed to export organizations');
+  });
 }
 </script>
 </body>

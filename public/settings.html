@@ -7,7 +7,7 @@
 
   <!-- Bootstrap 5 CSS -->
   <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
 
   <!-- Font Awesome (CSS CDN; no kit.js) -->
   <link rel="stylesheet"
@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="css/settings.css" />
 
   <!-- Bootstrap 5 Bundle (Popper included) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
 
   <!-- jQuery (NON-deferred so shim attaches before auth.js runs) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -52,6 +52,365 @@
 
   <!-- Navbar loader AFTER Bootstrap + Auth -->
   <script src="/js/navbar-loader.js" defer></script>
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .main-content {
+      padding: 2rem 1rem;
+      min-height: calc(100vh - 80px);
+    }
+
+    /* Modern Header */
+    .settings-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2.5rem 2rem;
+      border-radius: 20px;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .settings-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      transform: rotate(45deg);
+    }
+
+    .settings-header h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .settings-header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Modern Cards */
+    .settings-card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      margin-bottom: 2rem;
+      border: none;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .settings-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+    }
+
+    .settings-card .card-header {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-bottom: 2px solid #dee2e6;
+      padding: 1.5rem 2rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #495057;
+    }
+
+    .settings-card .card-body {
+      padding: 2rem;
+    }
+
+    /* Form Sections */
+    .form-section {
+      margin-bottom: 2.5rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .form-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    .section-title {
+      color: #495057;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .section-title i {
+      color: #667eea;
+      margin-right: 0.75rem;
+      width: 1.5rem;
+    }
+
+    /* Form Controls */
+    .form-label {
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-label.required::after {
+      content: ' *';
+      color: #dc3545;
+    }
+
+    .form-control, .form-select {
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      background-color: #fafbfc;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      background-color: white;
+    }
+
+    .form-text {
+      color: #6c757d;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+
+    /* Logo Upload Area */
+    .logo-upload-container {
+      border: 3px dashed #dee2e6;
+      border-radius: 15px;
+      padding: 2rem;
+      text-align: center;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo-upload-container:hover {
+      border-color: #667eea;
+      background: linear-gradient(135deg, #f0f4ff 0%, #e8f1ff 100%);
+      transform: translateY(-2px);
+    }
+
+    .logo-upload-container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+      transition: all 0.3s ease;
+      opacity: 0;
+    }
+
+    .logo-upload-container:hover::before {
+      opacity: 1;
+    }
+
+    .upload-icon {
+      font-size: 3rem;
+      color: #667eea;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .upload-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .upload-subtext {
+      color: #6c757d;
+      font-size: 0.9rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    #currentLogo img {
+      max-width: 100%;
+      max-height: 120px;
+      object-fit: contain;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Guidelines */
+    .guidelines-list {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-radius: 15px;
+      padding: 1.5rem;
+    }
+
+    .guidelines-list h6 {
+      color: #495057;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .guidelines-list li {
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .guidelines-list .fa-check {
+      color: #28a745;
+      margin-right: 0.5rem;
+    }
+
+    /* Save Button */
+    .btn-save {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      color: white;
+      padding: 1rem 3rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-save::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn-save:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+      color: white;
+    }
+
+    .btn-save:hover::before {
+      left: 100%;
+    }
+
+    /* Remove button for logo */
+    .btn-remove {
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 25px;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .btn-remove:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+      color: white;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .settings-header {
+        padding: 2rem 1.5rem;
+        text-align: center;
+      }
+
+      .settings-header h2 {
+        font-size: 2rem;
+      }
+
+      .settings-card .card-header {
+        padding: 1.25rem 1.5rem;
+      }
+
+      .settings-card .card-body {
+        padding: 1.5rem;
+      }
+
+      .btn-save {
+        width: 100%;
+      }
+    }
+
+    /* Alert styling */
+    .alert {
+      border-radius: 15px;
+      border: none;
+      font-weight: 500;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      padding: 1rem 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .alert::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    }
+
+    .alert-success {
+      background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+      color: #155724;
+      border-left: 4px solid #28a745;
+    }
+
+    .alert-success::before {
+      background: linear-gradient(90deg, #28a745, #20c997, #28a745);
+    }
+
+    .alert-danger {
+      background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+      color: #721c24;
+      border-left: 4px solid #dc3545;
+    }
+
+    .alert-danger::before {
+      background: linear-gradient(90deg, #dc3545, #e74c3c, #dc3545);
+    }
+
+    .alert-warning {
+      background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+      color: #856404;
+      border-left: 4px solid #ffc107;
+    }
+
+    .alert-warning::before {
+      background: linear-gradient(90deg, #ffc107, #f39c12, #ffc107);
+    }
+  </style>
 </head>
 <body>
   <!-- Navbar is auto-injected by navbar-loader.js -->
@@ -61,21 +420,24 @@
 
   <!-- Main Content -->
   <div class="container-fluid main-content pb-5">
-    <div class="pt-3 pb-2 mb-3 border-bottom">
-      <h2 class="mb-0"><i class="fas fa-cog me-2"></i>Laboratory Settings</h2>
-      <p class="text-muted mb-0">Configure your laboratory information, contact details, and branding</p>
+    <!-- Modern Header -->
+    <div class="settings-header">
+      <h2 class="mb-0"><i class="fas fa-cog me-3"></i>Laboratory Settings</h2>
+      <p class="mb-0">Configure your laboratory information, contact details, and branding</p>
     </div>
 
     <form id="settingsForm" class="needs-validation" novalidate>
       <!-- Basic Information -->
-      <div class="card mb-4">
+      <div class="card settings-card">
         <div class="card-header">
           <i class="fas fa-building me-2"></i>Basic Laboratory Information
         </div>
         <div class="card-body">
-          <div class="mb-4">
-            <div class="fw-semibold mb-2"><i class="fas fa-flask me-2"></i>Laboratory Details</div>
-            <div class="row g-3">
+          <div class="form-section">
+            <div class="section-title">
+              <i class="fas fa-flask"></i>Laboratory Details
+            </div>
+            <div class="row g-4">
               <div class="col-md-6">
                 <label class="form-label required">Laboratory Name</label>
                 <input type="text" class="form-control" id="labName" name="labName"
@@ -91,9 +453,11 @@
             </div>
           </div>
 
-          <div>
-            <div class="fw-semibold mb-2"><i class="fas fa-user-md me-2"></i>Laboratory Director</div>
-            <div class="row g-3">
+          <div class="form-section">
+            <div class="section-title">
+              <i class="fas fa-user-md"></i>Laboratory Director
+            </div>
+            <div class="row g-4">
               <div class="col-md-2">
                 <label class="form-label">Title</label>
                 <select class="form-select" id="directorTitle" name="labDirector.title">
@@ -122,14 +486,16 @@
       </div>
 
       <!-- Contact Information -->
-      <div class="card mb-4">
+      <div class="card settings-card">
         <div class="card-header">
           <i class="fas fa-address-book me-2"></i>Contact Information
         </div>
         <div class="card-body">
-          <div class="mb-4">
-            <div class="fw-semibold mb-2"><i class="fas fa-map-marker-alt me-2"></i>Address</div>
-            <div class="row g-3">
+          <div class="form-section">
+            <div class="section-title">
+              <i class="fas fa-map-marker-alt"></i>Address
+            </div>
+            <div class="row g-4">
               <div class="col-md-8">
                 <label class="form-label required">Street Address</label>
                 <input type="text" class="form-control" id="addressStreet"
@@ -143,7 +509,7 @@
               </div>
             </div>
 
-            <div class="row g-3 mt-1">
+            <div class="row g-4 mt-1">
               <div class="col-md-4">
                 <label class="form-label required">City</label>
                 <input type="text" class="form-control" id="addressCity"
@@ -170,9 +536,11 @@
             </div>
           </div>
 
-          <div>
-            <div class="fw-semibold mb-2"><i class="fas fa-phone me-2"></i>Phone & Communication</div>
-            <div class="row g-3">
+          <div class="form-section">
+            <div class="section-title">
+              <i class="fas fa-phone"></i>Phone & Communication
+            </div>
+            <div class="row g-4">
               <div class="col-md-4">
                 <label class="form-label required">Main Phone</label>
                 <input type="tel" class="form-control" id="phoneMain"
@@ -191,7 +559,7 @@
               </div>
             </div>
 
-            <div class="row g-3 mt-1">
+            <div class="row g-4 mt-1">
               <div class="col-md-4">
                 <label class="form-label">General Email</label>
                 <input type="email" class="form-control" id="emailGeneral"
@@ -213,12 +581,12 @@
       </div>
 
       <!-- Regulatory -->
-      <div class="card mb-4">
+      <div class="card settings-card">
         <div class="card-header">
           <i class="fas fa-certificate me-2"></i>Regulatory Information
         </div>
         <div class="card-body">
-          <div class="row g-3">
+          <div class="row g-4">
             <div class="col-md-6">
               <label class="form-label required">CLIA Number</label>
               <input type="text" class="form-control" id="cliaNumber"
@@ -238,23 +606,23 @@
       </div>
 
       <!-- Logo Upload -->
-      <div class="card mb-4">
+      <div class="card settings-card">
         <div class="card-header">
           <i class="fas fa-image me-2"></i>Laboratory Logo
         </div>
         <div class="card-body">
           <div class="row g-4">
             <div class="col-md-6">
-              <div class="border rounded p-3 text-center" id="logoUploadArea" style="cursor:pointer;">
+              <div class="logo-upload-container" id="logoUploadArea">
                 <div id="noLogoMessage">
-                  <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
-                  <p class="mb-0">Click to upload logo</p>
-                  <small class="text-muted">PNG, JPG, SVG up to 5MB</small>
+                  <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                  <p class="upload-text mb-0">Click to upload logo</p>
+                  <small class="upload-subtext">PNG, JPG, SVG up to 5MB</small>
                 </div>
                 <div id="currentLogo" style="display:none;">
-                  <img id="logoImage" src="" alt="Laboratory Logo" style="max-width:100%;height:auto;">
-                  <div class="mt-2">
-                    <button type="button" class="btn btn-sm btn-danger" id="removeLogo">
+                  <img id="logoImage" src="" alt="Laboratory Logo">
+                  <div class="mt-3">
+                    <button type="button" class="btn btn-remove" id="removeLogo">
                       <i class="fas fa-trash me-1"></i>Remove
                     </button>
                   </div>
@@ -263,13 +631,15 @@
               <input type="file" id="logoFile" accept="image/*" style="display:none;">
             </div>
             <div class="col-md-6">
-              <h6>Logo Guidelines</h6>
-              <ul class="list-unstyled mb-0">
-                <li><i class="fas fa-check text-success me-2"></i>Recommended size: 300×150 px</li>
-                <li><i class="fas fa-check text-success me-2"></i>Formats: PNG (preferred), JPG, SVG</li>
-                <li><i class="fas fa-check text-success me-2"></i>Max file size: 5MB</li>
-                <li><i class="fas fa-check text-success me-2"></i>Transparent background recommended</li>
-              </ul>
+              <div class="guidelines-list">
+                <h6><i class="fas fa-info-circle me-2"></i>Logo Guidelines</h6>
+                <ul class="list-unstyled mb-0">
+                  <li><i class="fas fa-check"></i>Recommended size: 300×150 px</li>
+                  <li><i class="fas fa-check"></i>Formats: PNG (preferred), JPG, SVG</li>
+                  <li><i class="fas fa-check"></i>Max file size: 5MB</li>
+                  <li><i class="fas fa-check"></i>Transparent background recommended</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -277,7 +647,7 @@
 
       <!-- Save -->
       <div class="text-center">
-        <button type="submit" class="btn btn-primary btn-lg">
+        <button type="submit" class="btn btn-save">
           <i class="fas fa-save me-2"></i>Save Laboratory Settings
         </button>
       </div>
@@ -291,9 +661,8 @@
       const wrap = document.getElementById('alertContainer');
       const id = 'a' + Date.now();
       wrap.innerHTML = `
-        <div id="${id}" class="alert alert-${type} alert-dismissible fade show" role="alert">
+        <div id="${id}" class="alert alert-${type} fade show" role="alert">
           ${message}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>`;
       setTimeout(() => {
         const el = document.getElementById(id);

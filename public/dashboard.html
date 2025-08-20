@@ -11,7 +11,6 @@
   <!-- Font Awesome -->
   
   <!-- Custom CSS -->
-  <link href="css/dashboard.css" rel="stylesheet">
 
   <style>
     /* Quick custom styles for dashboard */
@@ -118,7 +117,6 @@
       <div class="col-12">
         <div class="welcome-section">
           <h1 class="welcome-title">Welcome back, <span id="welcomeUserName">User</span>!</h1>
-          <p class="welcome-subtitle">Here's what's happening in your laboratory today</p>
         </div>
       </div>
     </div>
@@ -181,7 +179,93 @@
         </div>
       </div>
     </div>
+<!-- ADD THIS HTML ONLY - Insert after line 173 (after closing </div> of statistics cards) -->
+<!-- DO NOT CHANGE ANY JAVASCRIPT - Your existing code is perfect -->
 
+<!-- PCR Test Management Row -->
+<div class="row mb-4">
+  <!-- PCR Tests -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+              PCR Tests
+            </div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">8 Panels</div>
+          </div>
+          <div class="text-gray-300">
+            <i class="fas fa-dna fa-2x"></i>
+          </div>
+        </div>
+        <a href="/pcr-tests" class="btn btn-sm btn-primary mt-2">View Tests</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blood Tests (Coming Soon) -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+              Blood Tests
+            </div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">Soon</div>
+          </div>
+          <div class="text-gray-300">
+            <i class="fas fa-tint fa-2x"></i>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-secondary mt-2" disabled>Coming Soon</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Test Orders Today -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+              Test Orders
+            </div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">View All</div>
+          </div>
+          <div class="text-gray-300">
+            <i class="fas fa-clipboard-list fa-2x"></i>
+          </div>
+        </div>
+        <a href="/orders" class="btn btn-sm btn-success mt-2">Orders</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Test Results -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+              Test Results
+            </div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">Review</div>
+          </div>
+          <div class="text-gray-300">
+            <i class="fas fa-chart-line fa-2x"></i>
+          </div>
+        </div>
+        <a href="/results" class="btn btn-sm btn-info mt-2">Results</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- That's it! No JavaScript changes needed. Your existing DashboardManager code stays exactly as is. -->
     <!-- Charts and Recent Activity -->
     <div class="row">
       <!-- Recent Orders -->
