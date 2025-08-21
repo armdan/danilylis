@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PCR Test Results Entry - Lab Management System</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .page-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2rem 0;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .stats-card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-bottom: 1.5rem;
+    }
+
+    .stats-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .stats-icon {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      font-size: 1.5rem;
+    }
+
+    .order-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .order-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+
+    .order-card.selected {
+      border: 2px solid #667eea;
+      background: #f8f9ff;
+    }
+
+    .priority-badge {
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .priority-routine {
+      background-color: #e9ecef;
+      color: #495057;
+    }
+
+    .priority-urgent {
+      background-color: #ffc107;
+      color: #000;
+    }
+
+    .priority-stat {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .test-badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      margin: 0.25rem;
+      border-radius: 6px;
+      background: #e7f3ff;
+      color: #0066cc;
+      font-size: 0.875rem;
+    }
+
+    .section-divider {
+      border-top: 2px solid #dee2e6;
+      margin: 2rem 0;
+      padding-top: 2rem;
+    }
+
+    .result-entry-form {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+
+    .pathogen-result-row {
+      background: white;
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      border-radius: 6px;
+      border: 1px solid #dee2e6;
+    }
+
+    .detected-positive {
+      background: #fff5f5;
+      border-color: #dc3545;
+    }
+
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar placeholder -->
+  <div id="navbar-container"></div>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h1><i class="fas fa-vials me-3"></i>PCR Test Results Entry</h1>
+          <p class="mb-0">Enter test results for pending orders</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <button class="btn btn-light me-2" onclick="ResultsManager.loadPendingOrders()">
+            <i class="fas fa-sync"></i> Refresh Orders
+          </button>
+          <button class="btn btn-warning" onclick="location.href='/orders'">
+            <i class="fas fa-list"></i> All Orders
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+      <div class="col-md-3">
+        <div class="stats-card card">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="stats-icon bg-warning bg-opacity-10 text-warning">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="ms-3">
+                <h3 class="mb-0" id="pendingOrders">0</h3>
+                <p class="text-muted mb-0">Pending Orders</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stats-card card">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="stats-icon bg-info bg-opacity-10 text-info">
+                <i class="fas fa-hourglass-half"></i>
+              </div>
+              <div class="ms-3">
+                <h3 class="mb-0" id="processingOrders">0</h3>
+                <p class="text-muted mb-0">Processing</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stats-card card">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="stats-icon bg-success bg-opacity-10 text-success">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div class="ms-3">
+                <h3 class="mb-0" id="completedToday">0</h3>
+                <p class="text-muted mb-0">Completed Today</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stats-card card">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="stats-icon bg-danger bg-opacity-10 text-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+              </div>
+              <div class="ms-3">
+                <h3 class="mb-0" id="urgentOrders">0</h3>
+                <p class="text-muted mb-0">Urgent/STAT</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending Orders Section -->
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>Pending Orders Requiring Test Results</h5>
+      </div>
+      <div class="card-body">
+        <div id="pendingOrdersList">
+          <!-- Pending orders will be loaded here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Result Entry Section (Hidden by default) -->
+    <div class="section-divider" id="resultEntrySection" style="display: none;">
+      <h4 class="mb-3"><i class="fas fa-flask me-2"></i>Enter Test Results</h4>
+      
+      <!-- Order Info Display -->
+      <div class="card mb-3">
+        <div class="card-body" id="selectedOrderInfo">
+          <!-- Selected order details will show here -->
+        </div>
+      </div>
+
+      <!-- Result Entry Form -->
+      <div class="result-entry-form">
+        <form id="pcrResultForm">
+          <!-- Sample Information -->
+          <div class="row mb-3">
+            <div class="col-md-3">
+              <label class="form-label">Sample Type</label>
+              <select class="form-select" id="sampleType" required>
+                <option value="">Select...</option>
+                <option value="urine">Urine</option>
+                <option value="nail_clipping">Nail Clipping</option>
+                <option value="sputum">Sputum</option>
+                <option value="wound_swab">Wound Swab</option>
+                <option value="stool">Stool</option>
+                <option value="nasopharyngeal_swab">Nasopharyngeal Swab</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Collection Date/Time</label>
+              <input type="datetime-local" class="form-control" id="collectionDate" required>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Received Date/Time</label>
+              <input type="datetime-local" class="form-control" id="receivedDate" required>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Internal Control</label>
+              <select class="form-select" id="internalControl" required>
+                <option value="Pass">Pass</option>
+                <option value="Fail">Fail</option>
+                <option value="Invalid">Invalid</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Pathogen Results -->
+          <h6 class="mb-3">Pathogen Detection Results</h6>
+          <div id="pathogenResultsContainer">
+            <!-- Will be populated based on test panel -->
+          </div>
+
+          <!-- Resistance Markers (if applicable) -->
+          <div id="resistanceSection" style="display: none;">
+            <h6 class="mb-3 mt-4">Antibiotic Resistance Markers</h6>
+            <div id="resistanceResultsContainer">
+              <!-- Will be populated if panel includes resistance testing -->
+            </div>
+          </div>
+
+          <!-- Clinical Interpretation -->
+          <div class="mt-4">
+            <h6>Clinical Interpretation</h6>
+            <div class="row">
+              <div class="col-md-4">
+                <label class="form-label">Overall Result</label>
+                <select class="form-select" id="overallResult" required>
+                  <option value="Negative">Negative</option>
+                  <option value="Positive">Positive</option>
+                  <option value="Indeterminate">Indeterminate</option>
+                  <option value="Invalid">Invalid</option>
+                </select>
+              </div>
+              <div class="col-md-8">
+                <label class="form-label">Clinical Notes</label>
+                <textarea class="form-control" id="clinicalNotes" rows="2"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="mt-4">
+            <button type="submit" class="btn btn-success btn-lg">
+              <i class="fas fa-save me-2"></i>Save Results
+            </button>
+            <button type="button" class="btn btn-primary btn-lg ms-2" onclick="ResultsManager.saveAndFinalize()">
+              <i class="fas fa-check-double me-2"></i>Save & Mark as Final
+            </button>
+            <button type="button" class="btn btn-secondary btn-lg ms-2" onclick="ResultsManager.cancelEntry()">
+              <i class="fas fa-times me-2"></i>Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/navbar-loader.js"></script>
+
+  <script>
+    const ResultsManager = {
+      currentOrder: null,
+      pendingOrders: [],
+
+      init() {
+        if (!AuthManager.isAuthenticated()) {
+          window.location.href = '/login';
+          return;
+        }
+
+        $.ajaxSetup({
+          headers: AuthManager.getAuthHeaders()
+        });
+
+        this.loadPendingOrders();
+        this.setupEventHandlers();
+      },
+
+      setupEventHandlers() {
+        $('#pcrResultForm').on('submit', (e) => {
+          e.preventDefault();
+          this.saveResults(false);
+        });
+      },
+
+      async loadPendingOrders() {
+        try {
+          // Load orders with pending or processing status
+          const response = await $.ajax({
+            url: '/api/orders',
+            method: 'GET',
+            data: {
+              status: 'pending',
+              limit: 50
+            }
+          });
+
+          this.pendingOrders = response.orders || [];
+          this.displayPendingOrders();
+          this.updateStatistics();
+        } catch (error) {
+          console.error('Error loading pending orders:', error);
+          $('#pendingOrdersList').html(`
+            <div class="alert alert-danger">
+              Failed to load pending orders. Please refresh the page.
+            </div>
+          `);
+        }
+      },
+
+      displayPendingOrders() {
+        const container = $('#pendingOrdersList');
+        
+        if (this.pendingOrders.length === 0) {
+          container.html(`
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle me-2"></i>No pending orders requiring test results.
+            </div>
+          `);
+          return;
+        }
+
+        let html = '';
+        this.pendingOrders.forEach(order => {
+          const orderDate = new Date(order.createdAt);
+          const patientName = order.patient ? 
+            `${order.patient.firstName} ${order.patient.lastName}` : 'Unknown Patient';
+          
+          html += `
+            <div class="order-card" onclick="ResultsManager.selectOrder('${order._id}')">
+              <div class="row align-items-center">
+                <div class="col-md-2">
+                  <strong>Order #${order.orderNumber}</strong><br>
+                  <small>${orderDate.toLocaleDateString()}</small>
+                </div>
+                <div class="col-md-3">
+                  <strong>${patientName}</strong><br>
+                  <small>ID: ${order.patient?.patientId || 'N/A'}</small>
+                </div>
+                <div class="col-md-3">
+                  <strong>Dr. ${order.orderingPhysician?.name || 'N/A'}</strong><br>
+                  <small>${order.medicalOffice?.name || ''}</small>
+                </div>
+                <div class="col-md-3">
+                  ${order.tests?.map(t => 
+                    `<span class="test-badge">${t.test?.testName || 'Test'}</span>`
+                  ).join('') || ''}
+                </div>
+                <div class="col-md-1 text-end">
+                  <span class="priority-badge priority-${order.priority || 'routine'}">
+                    ${(order.priority || 'routine').toUpperCase()}
+                  </span>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        container.html(html);
+      },
+
+      selectOrder(orderId) {
+        // Remove previous selection
+        $('.order-card').removeClass('selected');
+        
+        // Find and select the order
+        this.currentOrder = this.pendingOrders.find(o => o._id === orderId);
+        if (!this.currentOrder) return;
+
+        // Mark as selected
+        event.currentTarget.classList.add('selected');
+
+        // Show the result entry section
+        $('#resultEntrySection').show();
+        
+        // Display order info
+        this.displaySelectedOrderInfo();
+        
+        // Setup the result entry form based on test type
+        this.setupResultEntryForm();
+
+        // Scroll to the form
+        document.getElementById('resultEntrySection').scrollIntoView({ behavior: 'smooth' });
+      },
+
+      displaySelectedOrderInfo() {
+        const order = this.currentOrder;
+        const patient = order.patient || {};
+        
+        // Extract test names - handle both populated and non-populated test objects
+        let testNames = 'N/A';
+        if (order.tests && order.tests.length > 0) {
+          testNames = order.tests.map(t => {
+            // Check if test is populated object or just an ID
+            if (t.test && typeof t.test === 'object') {
+              return t.test.testName || 'Unknown Test';
+            } else if (t.testName) {
+              return t.testName;
+            } else {
+              return 'Test ID: ' + (t.test || t._id || 'Unknown');
+            }
+          }).join(', ');
+        }
+        
+        $('#selectedOrderInfo').html(`
+          <div class="row">
+            <div class="col-md-3">
+              <strong>Order Number:</strong> ${order.orderNumber}<br>
+              <strong>Priority:</strong> <span class="priority-badge priority-${order.priority}">${order.priority.toUpperCase()}</span>
+            </div>
+            <div class="col-md-3">
+              <strong>Patient:</strong> ${patient.firstName} ${patient.lastName}<br>
+              <strong>DOB:</strong> ${patient.dateOfBirth ? new Date(patient.dateOfBirth).toLocaleDateString() : 'N/A'}
+            </div>
+            <div class="col-md-3">
+              <strong>Physician:</strong> ${order.orderingPhysician?.name}<br>
+              <strong>Office:</strong> ${order.medicalOffice?.name || 'N/A'}
+            </div>
+            <div class="col-md-3">
+              <strong>Tests Ordered:</strong><br>
+              ${testNames}
+            </div>
+          </div>
+        `);
+
+        // If we have multiple tests, show a test selector
+        if (order.tests && order.tests.length > 1) {
+          $('#selectedOrderInfo').append(`
+            <div class="row mt-3">
+              <div class="col-md-12">
+                <label class="form-label"><strong>Select Test to Enter Results:</strong></label>
+                <select class="form-select" id="testSelector" onchange="ResultsManager.selectTest(this.value)">
+                  ${order.tests.map((t, index) => {
+                    const testName = (t.test?.testName) || (t.testName) || `Test ${index + 1}`;
+                    const testId = t.test?._id || t.test || t._id;
+                    return `<option value="${index}">${testName}</option>`;
+                  }).join('')}
+                </select>
+              </div>
+            </div>
+          `);
+        }
+      },
+
+      selectTest(index) {
+        this.currentTestIndex = parseInt(index);
+        this.setupResultEntryForm();
+      },
+
+      async setupResultEntryForm() {
+        // Get the test from the order
+        const testIndex = this.currentTestIndex || 0;
+        const testItem = this.currentOrder.tests?.[testIndex];
+        
+        if (!testItem) {
+          this.showAlert('No test found in order', 'danger');
+          return;
+        }
+
+        // Get test ID - handle both populated and non-populated cases
+        const testId = testItem.test?._id || testItem.test || testItem._id;
+        
+        if (!testId) {
+          this.showAlert('Cannot determine test ID', 'danger');
+          return;
+        }
+
+        try {
+          // Fetch the full test configuration from the PCR tests endpoint
+          const testResponse = await $.ajax({
+            url: `/api/pcr/tests/${testId}`,
+            method: 'GET'
+          });
+
+          const test = testResponse.test;
+          console.log('Loaded test configuration:', test);
+
+          // Update the display with actual test name
+          if (test.testName && this.currentOrder.tests[testIndex]) {
+            // Update the local data so it displays correctly
+            if (!this.currentOrder.tests[testIndex].test) {
+              this.currentOrder.tests[testIndex].test = {};
+            }
+            this.currentOrder.tests[testIndex].test.testName = test.testName;
+            this.currentOrder.tests[testIndex].test.panel = test.panel;
+          }
+
+          // Setup pathogens from the actual test configuration
+          if (test.targets && test.targets.length > 0) {
+            this.setupPathogenResults(test.targets);
+          } else {
+            // Fallback to panel-based configuration if no targets defined
+            await this.loadPanelConfiguration(test.panel);
+          }
+
+          // Setup resistance markers if the test includes them
+          if (test.resistanceMarkers && test.resistanceMarkers.length > 0) {
+            $('#resistanceSection').show();
+            this.setupResistanceResults(test.resistanceMarkers);
+          } else {
+            $('#resistanceSection').hide();
+          }
+
+          // Store test info for later use
+          this.currentTest = test;
+          this.currentTestIndex = testIndex;
+
+          // Set default dates
+          const now = new Date();
+          $('#collectionDate').val(now.toISOString().slice(0, 16));
+          $('#receivedDate').val(now.toISOString().slice(0, 16));
+
+          // Set appropriate sample type based on test panel
+          this.setDefaultSampleType(test.panel);
+
+        } catch (error) {
+          console.error('Error loading test configuration:', error);
+          // Try to get test info from the order itself
+          const testName = testItem.test?.testName || testItem.testName || '';
+          const panel = testItem.test?.panel || testItem.panel || this.detectPanelFromName(testName);
+          console.log('Using fallback with panel:', panel);
+          this.loadFallbackConfiguration(panel);
+        }
+      },
+
+      async loadPanelConfiguration(panel) {
+        try {
+          // Load panel-specific configuration from PCR config
+          const configResponse = await $.ajax({
+            url: '/api/pcr/config',
+            method: 'GET'
+          });
+
+          const panelConfig = configResponse.panels?.find(p => p.name === panel);
+          if (panelConfig) {
+            this.setupPathogenResults(panelConfig.targets || []);
+            if (panelConfig.resistanceMarkers?.length > 0) {
+              $('#resistanceSection').show();
+              this.setupResistanceResults(panelConfig.resistanceMarkers);
+            }
+          } else {
+            this.loadFallbackConfiguration();
+          }
+        } catch (error) {
+          console.error('Error loading panel configuration:', error);
+          this.loadFallbackConfiguration();
+        }
+      },
+
+      loadFallbackConfiguration(panel) {
+        // Use panel parameter if provided, otherwise detect from order
+        if (!panel) {
+          const testName = this.currentOrder.tests?.[0]?.test?.testName || '';
+          panel = this.currentOrder.tests?.[0]?.test?.panel || this.detectPanelFromName(testName);
+        }
+        
+        // Load default configurations based on panel
+        const configs = {
+          'UTI': {
+            targets: [
+              'A. baumanii', 'Candida albicans', 'C. glabrata', 'C. freundii',
+              'E. aerogenes', 'C. trachomatis', 'E. cloacae', 'E. faecalis',
+              'E. faecium', 'E. coli', 'K. pneumoniae', 'M. morganii',
+              'N. gonorrhoeae', 'P. mirabilis', 'P. aeruginosa', 'S. aureus',
+              'S. saprophyticus', 'S. agalactiae', 'T. vaginalis', 'P. stuartii',
+              'K. oxytoca', 'P. vulgaris'
+            ],
+            resistanceMarkers: [
+              'MRSA-mecA', 'Carbapenamase A', 'Carbapenamase B', 'Carbapenamase D',
+              'CTXM1', 'CTXM8', 'CTXM9', 'AmpC b-lactamase', 'Vanco-Res Entero'
+            ],
+            sampleType: 'urine'
+          },
+          'Nail_Fungus': {
+            targets: [
+              'Trichophyton rubrum', 'Trichophyton mentagrophytes', 'Candida albicans',
+              'Candida parapsilosis', 'Scopulariopsis brevicaulis', 'Aspergillus niger',
+              'Fusarium solani', 'Acremonium strictum'
+            ],
+            resistanceMarkers: [],
+            sampleType: 'nail_clipping'
+          },
+          'Wound': {
+            targets: [
+              'S. aureus', 'MRSA', 'P. aeruginosa', 'E. coli', 'K. pneumoniae',
+              'E. faecalis', 'S. pyogenes', 'A. baumanii', 'P. mirabilis',
+              'Bacteroides fragilis', 'C. perfringens'
+            ],
+            resistanceMarkers: [
+              'MRSA-mecA', 'Carbapenamase A', 'Carbapenamase B', 'ESBL-CTXM',
+              'VanA', 'VanB'
+            ],
+            sampleType: 'wound_swab'
+          },
+          'Respiratory': {
+            targets: [
+              'S. pneumoniae', 'H. influenzae', 'M. catarrhalis', 'S. aureus',
+              'K. pneumoniae', 'P. aeruginosa', 'M. pneumoniae', 'C. pneumoniae',
+              'L. pneumophila', 'B. pertussis'
+            ],
+            resistanceMarkers: [
+              'MRSA-mecA', 'Carbapenamase', 'Macrolide resistance'
+            ],
+            sampleType: 'sputum'
+          },
+          'STI': {
+            targets: [
+              'C. trachomatis', 'N. gonorrhoeae', 'T. vaginalis', 'M. genitalium',
+              'U. urealyticum', 'U. parvum', 'HSV-1', 'HSV-2', 'T. pallidum'
+            ],
+            resistanceMarkers: [],
+            sampleType: 'urine'
+          }
+        };
+
+        const config = configs[panel] || configs['UTI'];
+        this.setupPathogenResults(config.targets);
+        
+        if (config.resistanceMarkers.length > 0) {
+          $('#resistanceSection').show();
+          this.setupResistanceResults(config.resistanceMarkers);
+        } else {
+          $('#resistanceSection').hide();
+        }
+
+        $('#sampleType').val(config.sampleType);
+      },
+
+      detectPanelFromName(testName) {
+        const nameLower = testName.toLowerCase();
+        if (nameLower.includes('uti') || nameLower.includes('urinary')) return 'UTI';
+        if (nameLower.includes('nail') || nameLower.includes('fungus')) return 'Nail_Fungus';
+        if (nameLower.includes('wound')) return 'Wound';
+        if (nameLower.includes('respiratory') || nameLower.includes('pneumonia')) return 'Respiratory';
+        if (nameLower.includes('sti') || nameLower.includes('sexual')) return 'STI';
+        return 'UTI'; // Default
+      },
+
+      setDefaultSampleType(panel) {
+        const sampleTypes = {
+          'UTI': 'urine',
+          'Nail_Fungus': 'nail_clipping',
+          'Wound': 'wound_swab',
+          'Respiratory': 'sputum',
+          'STI': 'urine',
+          'Pneumonia': 'sputum',
+          'GI': 'stool',
+          'COVID_FLU_RSV': 'nasopharyngeal_swab'
+        };
+        
+        const defaultType = sampleTypes[panel] || 'urine';
+        $('#sampleType').val(defaultType);
+      },
+
+      setupPathogenResults(targets) {
+        let html = '';
+        
+        // Handle different data formats for targets
+        targets.forEach(target => {
+          let pathogenName = '';
+          let geneTarget = '';
+          
+          // Extract name and gene based on data structure
+          if (typeof target === 'string') {
+            // Simple string format
+            pathogenName = target;
+          } else if (typeof target === 'object') {
+            // Object format - handle various property names
+            pathogenName = target.name || target.pathogen || target.targetName || '';
+            geneTarget = target.gene || target.geneTarget || '';
+            
+            // If name is still empty but we have other properties, try to construct it
+            if (!pathogenName && target.organism) {
+              pathogenName = target.organism;
+            }
+            
+            // Fallback if we can't extract a name
+            if (!pathogenName) {
+              console.error('Unable to extract pathogen name from:', target);
+              pathogenName = 'Unknown Target';
+            }
+          }
+          
+          html += `
+            <div class="pathogen-result-row">
+              <div class="row align-items-center">
+                <div class="col-md-4">
+                  <strong>${pathogenName}</strong>
+                  ${geneTarget ? `<small class="text-muted"> (${geneTarget})</small>` : ''}
+                </div>
+                <div class="col-md-3">
+                  <select class="form-select pathogen-detected" data-pathogen="${pathogenName}" onchange="ResultsManager.togglePathogenResult(this)">
+                    <option value="false">Not Detected</option>
+                    <option value="true">DETECTED</option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <input type="number" class="form-control ct-value" placeholder="CT Value" step="0.1" disabled>
+                </div>
+                <div class="col-md-3">
+                  <input type="text" class="form-control copies-ml" placeholder="copy/mL" value="Not Detected" disabled>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        
+        $('#pathogenResultsContainer').html(html || '<p class="text-muted">No targets configured for this test</p>');
+      },
+
+      setupResistanceResults(resistanceMarkers) {
+        let html = '';
+        
+        // Handle different data formats for resistance markers
+        resistanceMarkers.forEach(marker => {
+          let markerName = '';
+          let markerGene = '';
+          
+          // Extract name and gene based on data structure
+          if (typeof marker === 'string') {
+            // Simple string format
+            markerName = marker;
+          } else if (typeof marker === 'object') {
+            // Object format - handle various property names
+            markerName = marker.name || marker.marker || marker.markerName || '';
+            markerGene = marker.gene || marker.geneTarget || '';
+            
+            // If name is still empty but we have other properties, try to construct it
+            if (!markerName && marker.type) {
+              markerName = marker.type;
+            }
+            
+            // Fallback to showing the whole object as JSON if we can't extract a name
+            if (!markerName) {
+              console.error('Unable to extract marker name from:', marker);
+              markerName = 'Unknown Marker';
+            }
+          }
+          
+          html += `
+            <div class="pathogen-result-row">
+              <div class="row align-items-center">
+                <div class="col-md-6">
+                  <strong>${markerName}</strong>
+                  ${markerGene ? `<small class="text-muted"> (${markerGene})</small>` : ''}
+                </div>
+                <div class="col-md-6">
+                  <select class="form-select resistance-detected" data-marker="${markerName}">
+                    <option value="false">Not Detected</option>
+                    <option value="true">DETECTED</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        
+        $('#resistanceResultsContainer').html(html || '<p class="text-muted">No resistance markers for this test</p>');
+      },
+
+      togglePathogenResult(select) {
+        const row = $(select).closest('.pathogen-result-row');
+        const isDetected = select.value === 'true';
+        
+        if (isDetected) {
+          row.addClass('detected-positive');
+          row.find('.ct-value, .copies-ml').prop('disabled', false);
+          row.find('.copies-ml').val('');
+        } else {
+          row.removeClass('detected-positive');
+          row.find('.ct-value, .copies-ml').prop('disabled', true).val('');
+          row.find('.copies-ml').val('Not Detected');
+        }
+
+        // Update overall result
+        this.updateOverallResult();
+      },
+
+      updateOverallResult() {
+        const hasPositive = $('.pathogen-detected').toArray().some(s => s.value === 'true');
+        $('#overallResult').val(hasPositive ? 'Positive' : 'Negative');
+      },
+
+      async saveResults(finalize = false) {
+        if (!this.currentOrder) {
+          alert('Please select an order first');
+          return;
+        }
+
+        // Get the current test index
+        const testIndex = this.currentTestIndex || 0;
+        const testItem = this.currentOrder.tests?.[testIndex];
+        
+        if (!testItem) {
+          alert('No test found in the selected order');
+          return;
+        }
+
+        // Get IDs
+        let testId = testItem.test?._id || testItem.test || testItem._id;
+        let patientId = this.currentOrder.patient?._id || this.currentOrder.patient;
+        
+        // Ensure IDs are strings
+        if (typeof testId === 'object') testId = testId._id || String(testId);
+        if (typeof patientId === 'object') patientId = patientId._id || String(patientId);
+        
+        // Gather target results (pathogens) - matching PCRResult schema
+        const targetResults = [];
+        $('.pathogen-result-row').each(function() {
+          const pathogenSelect = $(this).find('.pathogen-detected');
+          if (pathogenSelect.length > 0) {
+            const pathogen = pathogenSelect.data('pathogen');
+            const detected = pathogenSelect.val() === 'true';
+            const ctValue = $(this).find('.ct-value').val();
+            const copiesML = $(this).find('.copies-ml').val();
+
+            if (pathogen && pathogen !== 'undefined') {
+              targetResults.push({
+                targetName: String(pathogen), // Schema expects targetName, not pathogen
+                targetCategory: 'bacteria', // Default category
+                detected: Boolean(detected),
+                ctValue: detected && ctValue ? parseFloat(ctValue) : null,
+                quantification: detected && copiesML ? {
+                  value: copiesML,
+                  unit: 'copies/mL'
+                } : null,
+                interpretation: detected ? 'Detected' : 'Not Detected' // Must match enum
+              });
+            }
+          }
+        });
+
+        // Gather resistance results - matching schema
+        const resistanceResults = [];
+        $('.resistance-detected').each(function() {
+          const marker = $(this).data('marker');
+          const detected = $(this).val() === 'true';
+          
+          if (marker && marker !== 'undefined') {
+            resistanceResults.push({
+              markerName: String(marker), // Schema expects markerName, not marker
+              detected: Boolean(detected),
+              interpretation: detected ? 'Detected' : 'Not Detected' // Must match enum
+            });
+          }
+        });
+
+        // Validate required fields
+        const sampleType = $('#sampleType').val();
+        const collectionDate = $('#collectionDate').val();
+        const receivedDate = $('#receivedDate').val();
+        const internalControl = $('#internalControl').val();
+        const overallResult = $('#overallResult').val();
+
+        if (!sampleType || !collectionDate || !receivedDate) {
+          alert('Please fill in all required sample information fields');
+          return;
+        }
+
+        // Get current user ID from token or storage
+        let userId = null;
+        try {
+          // Try to get from localStorage
+          const userStr = localStorage.getItem('user');
+          if (userStr) {
+            const user = JSON.parse(userStr);
+            userId = user._id || user.id || user.userId;
+          }
+          
+          // If not found, decode from token
+          if (!userId) {
+            const token = localStorage.getItem('token');
+            if (token) {
+              // Simple JWT decode (just get payload)
+              const payload = JSON.parse(atob(token.split('.')[1]));
+              userId = payload.userId || payload.id || payload._id;
+            }
+          }
+        } catch (e) {
+          console.log('Could not extract user ID:', e);
+        }
+        
+        // If still no user ID, use a default
+        if (!userId) {
+          console.warn('No user ID found, using default');
+          userId = '000000000000000000000000'; // Default MongoDB ObjectId format
+        }
+
+        // Generate result number
+        const timestamp = new Date().getTime();
+        const resultNumber = `PCR${timestamp}`;
+
+        // Create result data matching PCRResult schema exactly
+        const resultData = {
+          // Required references
+          order: String(this.currentOrder._id),
+          patient: String(patientId),
+          test: String(testId),
+          resultNumber: resultNumber,
+          
+          // Required sample info
+          sampleInfo: {
+            sampleType: sampleType,
+            collectionDate: new Date(collectionDate),
+            receivedDate: new Date(receivedDate),
+            sampleQuality: 'Adequate'
+          },
+          
+          // Test results
+          targetResults: targetResults,
+          
+          // Quality control (required)
+          qualityControl: {
+            internalControlResult: internalControl // Must match enum: Pass, Fail, Invalid
+          },
+          
+          // Overall result (required)
+          overallResult: {
+            status: overallResult, // Must match enum: Positive, Negative, Indeterminate, Invalid
+            pathogensDetected: targetResults.filter(t => t.detected).map(t => t.targetName),
+            clinicalInterpretation: $('#clinicalNotes').val() || 'See results',
+            recommendations: 'Clinical correlation is recommended'
+          },
+          
+          // Status
+          status: finalize ? 'Final' : 'Preliminary',
+          
+          // Required performedBy field
+          performedBy: String(userId),
+          performedDate: new Date()
+        };
+
+        // Add resistance results only if present
+        if (resistanceResults.length > 0) {
+          resultData.resistanceResults = resistanceResults;
+          resultData.overallResult.resistanceDetected = resistanceResults
+            .filter(r => r.detected)
+            .map(r => r.markerName);
+        }
+
+        console.log('Sending PCR result data:', JSON.stringify(resultData, null, 2));
+
+        try {
+          // Don't try to fetch result number from server since endpoint doesn't exist
+          // Just generate it locally
+          const timestamp = new Date().getTime();
+          resultData.resultNumber = `PCR${timestamp}`;
+
+          // Save the result
+          const response = await $.ajax({
+            url: '/api/pcr/results',
+            method: 'POST',
+            data: JSON.stringify(resultData),
+            contentType: 'application/json',
+            headers: AuthManager.getAuthHeaders()
+          });
+
+          console.log('Result saved successfully:', response);
+
+          // Update order status - use PATCH with correct endpoint
+          try {
+            await $.ajax({
+              url: `/api/orders/${this.currentOrder._id}/status`,
+              method: 'PATCH',
+              data: JSON.stringify({ status: 'completed' }),
+              contentType: 'application/json',
+              headers: AuthManager.getAuthHeaders()
+            });
+            console.log('Order status updated to completed');
+          } catch (orderError) {
+            console.log('Could not update order status (non-critical):', orderError.status);
+          }
+
+          this.showAlert('Results saved successfully!', 'success');
+          this.cancelEntry();
+          this.loadPendingOrders();
+
+          if (finalize && response.result?._id) {
+            if (confirm('Results saved and finalized. View report?')) {
+              // For now, just redirect to the main PCR results page
+              // since the report endpoint might not exist yet
+              window.location.href = '/pcr-results';
+            }
+          }
+        } catch (error) {
+          console.error('Error saving results:', error);
+          
+          let errorMessage = 'Failed to save results';
+          if (error.responseText) {
+            try {
+              const errorData = JSON.parse(error.responseText);
+              errorMessage = errorData.message || errorData.error || errorMessage;
+              if (errorData.details) {
+                console.error('Error details:', errorData.details);
+              }
+            } catch (e) {
+              console.error('Raw error:', error.responseText);
+            }
+          }
+          
+          this.showAlert(errorMessage, 'danger');
+        }
+      },
+
+      saveAndFinalize() {
+        this.saveResults(true);
+      },
+
+      cancelEntry() {
+        $('#resultEntrySection').hide();
+        $('.order-card').removeClass('selected');
+        this.currentOrder = null;
+        $('#pcrResultForm')[0].reset();
+      },
+
+      updateStatistics() {
+        const stats = {
+          pending: this.pendingOrders.filter(o => o.status === 'pending').length,
+          processing: this.pendingOrders.filter(o => o.status === 'processing').length,
+          urgent: this.pendingOrders.filter(o => o.priority === 'urgent' || o.priority === 'stat').length
+        };
+
+        $('#pendingOrders').text(stats.pending);
+        $('#processingOrders').text(stats.processing);
+        $('#urgentOrders').text(stats.urgent);
+        
+        // Load completed today count separately
+        const today = new Date().toISOString().split('T')[0];
+        $.get('/api/orders', { status: 'completed', dateFrom: today })
+          .done(response => {
+            $('#completedToday').text(response.orders?.length || 0);
+          });
+      },
+
+      showAlert(message, type) {
+        const alertDiv = $(`
+          <div class="alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 9999;">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        `);
+        $('body').append(alertDiv);
+        setTimeout(() => alertDiv.remove(), 5000);
+      }
+    };
+
+    // Initialize when DOM is ready
+    $(document).ready(() => ResultsManager.init());
+  </script>
+</body>
+</html>
