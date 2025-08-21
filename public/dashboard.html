@@ -207,87 +207,7 @@
     </div>
 
     <!-- Lab Operations Row -->
-    <div class="row mb-4">
-      <!-- Today's Orders -->
-      <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                  Today's Orders
-                </div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800" id="todayOrders">0</div>
-              </div>
-              <div class="text-gray-300">
-                <i class="fas fa-calendar-day fa-2x"></i>
-              </div>
-            </div>
-            <a href="/orders" class="btn btn-sm btn-primary mt-2">View Orders</a>
-          </div>
-        </div>
-      </div>
 
-      <!-- PCR Tests -->
-      <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                  PCR Tests
-                </div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800">8 Panels</div>
-              </div>
-              <div class="text-gray-300">
-                <i class="fas fa-dna fa-2x"></i>
-              </div>
-            </div>
-            <a href="/pcr-tests" class="btn btn-sm btn-info mt-2">View Tests</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Pending Results -->
-      <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                  Pending Results
-                </div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800" id="pendingResults">0</div>
-              </div>
-              <div class="text-gray-300">
-                <i class="fas fa-clock fa-2x"></i>
-              </div>
-            </div>
-            <a href="/pending-results" class="btn btn-sm btn-warning mt-2">Review</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Reports -->
-      <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                  Reports
-                </div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800">Generate</div>
-              </div>
-              <div class="text-gray-300">
-                <i class="fas fa-file-medical fa-2x"></i>
-              </div>
-            </div>
-            <a href="/reports" class="btn btn-sm btn-success mt-2">Reports</a>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- Charts and Recent Activity -->
     <div class="row">
@@ -557,7 +477,7 @@
         }
 
         tbody.innerHTML = orders.map(order => `
-          <tr style="cursor: pointer;" onclick="window.location.href='/orders/${order._id}'">
+          <tr style="cursor: pointer;" onclick="window.location.href='/orders?view=${order._id}'">
             <td><strong>${order.orderNumber || 'N/A'}</strong></td>
             <td>${order.patient ? `${order.patient.firstName || ''} ${order.patient.lastName || ''}`.trim() : 'N/A'}</td>
             <td>${order.tests ? order.tests.length : 0} test(s)</td>

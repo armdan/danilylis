@@ -191,15 +191,14 @@ app.get('/pcr-results', (req, res) => {
 
 // Add these AFTER your existing routes like app.get('/orders', ...)
 
-// Order entry page
+// Order entry page (both routes for flexibility)
+app.get('/order-entry', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'order-entry.html'));
+});
+
 app.get('/orders/new', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'order-entry.html'));
 });
-// All Orders
-app.get('/orders/orders', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'order.html'));
-});
-
 
 // Label printing page
 app.get('/label-print', (req, res) => {

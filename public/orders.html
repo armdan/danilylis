@@ -232,10 +232,16 @@
             loadOrders();
             loadStatistics();
             
-            // Set today's date as default
-            const today = new Date().toISOString().split('T')[0];
-            $('#dateFrom').val(today);
-            $('#dateTo').val(today);
+            // Don't set date filters by default - show all orders
+            // Users can set dates if they want to filter
+            
+            // Check if there's a specific order to view from URL params
+            const urlParams = new URLSearchParams(window.location.search);
+            const viewOrderId = urlParams.get('view');
+            if (viewOrderId) {
+                // Wait a moment for orders to load, then open the modal
+                setTimeout(() => viewOrder(viewOrderId), 500);
+            }
         });
 
         function loadStatistics() {
@@ -479,8 +485,11 @@
                     contentType: 'application/json',
                     data: JSON.stringify({ status: 'processing' }),
                     success: function() {
+                        // Just reload the current page of orders to show the update
                         loadOrders(currentPage);
                         loadStatistics();
+                        // Show success message
+                        showMessage('Order status updated to processing', 'success');
                     },
                     error: function() {
                         alert('Failed to update order status');
@@ -497,14 +506,33 @@
                     contentType: 'application/json',
                     data: JSON.stringify({ status: 'cancelled' }),
                     success: function() {
+                        // Just reload the current page of orders to show the update
                         loadOrders(currentPage);
                         loadStatistics();
+                        // Show success message
+                        showMessage('Order cancelled successfully', 'warning');
                     },
                     error: function() {
                         alert('Failed to cancel order');
                     }
                 });
             }
+        }
+
+        // Helper function to show success/error messages
+        function showMessage(message, type) {
+            const alertClass = type === 'success' ? 'alert-success' : 
+                              type === 'warning' ? 'alert-warning' : 'alert-danger';
+            const alertHtml = `
+                <div class="alert ${alertClass} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-5" style="z-index: 9999;">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            $('body').append(alertHtml);
+            setTimeout(() => {
+                $('.alert').fadeOut(() => $('.alert').remove());
+            }, 3000);
         }
 
         function exportOrders() {
