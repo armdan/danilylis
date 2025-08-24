@@ -126,10 +126,29 @@ router.get('/', async (req, res) => {
     let query = {};
     
     if (req.query.search) {
+      // First, find patients matching the search term
+      const searchRegex = new RegExp(req.query.search, 'i');
+      const matchingPatients = await Patient.find({
+        $or: [
+          { firstName: searchRegex },
+          { lastName: searchRegex },
+          { patientId: searchRegex },
+          { phone: searchRegex }
+        ]
+      }).select('_id');
+      
+      const patientIds = matchingPatients.map(p => p._id);
+      
+      // Build the search query to include patient IDs, order numbers, and doctor names
       query.$or = [
-        { orderNumber: { $regex: req.query.search, $options: 'i' } },
-        { 'orderingPhysician.name': { $regex: req.query.search, $options: 'i' } }
+        { orderNumber: searchRegex },
+        { 'orderingPhysician.name': searchRegex }
       ];
+      
+      // Add patient search if we found matching patients
+      if (patientIds.length > 0) {
+        query.$or.push({ patient: { $in: patientIds } });
+      }
     }
 
     if (req.query.status) query.status = req.query.status;
@@ -298,7 +317,10 @@ router.post('/', async (req, res) => {
 
     // Get user ID from token (handle different possible structures)
     const userId = req.user?.userId || req.user?.id || req.user?._id;
-
+    if (req.body.specimenInfo) {
+      req.body.specimenType = req.body.specimenInfo.type;
+      req.body.specimenCondition = req.body.specimenInfo.condition;
+    }
     const order = new Order({
       ...req.body,
       orderNumber,
@@ -335,6 +357,95 @@ router.post('/', async (req, res) => {
     });
   } catch (error) {
     console.error('Create order error:', error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+});
+
+// ADD THE NEW PUT ROUTE HERE
+// Update existing order
+router.put('/:id', async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+    
+    // Don't allow editing completed or cancelled orders
+    if (order.status === 'completed' || order.status === 'cancelled') {
+      return res.status(400).json({ 
+        message: 'Cannot edit completed or cancelled orders' 
+      });
+    }
+    
+    // Verify patient exists if changed
+    if (req.body.patient && req.body.patient !== order.patient.toString()) {
+      const patient = await Patient.findById(req.body.patient);
+      if (!patient) {
+        return res.status(404).json({ message: 'Patient not found' });
+      }
+    }
+    
+    // Verify tests if changed
+    if (req.body.tests) {
+      const testIds = req.body.tests.map(t => t.test);
+      
+      // Check regular tests
+      const regularTests = await Test.find({ _id: { $in: testIds } });
+      const regularTestIds = regularTests.map(t => t._id.toString());
+      
+      // Check PCR tests for IDs not found in regular tests
+      const missingTestIds = testIds.filter(id => !regularTestIds.includes(id));
+      const pcrTests = missingTestIds.length > 0 ? 
+        await PCRTest.find({ _id: { $in: missingTestIds } }) : [];
+      
+      const totalTestsFound = regularTests.length + pcrTests.length;
+      
+      if (totalTestsFound !== testIds.length) {
+        return res.status(400).json({ message: 'One or more tests not found' });
+      }
+      
+      // Recalculate total amount
+      const allTests = [...regularTests, ...pcrTests];
+      order.totalAmount = allTests.reduce((total, test) => {
+        return total + (test.price || 0);
+      }, 0);
+    }
+        // ADD THIS BEFORE THE updateFields SECTION (around line 374)
+    if (req.body.specimenInfo) {
+      req.body.specimenType = req.body.specimenInfo.type;
+      req.body.specimenCondition = req.body.specimenInfo.condition;
+    }
+    // Update allowed fields
+    const updateFields = [
+      'patient', 'medicalOffice', 'orderingPhysician', 
+      'tests', 'priority', 'collectionType', 'collectionDateTime',
+      'specimenInfo', 'clinicalInfo', 'specimenType', 'specimenCondition'
+    ];
+    
+    updateFields.forEach(field => {
+      if (req.body[field] !== undefined) {
+        order[field] = req.body[field];
+      }
+    });
+    
+    // Track who modified
+    const userId = req.user?.userId || req.user?.id || req.user?._id;
+    order.modifiedBy = userId;
+    
+    await order.save();
+    
+    // Populate for response
+    await order.populate('patient', 'firstName lastName patientId dateOfBirth');
+    await order.populate('medicalOffice', 'name');
+    await order.populate('createdBy', 'firstName lastName username');
+    
+    res.json({
+      message: 'Order updated successfully',
+      order
+    });
+  } catch (error) {
+    console.error('Update order error:', error);
     res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 });

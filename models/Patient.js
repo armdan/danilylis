@@ -8,11 +8,11 @@ const patientSchema = new mongoose.Schema({
     index: true,
     validate: {
       validator: function(value) {
-        // Validate numeric patient ID format: YYMMDDNNN (9 digits)
-        return /^\d{9}$/.test(value);
-      },
-      message: 'Patient ID must be a 9-digit numeric value'
-    }
+    // Validate numeric patient ID format: 5 digits
+    return /^\d{5}$/.test(value);
+  },
+  message: 'Patient ID must be a 5-digit numeric value'
+}
   },
   firstName: {
     type: String,
@@ -544,37 +544,30 @@ patientSchema.virtual('currentBalance').get(function() {
 // Static method to generate patient ID
 patientSchema.statics.generatePatientId = async function() {
   try {
-    const now = new Date();
-    const year = now.getFullYear().toString().slice(-2);
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    
-    const datePrefix = `${year}${month}${day}`;
-    const todayPattern = new RegExp(`^${datePrefix}\\d{3}$`);
-    
-    const todayPatients = await this.find(
-      { patientId: { $regex: todayPattern } },
+    // Find the highest patient ID number
+    const lastPatient = await this.findOne(
+      { patientId: { $regex: /^\d{5}$/ } }, // Only look for 5-digit IDs
       { patientId: 1 }
     ).sort({ patientId: -1 });
     
-    let nextSequence = 1;
-    if (todayPatients.length > 0) {
-      const lastPatientId = todayPatients[0].patientId;
-      const lastSequence = parseInt(lastPatientId.slice(-3), 10);
-      nextSequence = lastSequence + 1;
+    let nextNumber = 10001; // Starting number
+    
+    if (lastPatient && lastPatient.patientId) {
+      // Extract number from patient ID and increment
+      const lastNumber = parseInt(lastPatient.patientId);
+      if (!isNaN(lastNumber)) {
+        nextNumber = lastNumber + 1;
+      }
     }
     
-    if (nextSequence > 999) {
-      const timestamp = Date.now();
-      return timestamp.toString().slice(-9);
-    }
-    
-    return `${datePrefix}${String(nextSequence).padStart(3, '0')}`;
+    // Return as zero-padded 5-digit string (e.g., 01001, 01002)
+    return String(nextNumber).padStart(5, '0');
     
   } catch (error) {
     console.error('Patient ID generation error:', error);
-    const timestamp = Date.now();
-    return timestamp.toString().slice(-9);
+    // Fallback: use a random number in the valid range
+    const randomNum = Math.floor(Math.random() * 89999) + 10000;
+    return String(randomNum);
   }
 };
 

@@ -9,147 +9,137 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <style>
-        .main-content {
-            padding: 20px;
-            min-height: calc(100vh - 64px);
-            margin-top: 56px;
-        }
-        .order-card {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.85em;
-        }
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-processing { background: #cce5ff; color: #004085; }
-        .status-completed { background: #d4edda; color: #155724; }
-        .status-cancelled { background: #f8d7da; color: #721c24; }
-        .priority-routine { background: #6c757d; color: white; }
-        .priority-urgent { background: #ff9800; color: white; }
-        .priority-stat { background: #dc3545; color: white; }
-        .search-filters {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .order-actions {
-            display: flex;
-            gap: 5px;
-        }
-        .test-count {
-            background: #e7f3ff;
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 0.9em;
-        }
-        .stat-card {
-            text-align: center;
-            padding: 15px;
-        }
-        .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-        }
-        .stat-label {
-            color: #6c757d;
-            font-size: 0.9rem;
-        }
-    </style>
+    
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/theme-colors.css">
+    <link rel="stylesheet" href="/css/unified-search.css">
+    <link rel="stylesheet" href="/css/unified-footer.css">
+
+<style>
+    /* Only page-specific styles not in main.css */
+    .order-actions {
+        display: flex;
+        gap: 5px;
+    }
+    .test-count {
+        background: #e7f3ff;
+        padding: 3px 8px;
+        border-radius: 10px;
+        font-size: 0.9em;
+    }
+</style>
 </head>
 <body>
     <!-- Navbar will be injected here -->
 
     <div class="container-fluid main-content">
         <!-- Page Header -->
-        <div class="row mb-4">
-            <div class="col-md-8">
-                <h2><i class="fas fa-clipboard-list me-2"></i>Orders</h2>
-                <p class="text-muted">Manage laboratory test orders</p>
-            </div>
-            <div class="col-md-4 text-end">
-                <a href="/order-entry" class="btn btn-success">
+        <div class="page-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1><i class="fas fa-clipboard-check me-2"></i>Orders</h1>
+                <div class="d-flex gap-3">
+                    <a href="/order-entry" class="btn btn-success">
                     <i class="fas fa-plus me-2"></i>New Order
-                </a>
-                <button class="btn btn-outline-secondary" onclick="exportOrders()">
-                    <i class="fas fa-download me-2"></i>Export
-                </button>
-            </div>
-        </div>
+                     </a>
 
-        <!-- Statistics Cards -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card bg-primary text-white">
-                    <div class="card-body stat-card">
-                        <div class="stat-value" id="totalOrders">0</div>
-                        <div class="stat-label">Total Orders</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card bg-warning text-white">
-                    <div class="card-body stat-card">
-                        <div class="stat-value" id="pendingOrders">0</div>
-                        <div class="stat-label">Pending</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card bg-info text-white">
-                    <div class="card-body stat-card">
-                        <div class="stat-value" id="processingOrders">0</div>
-                        <div class="stat-label">Processing</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card bg-success text-white">
-                    <div class="card-body stat-card">
-                        <div class="stat-value" id="completedToday">0</div>
-                        <div class="stat-label">Completed Today</div>
-                    </div>
+                    <button class="btn btn-light btn-sm" onclick="exportOrders()">
+                        <i class="fas fa-print me-1"></i>Export
+                    </button>
+
                 </div>
             </div>
         </div>
 
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-value text-primary" id="totalOrders">0</div>
+            <div class="stat-label">Total Orders</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-value text-warning" id="pendingOrders">0</div>
+            <div class="stat-label">Pending</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-value text-info" id="processingOrders">0</div>
+            <div class="stat-label">Processing</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-value text-success" id="completedToday">0</div>
+            <div class="stat-label">Completed Today</div>
+        </div>
+    </div>
+</div>
+
+<div class="section-header">
+    <i class="fas fa-filter"></i> Search & Filters
+</div>
         <!-- Search and Filters -->
-        <div class="order-card">
-            <div class="search-filters">
+<div class="card unified-search-card">
+    <div class="unified-search-filters">
+        <div class="search-group search-main">
+            <label for="searchInput">Search Orders</label>
+            <div class="search-input-wrapper">
                 <input type="text" id="searchInput" class="form-control" 
-                    placeholder="Search by order number, patient name, or doctor...">
-                <input type="date" id="dateFrom" class="form-control" style="width: 200px;">
-                <input type="date" id="dateTo" class="form-control" style="width: 200px;">
-                <select id="statusFilter" class="form-select" style="width: 150px;">
-                    <option value="">All Status</option>
-                    <option value="pending">Pending</option>
-                    <option value="processing">Processing</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
-                </select>
-                <select id="priorityFilter" class="form-select" style="width: 150px;">
-                    <option value="">All Priority</option>
-                    <option value="routine">Routine</option>
-                    <option value="urgent">Urgent</option>
-                    <option value="stat">STAT</option>
-                </select>
-                <button class="btn btn-primary" onclick="searchOrders()">
-                    <i class="fas fa-search"></i> Search
-                </button>
-                <button class="btn btn-outline-secondary" onclick="resetFilters()">
-                    <i class="fas fa-redo"></i> Reset
+                       placeholder="Order number, patient name, doctor...">
+                <button class="search-icon" type="button" onclick="searchOrders()">
+                    <i class="fas fa-search"></i>
                 </button>
             </div>
         </div>
+        <div class="search-group">
+            <label for="dateFrom">From Date</label>
+            <input type="date" id="dateFrom" class="form-control">
+        </div>
+        <div class="search-group">
+            <label for="dateTo">To Date</label>
+            <input type="date" id="dateTo" class="form-control">
+        </div>
+        <div class="search-group">
+            <label for="statusFilter">Status</label>
+            <select id="statusFilter" class="form-select">
+                <option value="">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="processing">Processing</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+            </select>
+        </div>
+        <div class="search-group">
+            <label for="priorityFilter">Priority</label>
+            <select id="priorityFilter" class="form-select">
+                <option value="">All Priority</option>
+                <option value="routine">Routine</option>
+                <option value="urgent">Urgent</option>
+                <option value="stat">STAT</option>
+            </select>
+        </div>
+        <div class="search-actions">
+            <button class="btn-search-primary" onclick="searchOrders()">
+                <i class="fas fa-search me-1"></i>Search
+            </button>
+            <button class="btn-search-secondary" onclick="resetFilters()">
+                <i class="fas fa-redo me-1"></i>Reset
+            </button>
+        </div>
+    </div>
+</div>
 
+
+
+<div class="section-header">
+    <i class="fas fa-list"></i> Order List  
+</div>
         <!-- Orders Table -->
-        <div class="order-card">
+        <div class="card">
             <div class="table-responsive">
                 <table class="table table-hover">
                     <thead>
@@ -221,349 +211,426 @@
     <!-- Load navbar -->
     <script src="/js/navbar-loader.js"></script>
 
-    <!-- Orders Page Script -->
-    <script>
-        let currentPage = 1;
-        const limit = 10;
-        let orderDetailsModal;
+<!-- Orders Page Script -->
+<script>
+    let currentPage = 1;
+    const limit = 10;
+    let orderDetailsModal;
 
-        $(document).ready(function() {
-            orderDetailsModal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
-            loadOrders();
-            loadStatistics();
-            
-            // Don't set date filters by default - show all orders
-            // Users can set dates if they want to filter
-            
-            // Check if there's a specific order to view from URL params
-            const urlParams = new URLSearchParams(window.location.search);
-            const viewOrderId = urlParams.get('view');
-            if (viewOrderId) {
-                // Wait a moment for orders to load, then open the modal
-                setTimeout(() => viewOrder(viewOrderId), 500);
+    $(document).ready(function() {
+        orderDetailsModal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
+        loadOrders();
+        loadStatistics();
+        
+        // Load footer
+        $('#footer-container').load('/components/footer.html', function(response, status, xhr) {
+            if (status == "error") {
+                console.error("Footer failed to load:", xhr.status, xhr.statusText);
+                if (xhr.status === 404) {
+                    console.error("Footer not found at /components/footer.html");
+                    $('#footer-container').html(`
+                        <div style="background: #2c3e50; color: white; padding: 20px; text-align: center;">
+                            <p>Footer file not found - Please create /public/components/footer.html</p>
+                        </div>
+                    `);
+                }
+            } else {
+                console.log("Footer loaded successfully");
             }
         });
+        
+        // Check if there's a specific order to view from URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        const viewOrderId = urlParams.get('view');
+        if (viewOrderId) {
+            setTimeout(() => viewOrder(viewOrderId), 500);
+        }
+        
+        // Setup Enter key handler for search input
+        $('#searchInput').on('keypress', function(e) {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                e.preventDefault();
+                searchOrders();
+            }
+        });
+        
+        // Enter key for date inputs
+        $('#dateFrom, #dateTo').on('keypress', function(e) {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                e.preventDefault();
+                searchOrders();
+            }
+        });
+        
+        // Auto-search when select filters change
+        $('#statusFilter, #priorityFilter').on('change', function() {
+            searchOrders();
+        });
+        
+        // Auto-search when date inputs change
+        $('#dateFrom, #dateTo').on('change', function() {
+            searchOrders();
+        });
+    });
 
-        function loadStatistics() {
-            $.get('/api/orders/statistics')
-                .done(function(stats) {
-                    $('#totalOrders').text(stats.total || 0);
-                    $('#pendingOrders').text(stats.pending || 0);
-                    $('#processingOrders').text(stats.processing || 0);
-                    $('#completedToday').text(stats.completedToday || 0);
-                })
-                .fail(function() {
-                    console.error('Failed to load statistics');
-                });
+    function loadStatistics() {
+        $.get('/api/orders/statistics')
+            .done(function(stats) {
+                $('#totalOrders').text(stats.total || 0);
+                $('#pendingOrders').text(stats.pending || 0);
+                $('#processingOrders').text(stats.processing || 0);
+                $('#completedToday').text(stats.completedToday || 0);
+            })
+            .fail(function() {
+                console.error('Failed to load statistics');
+            });
+    }
+
+    function loadOrders(page = 1) {
+        currentPage = page;
+        
+        const params = new URLSearchParams({
+            page: page,
+            limit: limit
+        });
+
+        // Add filters - trim search value to remove whitespace
+        const search = $('#searchInput').val().trim();
+        const dateFrom = $('#dateFrom').val();
+        const dateTo = $('#dateTo').val();
+        const status = $('#statusFilter').val();
+        const priority = $('#priorityFilter').val();
+
+        // Only append if there's actual content
+        if (search && search.length > 0) params.append('search', search);
+        if (dateFrom) params.append('dateFrom', dateFrom);
+        if (dateTo) params.append('dateTo', dateTo);
+        if (status) params.append('status', status);
+        if (priority) params.append('priority', priority);
+
+        console.log('Loading orders with params:', params.toString());
+
+        $.get(`/api/orders?${params.toString()}`)
+            .done(function(response) {
+                console.log('Orders loaded:', response);
+                displayOrders(response.orders || []);
+                displayPagination(response.pagination || {});
+            })
+            .fail(function(xhr) {
+                console.error('Failed to load orders:', xhr);
+                $('#ordersTableBody').html('<tr><td colspan="8" class="text-center">Failed to load orders</td></tr>');
+            });
+    }
+
+    function editOrder(orderId) {
+        // Redirect to order-entry page with edit mode
+        window.location.href = `/order-entry?edit=${orderId}`;
+    }
+
+    function displayOrders(orders) {
+        const tbody = $('#ordersTableBody');
+        tbody.empty();
+
+        if (!orders || orders.length === 0) {
+            tbody.append(`
+                <tr>
+                    <td colspan="8" class="text-center py-4">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No orders found</p>
+                    </td>
+                </tr>
+            `);
+            return;
         }
 
-        function loadOrders(page = 1) {
-            currentPage = page;
+        orders.forEach(order => {
+            const orderDate = new Date(order.createdAt);
+            const formattedDate = `${orderDate.toLocaleDateString()} ${orderDate.toLocaleTimeString()}`;
             
-            const params = new URLSearchParams({
-                page: page,
-                limit: limit
-            });
-
-            // Add filters
-            const search = $('#searchInput').val();
-            const dateFrom = $('#dateFrom').val();
-            const dateTo = $('#dateTo').val();
-            const status = $('#statusFilter').val();
-            const priority = $('#priorityFilter').val();
-
-            if (search) params.append('search', search);
-            if (dateFrom) params.append('dateFrom', dateFrom);
-            if (dateTo) params.append('dateTo', dateTo);
-            if (status) params.append('status', status);
-            if (priority) params.append('priority', priority);
-
-            $.get(`/api/orders?${params.toString()}`)
-                .done(function(response) {
-                    displayOrders(response.orders || []);
-                    displayPagination(response.pagination || {});
-                })
-                .fail(function() {
-                    $('#ordersTableBody').html('<tr><td colspan="8" class="text-center">Failed to load orders</td></tr>');
-                });
-        }
-
-        function displayOrders(orders) {
-            const tbody = $('#ordersTableBody');
-            tbody.empty();
-
-            if (!orders || orders.length === 0) {
-                tbody.append(`
-                    <tr>
-                        <td colspan="8" class="text-center py-4">
-                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">No orders found</p>
-                        </td>
-                    </tr>
-                `);
-                return;
-            }
-
-            orders.forEach(order => {
-                const orderDate = new Date(order.createdAt);
-                const formattedDate = `${orderDate.toLocaleDateString()} ${orderDate.toLocaleTimeString()}`;
-                
-                const row = `
-                    <tr>
-                        <td><strong>${order.orderNumber}</strong></td>
-                        <td>${formattedDate}</td>
-                        <td>
-                            ${order.patient ? `${order.patient.firstName} ${order.patient.lastName}` : 'N/A'}
-                            <br><small class="text-muted">${order.patient?.patientId || ''}</small>
-                        </td>
-                        <td>
-                            ${order.orderingPhysician?.name || 'N/A'}
-                            <br><small class="text-muted">${order.medicalOffice?.name || ''}</small>
-                        </td>
-                        <td>
-                            <span class="test-count">
-                                <i class="fas fa-vial"></i> ${order.tests?.length || 0} tests
-                            </span>
-                        </td>
-                        <td>
-                            <span class="status-badge priority-${order.priority || 'routine'}">
-                                ${(order.priority || 'routine').toUpperCase()}
-                            </span>
-                        </td>
-                        <td>
-                            <span class="status-badge status-${order.status || 'pending'}">
-                                ${(order.status || 'pending').toUpperCase()}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="order-actions">
-                                <button class="btn btn-sm btn-info" onclick="viewOrder('${order._id}')" title="View">
-                                    <i class="fas fa-eye"></i>
+            const row = `
+                <tr>
+                    <td><strong>${order.orderNumber}</strong></td>
+                    <td>${formattedDate}</td>
+                    <td>
+                        ${order.patient ? `${order.patient.firstName} ${order.patient.lastName}` : 'N/A'}
+                        <br><small class="text-muted">${order.patient?.patientId || ''}</small>
+                    </td>
+                    <td>
+                        ${order.orderingPhysician?.name || 'N/A'}
+                        <br><small class="text-muted">${order.medicalOffice?.name || ''}</small>
+                    </td>
+                    <td>
+                        <span class="test-count">
+                            <i class="fas fa-vial"></i> ${order.tests?.length || 0} tests
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge priority-${order.priority || 'routine'}">
+                            ${(order.priority || 'routine').toUpperCase()}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge status-${order.status || 'pending'}">
+                            ${(order.status || 'pending').toUpperCase()}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="order-actions">
+                            <button class="btn btn-sm btn-info" onclick="viewOrder('${order._id}')" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-warning" onclick="editOrder('${order._id}')" title="Edit Order">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-secondary" onclick="printLabels('${order._id}')" title="Reprint Labels">
+                                <i class="fas fa-barcode"></i>
+                            </button>
+                            ${order.status === 'pending' || order.status === 'processing' ? `
+                                <button class="btn btn-sm btn-primary" onclick="enterResults('${order._id}')" title="Enter Results">
+                                    <i class="fas fa-flask"></i>
                                 </button>
-                                <button class="btn btn-sm btn-primary" onclick="printLabels('${order._id}')" title="Print Labels">
-                                    <i class="fas fa-print"></i>
+                            ` : ''}
+                            ${order.status === 'completed' || order.status === 'final' ? `
+                                <button class="btn btn-sm btn-success" onclick="viewReport('${order._id}')" title="View Report">
+                                    <i class="fas fa-file-medical"></i>
                                 </button>
-                                ${order.status === 'pending' ? `
-                                    <button class="btn btn-sm btn-success" onclick="processOrder('${order._id}')" title="Process">
-                                        <i class="fas fa-play"></i>
-                                    </button>
-                                ` : ''}
-                                ${order.status !== 'cancelled' && order.status !== 'completed' ? `
-                                    <button class="btn btn-sm btn-danger" onclick="cancelOrder('${order._id}')" title="Cancel">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                ` : ''}
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                tbody.append(row);
-            });
-        }
-
-        function displayPagination(pagination) {
-            const paginationEl = $('#pagination');
-            paginationEl.empty();
-
-            if (!pagination || pagination.pages <= 1) return;
-
-            if (pagination.current > 1) {
-                paginationEl.append(`
-                    <li class="page-item">
-                        <a class="page-link" href="#" onclick="loadOrders(${pagination.current - 1}); return false;">Previous</a>
-                    </li>
-                `);
-            }
-
-            for (let i = 1; i <= Math.min(pagination.pages, 10); i++) {
-                paginationEl.append(`
-                    <li class="page-item ${pagination.current === i ? 'active' : ''}">
-                        <a class="page-link" href="#" onclick="loadOrders(${i}); return false;">${i}</a>
-                    </li>
-                `);
-            }
-
-            if (pagination.current < pagination.pages) {
-                paginationEl.append(`
-                    <li class="page-item">
-                        <a class="page-link" href="#" onclick="loadOrders(${pagination.current + 1}); return false;">Next</a>
-                    </li>
-                `);
-            }
-        }
-
-        function searchOrders() {
-            loadOrders(1);
-        }
-
-        function resetFilters() {
-            $('#searchInput').val('');
-            $('#dateFrom').val('');
-            $('#dateTo').val('');
-            $('#statusFilter').val('');
-            $('#priorityFilter').val('');
-            loadOrders(1);
-        }
-
-        function viewOrder(orderId) {
-            $.get(`/api/orders/${orderId}`)
-                .done(function(response) {
-                    const order = response.order;
-                    const orderDate = new Date(order.createdAt);
-                    
-                    let testsHtml = '';
-                    if (order.tests && order.tests.length > 0) {
-                        testsHtml = '<h6>Tests:</h6><ul>';
-                        order.tests.forEach(testItem => {
-                            testsHtml += `<li>${testItem.test?.testName || 'Unknown Test'} (${testItem.test?.testCode || ''})</li>`;
-                        });
-                        testsHtml += '</ul>';
-                    }
-
-                    const detailsHtml = `
-                        <div class="order-details">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h6>Order Information</h6>
-                                    <p><strong>Order Number:</strong> ${order.orderNumber}</p>
-                                    <p><strong>Date:</strong> ${orderDate.toLocaleString()}</p>
-                                    <p><strong>Priority:</strong> <span class="status-badge priority-${order.priority}">${order.priority.toUpperCase()}</span></p>
-                                    <p><strong>Status:</strong> <span class="status-badge status-${order.status}">${order.status.toUpperCase()}</span></p>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6>Patient Information</h6>
-                                    <p><strong>Name:</strong> ${order.patient?.firstName} ${order.patient?.lastName}</p>
-                                    <p><strong>Patient ID:</strong> ${order.patient?.patientId}</p>
-                                    <p><strong>DOB:</strong> ${order.patient ? new Date(order.patient.dateOfBirth).toLocaleDateString() : 'N/A'}</p>
-                                    <p><strong>Phone:</strong> ${order.patient?.phone || 'N/A'}</p>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h6>Ordering Physician</h6>
-                                    <p><strong>Name:</strong> ${order.orderingPhysician?.name}</p>
-                                    <p><strong>Phone:</strong> ${order.orderingPhysician?.phone || 'N/A'}</p>
-                                    <p><strong>Facility:</strong> ${order.medicalOffice?.name || 'N/A'}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    ${testsHtml}
-                                </div>
-                            </div>
-                            ${order.clinicalInfo?.diagnosis ? `
-                                <hr>
-                                <h6>Clinical Information</h6>
-                                <p><strong>Diagnosis:</strong> ${order.clinicalInfo.diagnosis}</p>
+                            ` : ''}
+                            ${order.status === 'pending' ? `
+                                <button class="btn btn-sm btn-danger" onclick="cancelOrder('${order._id}')" title="Cancel">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             ` : ''}
                         </div>
-                    `;
-
-                    $('#orderDetailsContent').html(detailsHtml);
-                    $('#printOrderBtn').off('click').on('click', function() {
-                        printOrder(orderId);
-                    });
-                    orderDetailsModal.show();
-                })
-                .fail(function() {
-                    alert('Failed to load order details');
-                });
-        }
-
-        function printLabels(orderId) {
-            window.open(`/label-print?orderId=${orderId}`, '_blank', 'width=400,height=600');
-        }
-
-        function printOrder(orderId) {
-            window.print();
-        }
-
-        function processOrder(orderId) {
-            if (confirm('Mark this order as processing?')) {
-                $.ajax({
-                    url: `/api/orders/${orderId}/status`,
-                    method: 'PATCH',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ status: 'processing' }),
-                    success: function() {
-                        // Just reload the current page of orders to show the update
-                        loadOrders(currentPage);
-                        loadStatistics();
-                        // Show success message
-                        showMessage('Order status updated to processing', 'success');
-                    },
-                    error: function() {
-                        alert('Failed to update order status');
-                    }
-                });
-            }
-        }
-
-        function cancelOrder(orderId) {
-            if (confirm('Are you sure you want to cancel this order?')) {
-                $.ajax({
-                    url: `/api/orders/${orderId}/status`,
-                    method: 'PATCH',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ status: 'cancelled' }),
-                    success: function() {
-                        // Just reload the current page of orders to show the update
-                        loadOrders(currentPage);
-                        loadStatistics();
-                        // Show success message
-                        showMessage('Order cancelled successfully', 'warning');
-                    },
-                    error: function() {
-                        alert('Failed to cancel order');
-                    }
-                });
-            }
-        }
-
-        // Helper function to show success/error messages
-        function showMessage(message, type) {
-            const alertClass = type === 'success' ? 'alert-success' : 
-                              type === 'warning' ? 'alert-warning' : 'alert-danger';
-            const alertHtml = `
-                <div class="alert ${alertClass} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-5" style="z-index: 9999;">
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+                    </td>
+                </tr>
             `;
-            $('body').append(alertHtml);
-            setTimeout(() => {
-                $('.alert').fadeOut(() => $('.alert').remove());
-            }, 3000);
+            tbody.append(row);
+        });
+    }
+
+    function enterResults(orderId) {
+        // Redirect to PCR results page - the page will load this order
+        window.location.href = `/pcr-results?orderId=${orderId}`;
+    }
+
+    function viewReport(orderId) {
+        // Need to find the result ID for this order first
+        $.get(`/api/pcr/results?order=${orderId}`)
+            .done(function(response) {
+                if (response.results && response.results.length > 0) {
+                    // Redirect to reports page with the result ID
+                    const resultId = response.results[0]._id;
+                    window.location.href = `/reports?resultId=${resultId}`;
+                } else {
+                    alert('No results found for this order yet');
+                }
+            })
+            .fail(function() {
+                alert('Failed to load results for this order');
+            });
+    }
+
+    function displayPagination(pagination) {
+        const paginationEl = $('#pagination');
+        paginationEl.empty();
+
+        if (!pagination || pagination.pages <= 1) return;
+
+        if (pagination.current > 1) {
+            paginationEl.append(`
+                <li class="page-item">
+                    <a class="page-link" href="#" onclick="loadOrders(${pagination.current - 1}); return false;">Previous</a>
+                </li>
+            `);
         }
 
-        function exportOrders() {
-            const params = new URLSearchParams();
-            const dateFrom = $('#dateFrom').val();
-            const dateTo = $('#dateTo').val();
-            
-            if (dateFrom) params.append('dateFrom', dateFrom);
-            if (dateTo) params.append('dateTo', dateTo);
-            params.append('format', 'csv');
+        for (let i = 1; i <= Math.min(pagination.pages, 10); i++) {
+            paginationEl.append(`
+                <li class="page-item ${pagination.current === i ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="loadOrders(${i}); return false;">${i}</a>
+                </li>
+            `);
+        }
 
-            const token = AuthManager.getToken();
-            fetch(`/api/orders/export?${params.toString()}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
+        if (pagination.current < pagination.pages) {
+            paginationEl.append(`
+                <li class="page-item">
+                    <a class="page-link" href="#" onclick="loadOrders(${pagination.current + 1}); return false;">Next</a>
+                </li>
+            `);
+        }
+    }
+
+    function searchOrders() {
+        loadOrders(1);
+    }
+
+    function resetFilters() {
+        $('#searchInput').val('');
+        $('#dateFrom').val('');
+        $('#dateTo').val('');
+        $('#statusFilter').val('');
+        $('#priorityFilter').val('');
+        loadOrders(1);
+    }
+
+    function viewOrder(orderId) {
+        $.get(`/api/orders/${orderId}`)
+            .done(function(response) {
+                const order = response.order;
+                const orderDate = new Date(order.createdAt);
+                
+                let testsHtml = '';
+                if (order.tests && order.tests.length > 0) {
+                    testsHtml = '<h6>Tests:</h6><ul>';
+                    order.tests.forEach(testItem => {
+                        testsHtml += `<li>${testItem.test?.testName || 'Unknown Test'} (${testItem.test?.testCode || ''})</li>`;
+                    });
+                    testsHtml += '</ul>';
+                }
+
+                const detailsHtml = `
+                    <div class="order-details">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Order Information</h6>
+                                <p><strong>Order Number:</strong> ${order.orderNumber}</p>
+                                <p><strong>Date:</strong> ${orderDate.toLocaleString()}</p>
+                                <p><strong>Priority:</strong> <span class="status-badge priority-${order.priority}">${order.priority.toUpperCase()}</span></p>
+                                <p><strong>Status:</strong> <span class="status-badge status-${order.status}">${order.status.toUpperCase()}</span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Patient Information</h6>
+                                <p><strong>Name:</strong> ${order.patient?.firstName} ${order.patient?.lastName}</p>
+                                <p><strong>Patient ID:</strong> ${order.patient?.patientId}</p>
+                                <p><strong>DOB:</strong> ${order.patient ? new Date(order.patient.dateOfBirth).toLocaleDateString() : 'N/A'}</p>
+                                <p><strong>Phone:</strong> ${order.patient?.phone || 'N/A'}</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Ordering Physician</h6>
+                                <p><strong>Name:</strong> ${order.orderingPhysician?.name}</p>
+                                <p><strong>Phone:</strong> ${order.orderingPhysician?.phone || 'N/A'}</p>
+                                <p><strong>Facility:</strong> ${order.medicalOffice?.name || 'N/A'}</p>
+                            </div>
+                            <div class="col-md-6">
+                                ${testsHtml}
+                            </div>
+                        </div>
+                        ${order.clinicalInfo?.diagnosis ? `
+                            <hr>
+                            <h6>Clinical Information</h6>
+                            <p><strong>Diagnosis:</strong> ${order.clinicalInfo.diagnosis}</p>
+                        ` : ''}
+                    </div>
+                `;
+
+                $('#orderDetailsContent').html(detailsHtml);
+                $('#printOrderBtn').off('click').on('click', function() {
+                    printOrder(orderId);
+                });
+                orderDetailsModal.show();
             })
-            .then(response => response.blob())
-            .then(blob => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `orders_${new Date().toISOString().split('T')[0]}.csv`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-            })
-            .catch(error => {
-                console.error('Export error:', error);
-                alert('Failed to export orders');
+            .fail(function() {
+                alert('Failed to load order details');
+            });
+    }
+
+    function printLabels(orderId) {
+        window.open(`/label-print?orderId=${orderId}`, '_blank', 'width=400,height=600');
+    }
+
+    function printOrder(orderId) {
+        window.print();
+    }
+
+    function processOrder(orderId) {
+        if (confirm('Mark this order as processing?')) {
+            $.ajax({
+                url: `/api/orders/${orderId}/status`,
+                method: 'PATCH',
+                contentType: 'application/json',
+                data: JSON.stringify({ status: 'processing' }),
+                success: function() {
+                    loadOrders(currentPage);
+                    loadStatistics();
+                    showMessage('Order status updated to processing', 'success');
+                },
+                error: function() {
+                    alert('Failed to update order status');
+                }
             });
         }
-    </script>
-</body>
+    }
+
+    function cancelOrder(orderId) {
+        if (confirm('Are you sure you want to cancel this order?')) {
+            $.ajax({
+                url: `/api/orders/${orderId}/status`,
+                method: 'PATCH',
+                contentType: 'application/json',
+                data: JSON.stringify({ status: 'cancelled' }),
+                success: function() {
+                    loadOrders(currentPage);
+                    loadStatistics();
+                    showMessage('Order cancelled successfully', 'warning');
+                },
+                error: function() {
+                    alert('Failed to cancel order');
+                }
+            });
+        }
+    }
+
+    function showMessage(message, type) {
+        const alertClass = type === 'success' ? 'alert-success' : 
+                          type === 'warning' ? 'alert-warning' : 'alert-danger';
+        const alertHtml = `
+            <div class="alert ${alertClass} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-5" style="z-index: 9999;">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+        $('body').append(alertHtml);
+        setTimeout(() => {
+            $('.alert').fadeOut(() => $('.alert').remove());
+        }, 3000);
+    }
+
+    function exportOrders() {
+        const params = new URLSearchParams();
+        const dateFrom = $('#dateFrom').val();
+        const dateTo = $('#dateTo').val();
+        
+        if (dateFrom) params.append('dateFrom', dateFrom);
+        if (dateTo) params.append('dateTo', dateTo);
+        params.append('format', 'csv');
+
+        const token = AuthManager.getToken();
+        fetch(`/api/orders/export?${params.toString()}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `orders_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        })
+        .catch(error => {
+            console.error('Export error:', error);
+            alert('Failed to export orders');
+        });
+    }
+</script>
+    <!-- Footer container -->
+<!-- Footer container goes here, INSIDE body -->
+    <div id="footer-container"></div>
+</body>  <!-- This closes AFTER the footer container -->
 </html>

@@ -9,24 +9,24 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
+    <!-- Unified CSS files -->
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/theme-colors.css">
+    <link rel="stylesheet" href="/css/unified-search.css">
+    <link rel="stylesheet" href="/css/unified-footer.css">
+    
     <style>
-        .main-content {
-            padding: 20px;
-            min-height: calc(100vh - 64px);
-            margin-top: 56px;
-        }
-        .order-form-section {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .section-title {
-            color: #2c3e50;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #3498db;
+        /* Page-specific styles only */
+        .card-header.bg-primary {
+    background-color: #007bff !important;
+    color: white !important;
+}
+
+.card-header.bg-primary h5 {
+    color: white !important;
+}
+        .position-relative {
+            z-index: 10;
         }
         .test-item {
             padding: 10px;
@@ -46,9 +46,9 @@
             border-radius: 4px;
             max-height: 200px;
             overflow-y: auto;
-            z-index: 1000;
+            z-index: 9999;
             width: 100%;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
         .autocomplete-item {
             padding: 10px;
@@ -71,11 +71,6 @@
         }
         .create-new-btn:hover {
             background: #218838;
-        }
-        /* Remove sticky positioning to prevent overlap issues */
-        .order-summary {
-            /* position: sticky; */
-            /* top: 76px; */
         }
         .test-category-tabs {
             margin-bottom: 20px;
@@ -112,8 +107,8 @@
         
         /* Label styles for embedded preview */
         .label-container {
-            width: 216px;  /* 2.25 inches at 96 DPI */
-            height: 120px; /* 1.25 inches at 96 DPI */
+            width: 216px;
+            height: 120px;
             border: 1px solid #ddd;
             padding: 8px;
             margin: 5px;
@@ -209,962 +204,1027 @@
     <!-- Navbar will be injected here by navbar-loader.js -->
 
     <div class="container-fluid main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1><i class="fas fa-file-medical me-2"></i>New Order Entry</h1>
+                <div>
+                    <a href="/orders" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Orders
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-md-8">
-                <!-- Order Header -->
- <!-- Replace the Order Header section in your order-entry.html with this updated version -->
-
-<!-- Order Header -->
-<div class="order-form-section">
-    <h4 class="section-title"><i class="fas fa-file-medical me-2"></i>New Order Entry</h4>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label class="form-label">Order Date & Time</label>
-                <input type="datetime-local" class="form-control" id="orderDateTime" readonly>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label class="form-label">Collection Date & Time</label>
-                <input type="datetime-local" class="form-control" id="collectionDateTime">
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label class="form-label">Priority</label>
-                <select class="form-select" id="orderPriority">
-                    <option value="routine">Routine</option>
-                    <option value="urgent">Urgent</option>
-                    <option value="stat">STAT</option>
-                </select>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label class="form-label">Collection Type</label>
-                <select class="form-select" id="collectionType">
-                    <option value="facility">Medical Office</option>
-                    <option value="facility">Facility Collection</option>
-                    <option value="home-visit">Home Visit</option>
-                    <option value="walk-in">Walk-in</option>
-                </select>
-            </div>
-        </div>
-    </div>
-</div>
-                <!-- Patient Section -->
-                <div class="order-form-section">
-                    <h5 class="section-title"><i class="fas fa-user me-2"></i>Patient Information</h5>
-                    <div class="position-relative">
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" id="patientSearch" 
-                                placeholder="Search patient by name, ID, or phone...">
-                            <button class="btn btn-outline-primary" type="button" id="searchPatientBtn">
-                                <i class="fas fa-search"></i>
-                            </button>
-                            <button class="btn btn-success" type="button" id="newPatientBtn">
-                                <i class="fas fa-plus me-1"></i>New Patient
-                            </button>
-                        </div>
-                        <div id="patientDropdown" class="autocomplete-dropdown" style="display: none;"></div>
-                    </div>
-                    
-                    <div id="selectedPatientInfo" class="alert alert-info" style="display: none;">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>Selected Patient:</strong>
-                                <span id="patientName"></span> | 
-                                <span id="patientId"></span> | 
-                                <span id="patientDob"></span>
+                <!-- Order Header Section -->
+                <div class="section-header">
+                    <i class="fas fa-clipboard"></i> Order Information
+                </div>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Order Date & Time</label>
+                                    <input type="datetime-local" class="form-control" id="orderDateTime" readonly>
+                                </div>
                             </div>
-                            <button class="btn btn-sm btn-outline-danger" id="clearPatientBtn">
-                                <i class="fas fa-times"></i>
-                            </button>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Collection Date & Time</label>
+                                    <input type="datetime-local" class="form-control" id="collectionDateTime">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Priority</label>
+                                    <select class="form-select" id="orderPriority">
+                                        <option value="routine">Routine</option>
+                                        <option value="urgent">Urgent</option>
+                                        <option value="stat">STAT</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Collection Type</label>
+                                    <select class="form-select" id="collectionType">
+                                        <option value="facility">Medical Office</option>
+                                        <option value="facility">Facility Collection</option>
+                                        <option value="home-visit">Home Visit</option>
+                                        <option value="walk-in">Walk-in</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Patient Section -->
+                <div class="section-header">
+                    <i class="fas fa-user"></i> Patient Information
+                </div>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="position-relative">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" id="patientSearch" 
+                                    placeholder="Search patient by name, ID, or phone...">
+                                <button class="btn btn-outline-primary" type="button" id="searchPatientBtn">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                                <button class="btn btn-success" type="button" id="newPatientBtn">
+                                    <i class="fas fa-plus me-1"></i>New Patient
+                                </button>
+                            </div>
+                            <div id="patientDropdown" class="autocomplete-dropdown" style="display: none;"></div>
+                        </div>
+                        
+                        <div id="selectedPatientInfo" class="alert alert-info" style="display: none;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>Selected Patient:</strong>
+                                    <span id="patientName"></span> | 
+                                    <span id="patientId"></span> | 
+                                    <span id="patientDob"></span>
+                                </div>
+                                <button class="btn btn-sm btn-outline-danger" id="clearPatientBtn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
         
                 <!-- Medical Office & Doctor Section -->
-                <div class="order-form-section">
-                    <h5 class="section-title"><i class="fas fa-hospital me-2"></i>Medical Office & Doctor</h5>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="position-relative mb-3">
-                                <label class="form-label">Medical Office</label>
-                                <input type="text" class="form-control" id="officeSearch" 
-                                    placeholder="Search or create new office...">
-                                <div id="officeDropdown" class="autocomplete-dropdown" style="display: none;"></div>
+                <div class="section-header">
+                    <i class="fas fa-hospital"></i> Medical Office & Doctor
+                </div>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="position-relative mb-3">
+                                    <label class="form-label">Medical Office</label>
+                                    <input type="text" class="form-control" id="officeSearch" 
+                                        placeholder="Search or create new office...">
+                                    <div id="officeDropdown" class="autocomplete-dropdown" style="display: none;"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="position-relative mb-3">
+                                    <label class="form-label">Ordering Doctor</label>
+                                    <input type="text" class="form-control" id="doctorSearch" 
+                                        placeholder="Search or create new doctor...">
+                                    <div id="doctorDropdown" class="autocomplete-dropdown" style="display: none;"></div>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="position-relative mb-3">
-                                <label class="form-label">Ordering Doctor</label>
-                                <input type="text" class="form-control" id="doctorSearch" 
-                                    placeholder="Search or create new doctor...">
-                                <div id="doctorDropdown" class="autocomplete-dropdown" style="display: none;"></div>
+                        <div id="selectedOfficeInfo" class="alert alert-light" style="display: none;"></div>
+                        <div id="selectedDoctorInfo" class="alert alert-light" style="display: none;"></div>
+                    </div>
+                </div>
+
+                <!-- Specimen Information Section -->
+                <div class="section-header">
+                    <i class="fas fa-vial"></i> Specimen Information
+                </div>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Specimen Type <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="specimenType" required>
+                                        <option value="">Select...</option>
+                                        <option value="blood">Blood</option>
+                                        <option value="urine">Urine</option>
+                                        <option value="swab">Swab</option>
+                                        <option value="stool">Stool</option>
+                                        <option value="sputum">Sputum</option>
+                                        <option value="tissue">Tissue</option>
+                                        <option value="nail_clipping">Nail Clipping</option>
+                                        <option value="nasopharyngeal_swab">Nasopharyngeal Swab</option>
+                                        <option value="wound_swab">Wound Swab</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Specimen Condition <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="specimenCondition" required>
+                                        <option value="good">Good</option>
+                                        <option value="hemolyzed">Hemolyzed</option>
+                                        <option value="clotted">Clotted</option>
+                                        <option value="insufficient">Insufficient Volume</option>
+                                        <option value="contaminated">Contaminated</option>
+                                        <option value="improper_container">Improper Container</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Volume/Quantity</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="specimenVolume" step="0.1" placeholder="Amount">
+                                        <select class="form-select" id="volumeUnit" style="max-width: 80px;">
+                                            <option value="mL">mL</option>
+                                            <option value="mg">mg</option>
+                                            <option value="swabs">swabs</option>
+                                            <option value="units">units</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Specimen Notes</label>
+                                    <textarea class="form-control" id="specimenNotes" rows="2" placeholder="Any additional notes about the specimen..."></textarea>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div id="selectedOfficeInfo" class="alert alert-light" style="display: none;"></div>
-                    <div id="selectedDoctorInfo" class="alert alert-light" style="display: none;"></div>
                 </div>
 
                 <!-- Test Selection Section -->
-                <div class="order-form-section">
-                    <h5 class="section-title"><i class="fas fa-vial me-2"></i>Test Selection</h5>
-                    
-                    <!-- Test Categories -->
-                    <ul class="nav nav-tabs test-category-tabs" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#allTests">All Tests</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#hematology">Hematology</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#chemistry">Chemistry</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#microbiology">Microbiology</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#pcr">PCR</a>
-                        </li>
-                    </ul>
+                <div class="section-header">
+                    <i class="fas fa-flask"></i> Test Selection
+                </div>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <!-- Test Categories -->
+                        <ul class="nav nav-tabs test-category-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#allTests">All Tests</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#hematology">Hematology</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#chemistry">Chemistry</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#microbiology">Microbiology</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#pcr">PCR</a>
+                            </li>
+                        </ul>
 
-                    <!-- Test Search -->
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" id="testSearch" 
-                            placeholder="Search tests by name or code...">
-                        <button class="btn btn-outline-secondary" type="button" id="clearTestSearch">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
+                        <!-- Test Search -->
+                        <div class="input-group mb-3 mt-3">
+                            <input type="text" class="form-control" id="testSearch" 
+                                placeholder="Search tests by name or code...">
+                            <button class="btn btn-outline-secondary" type="button" id="clearTestSearch">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
 
-                    <!-- Test Grid -->
-                    <div class="tab-content">
-                        <div class="tab-pane fade show active" id="allTests">
-                            <div id="testGrid" class="test-grid"></div>
+                        <!-- Test Grid -->
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="allTests">
+                                <div id="testGrid" class="test-grid"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Clinical Information -->
-                <div class="order-form-section">
-                    <h5 class="section-title"><i class="fas fa-notes-medical me-2"></i>Clinical Information</h5>
-                    <div class="mb-3">
-                        <label class="form-label">Clinical Diagnosis (ICD10 Codes)</label>
-                        <textarea class="form-control" id="diagnosis" rows="2"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Special Instructions</label>
-                        <textarea class="form-control" id="specialInstructions" rows="2"></textarea>
+                <!-- Diagnosis Code Selection -->
+                <div class="section-header">
+                    <i class="fas fa-notes-medical"></i> Diagnosis Code Selection
+                </div>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Clinical Diagnosis (ICD10 Codes)</label>
+                            <textarea class="form-control" id="diagnosis" rows="2"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Special Instructions</label>
+                            <textarea class="form-control" id="specialInstructions" rows="2"></textarea>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Order Summary Sidebar -->
-            <div class="col-md-4">
-                <div class="order-summary order-form-section">
-                    <h5 class="section-title"><i class="fas fa-shopping-cart me-2"></i>Order Summary</h5>
-                    
-                    <div class="mb-3">
-                        <strong>Order Number:</strong>
-                        <span id="orderNumber" class="text-primary">Will be generated</span>
-                    </div>
+<!-- Order Summary Sidebar -->
+<div class="col-md-4">
+    <div class="sticky-top" style="top: 76px;">
+        <!-- Order Summary Card -->
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Order Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <strong>Order Number:</strong>
+                    <span id="orderNumber" class="text-primary">Will be generated</span>
+                </div>
 
-                    <div id="selectedTests" class="mb-3">
-                        <h6>Selected Tests:</h6>
-                        <div id="selectedTestsList" class="list-group">
-                            <div class="text-muted">No tests selected</div>
-                        </div>
+                <div id="selectedTests" class="mb-3">
+                    <h6>Selected Tests:</h6>
+                    <div id="selectedTestsList" class="list-group">
+                        <div class="text-muted">No tests selected</div>
                     </div>
+                </div>
 
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between">
-                            <strong>Total Tests:</strong>
-                            <span id="totalTests">0</span>
-                        </div>
-
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                        <strong>Total Tests:</strong>
+                        <span id="totalTests">0</span>
                     </div>
+                </div>
 
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-primary btn-lg" id="saveOrderBtn" disabled>
-                            <i class="fas fa-save me-2"></i>Save Order
-                        </button>
-                        <button class="btn btn-success" id="saveAndPrintBtn" disabled>
-                            <i class="fas fa-print me-2"></i>Save & Print Labels
-                        </button>
-                        <button class="btn btn-outline-secondary" id="cancelOrderBtn">
-                            <i class="fas fa-times me-2"></i>Cancel
-                        </button>
-                    </div>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary btn-lg" id="saveOrderBtn" disabled>
+                        <i class="fas fa-save me-2"></i>Save Order
+                    </button>
+                    <button class="btn btn-success" id="saveAndPrintBtn" disabled>
+                        <i class="fas fa-print me-2"></i>Save & Print Labels
+                    </button>
+                    <button class="btn btn-outline-secondary" id="cancelOrderBtn">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Label Preview Section (hidden by default) - NOW INSIDE THE STICKY CONTAINER -->
+        <div id="labelPreviewSection" class="card mt-3" style="display: none;">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-barcode me-2"></i>Label Preview</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Copies per Test:</label>
+                    <input type="number" class="form-control" id="copiesPerTest" min="1" max="10" value="1">
                 </div>
                 
-                <!-- Label Preview Section (hidden by default) -->
-                <div id="labelPreviewSection" class="order-form-section mt-3" style="display: none;">
-                    <h5 class="section-title"><i class="fas fa-barcode me-2"></i>Label Preview</h5>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Copies per Test:</label>
-                        <input type="number" class="form-control" id="copiesPerTest" min="1" max="10" value="1">
-                    </div>
-                    
-                    <div id="labelsContainer" class="d-flex flex-wrap gap-2 justify-content-center mb-3">
-                        <!-- Labels will be generated here -->
-                    </div>
-                    
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-primary" onclick="OrderEntry.printLabelsNow()">
-                            <i class="fas fa-print me-2"></i>Print Labels
-                        </button>
-                        <button class="btn btn-outline-secondary" onclick="OrderEntry.hideLabels()">
-                            <i class="fas fa-times me-2"></i>Close Preview
-                        </button>
-                    </div>
+                <div id="labelsContainer" class="d-flex flex-wrap gap-2 justify-content-center mb-3" style="max-height: 300px; overflow-y: auto;">
+                    <!-- Labels will be generated here -->
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- New Patient Modal -->
-<!-- Updated Patient Modal with Tabs -->
-<div class="modal fade" id="newPatientModal" tabindex="-1">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Create New Patient</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="newPatientForm" class="needs-validation" novalidate>
-                    <!-- Nav tabs -->
-                    <ul class="nav nav-tabs mb-3" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#patientPersonalInfo">Personal Information</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#patientContactInfo">Contact & Address</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#patientInsuranceInfo">Insurance</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#patientBillingInfo">Billing</a>
-                        </li>
-                    </ul>
-
-                    <!-- Tab content -->
-                    <div class="tab-content">
-                        <!-- Personal Information Tab -->
-                        <div class="tab-pane fade show active" id="patientPersonalInfo">
-                            <h6 class="mb-3 text-primary">Basic Information</h6>
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-4">
-                                    <label class="form-label">First Name <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="newPatientFirstName" required>
-                                    <div class="invalid-feedback">First name is required</div>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Last Name <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="newPatientLastName" required>
-                                    <div class="invalid-feedback">Last name is required</div>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Date of Birth <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" id="newPatientDob" required>
-                                    <div class="invalid-feedback">Date of birth is required</div>
-                                </div>
-                            </div>
-
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-4">
-                                    <label class="form-label">Gender <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="newPatientGender" required>
-                                        <option value="">Select Gender</option>
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
-                                        <option value="other">Other</option>
-                                    </select>
-                                    <div class="invalid-feedback">Please select a gender</div>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Phone Number <span class="text-danger">*</span></label>
-                                    <input type="tel" class="form-control" id="newPatientPhone" required>
-                                    <div class="invalid-feedback">Phone number is required</div>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="newPatientEmail">
-                                </div>
-                            </div>
-
-                            <!-- Emergency Contact -->
-                            <h6 class="mb-3 text-primary">Emergency Contact</h6>
-                            <div class="row g-3">
-                                <div class="col-md-4">
-                                    <label class="form-label">Contact Name</label>
-                                    <input type="text" class="form-control" id="newPatientEmergencyName">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Contact Phone</label>
-                                    <input type="tel" class="form-control" id="newPatientEmergencyPhone">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Relationship</label>
-                                    <input type="text" class="form-control" id="newPatientEmergencyRelationship" 
-                                           placeholder="e.g., Spouse, Parent, Sibling">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Contact & Address Tab -->
-                        <div class="tab-pane fade" id="patientContactInfo">
-                            <h6 class="mb-3 text-primary">Residential Address</h6>
-                            <div class="row g-3 mb-4">
-                                <div class="col-12">
-                                    <label class="form-label">Street Address</label>
-                                    <input type="text" class="form-control" id="newPatientStreet">
-                                </div>
-                                <div class="col-md-5">
-                                    <label class="form-label">City</label>
-                                    <input type="text" class="form-control" id="newPatientCity">
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">State</label>
-                                    <input type="text" class="form-control" id="newPatientState">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">ZIP Code</label>
-                                    <input type="text" class="form-control" id="newPatientZipCode">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Insurance Tab -->
-                        <div class="tab-pane fade" id="patientInsuranceInfo">
-                            <!-- Primary Insurance -->
-                            <h6 class="mb-3 text-primary">Primary Insurance</h6>
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-6">
-                                    <label class="form-label">Insurance Provider</label>
-                                    <input type="text" class="form-control" id="newPatientInsuranceProvider" 
-                                           placeholder="e.g., Blue Cross Blue Shield">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Plan Name</label>
-                                    <input type="text" class="form-control" id="newPatientInsurancePlanName">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Policy Number</label>
-                                    <input type="text" class="form-control" id="newPatientPolicyNumber">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Group Number</label>
-                                    <input type="text" class="form-control" id="newPatientGroupNumber">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Subscriber ID</label>
-                                    <input type="text" class="form-control" id="newPatientSubscriberId">
-                                </div>
-                            </div>
-
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-6">
-                                    <label class="form-label">Subscriber Name</label>
-                                    <input type="text" class="form-control" id="newPatientSubscriberName" 
-                                           placeholder="If different from patient">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Relationship to Subscriber</label>
-                                    <select class="form-select" id="newPatientSubscriberRelationship">
-                                        <option value="self">Self</option>
-                                        <option value="spouse">Spouse</option>
-                                        <option value="child">Child</option>
-                                        <option value="parent">Parent</option>
-                                        <option value="other">Other</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-4">
-                                    <label class="form-label">Effective Date</label>
-                                    <input type="date" class="form-control" id="newPatientInsuranceEffectiveDate">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Copay Amount</label>
-                                    <input type="number" class="form-control" id="newPatientInsuranceCopay" 
-                                           min="0" step="0.01" placeholder="0.00">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Deductible</label>
-                                    <input type="number" class="form-control" id="newPatientInsuranceDeductible" 
-                                           min="0" step="0.01" placeholder="0.00">
-                                </div>
-                            </div>
-
-                            <!-- Medicare/Medicaid -->
-                            <h6 class="mb-3 text-primary">Medicare/Medicaid</h6>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="newPatientHasMedicare">
-                                        <label class="form-check-label" for="newPatientHasMedicare">
-                                            Patient has Medicare
-                                        </label>
-                                    </div>
-                                    <input type="text" class="form-control mt-2" id="newPatientMedicareNumber" 
-                                           placeholder="Medicare Number" style="display:none;">
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="newPatientHasMedicaid">
-                                        <label class="form-check-label" for="newPatientHasMedicaid">
-                                            Patient has Medicaid
-                                        </label>
-                                    </div>
-                                    <input type="text" class="form-control mt-2" id="newPatientMedicaidNumber" 
-                                           placeholder="Medicaid Number" style="display:none;">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Billing Tab -->
-                        <div class="tab-pane fade" id="patientBillingInfo">
-                            <h6 class="mb-3 text-primary">Billing Preferences</h6>
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-6">
-                                    <label class="form-label">Preferred Payment Method</label>
-                                    <select class="form-select" id="newPatientPaymentMethod">
-                                        <option value="insurance">Insurance</option>
-                                        <option value="self-pay">Self Pay</option>
-                                        <option value="payment-plan">Payment Plan</option>
-                                        <option value="credit-card">Credit Card</option>
-                                        <option value="cash">Cash</option>
-                                        <option value="check">Check</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Billing Email</label>
-                                    <input type="email" class="form-control" id="newPatientBillingEmail" 
-                                           placeholder="For statements and invoices">
-                                </div>
-                            </div>
-
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="newPatientPaperlessBilling">
-                                        <label class="form-check-label" for="newPatientPaperlessBilling">
-                                            Paperless Billing (Email only)
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="newPatientIsGuarantor">
-                                        <label class="form-check-label" for="newPatientIsGuarantor">
-                                            Patient is the guarantor
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="createPatientBtn">
-                    <i class="fas fa-save me-2"></i>Create Patient
-                </button>
+                
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" onclick="OrderEntry.printLabelsNow()">
+                        <i class="fas fa-print me-2"></i>Print Labels
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="OrderEntry.hideLabels()">
+                        <i class="fas fa-times me-2"></i>Close Preview
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 </div>
+        </div>
+    </div>
 
-<!-- Add this script to handle the Medicare/Medicaid checkboxes -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Medicare/Medicaid checkboxes
-    document.getElementById('newPatientHasMedicare').addEventListener('change', function(e) {
-        document.getElementById('newPatientMedicareNumber').style.display = 
-            e.target.checked ? 'block' : 'none';
-    });
+    <!-- New Patient Modal - COMPLETE -->
+    <div class="modal fade" id="newPatientModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Patient</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="newPatientForm" class="needs-validation" novalidate>
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs mb-3" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#patientPersonalInfo">Personal Information</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#patientContactInfo">Contact & Address</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#patientInsuranceInfo">Insurance</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#patientBillingInfo">Billing</a>
+                            </li>
+                        </ul>
 
-    document.getElementById('newPatientHasMedicaid').addEventListener('change', function(e) {
-        document.getElementById('newPatientMedicaidNumber').style.display = 
-            e.target.checked ? 'block' : 'none';
-    });
-});
-</script>
-  <!-- End New Patient Modal -->
-<!-- Add this script to handle the Medicare/Medicaid checkboxes -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Medicare/Medicaid checkboxes
-    document.getElementById('newPatientHasMedicare').addEventListener('change', function(e) {
-        document.getElementById('newPatientMedicareNumber').style.display = 
-            e.target.checked ? 'block' : 'none';
-    });
-
-    document.getElementById('newPatientHasMedicaid').addEventListener('change', function(e) {
-        document.getElementById('newPatientMedicaidNumber').style.display = 
-            e.target.checked ? 'block' : 'none';
-    });
-});
-</script>
-    <!-- End New Patient Modal-->
-
-    <!-- New Office Modal -->
-     <div class="modal fade" id="newOfficeModal" tabindex="-1">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Create New Medical Office</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="newOfficeForm">
-                    <!-- Nav tabs -->
-                    <ul class="nav nav-tabs mb-3" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#officeBasicInfo">Basic Information</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#officeContactInfo">Contact Details</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#officeBusinessInfo">Business Information</a>
-                        </li>
-                    </ul>
-
-                    <!-- Tab content -->
-                    <div class="tab-content">
-                        <!-- Basic Information Tab -->
-                        <div class="tab-pane fade show active" id="officeBasicInfo">
-                            <div class="row mb-3">
-                                <div class="col-md-8">
-                                    <label class="form-label">Medical Office Name <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="newOfficeName" required>
+                        <!-- Tab content -->
+                        <div class="tab-content">
+                            <!-- Personal Information Tab -->
+                            <div class="tab-pane fade show active" id="patientPersonalInfo">
+                                <h6 class="mb-3 text-primary">Basic Information</h6>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-4">
+                                        <label class="form-label">First Name <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="newPatientFirstName" required>
+                                        <div class="invalid-feedback">First name is required</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Last Name <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="newPatientLastName" required>
+                                        <div class="invalid-feedback">Last name is required</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Date of Birth <span class="text-danger">*</span></label>
+                                        <input type="date" class="form-control" id="newPatientDob" required>
+                                        <div class="invalid-feedback">Date of birth is required</div>
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Office Code</label>
-                                    <input type="text" class="form-control" id="newOfficeCode" placeholder="Auto-generated">
+
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Gender <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="newPatientGender" required>
+                                            <option value="">Select Gender</option>
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                        <div class="invalid-feedback">Please select a gender</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Phone Number <span class="text-danger">*</span></label>
+                                        <input type="tel" class="form-control" id="newPatientPhone" required>
+                                        <div class="invalid-feedback">Phone number is required</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="newPatientEmail">
+                                    </div>
+                                </div>
+
+                                <!-- Emergency Contact -->
+                                <h6 class="mb-3 text-primary">Emergency Contact</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Contact Name</label>
+                                        <input type="text" class="form-control" id="newPatientEmergencyName">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Contact Phone</label>
+                                        <input type="tel" class="form-control" id="newPatientEmergencyPhone">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Relationship</label>
+                                        <input type="text" class="form-control" id="newPatientEmergencyRelationship" 
+                                               placeholder="e.g., Spouse, Parent, Sibling">
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Organization (Optional)</label>
-                                <select class="form-select" id="newOfficeOrganization">
-                                    <option value="">Independent Office</option>
-                                    <!-- Options will be loaded dynamically -->
-                                </select>
+                            <!-- Contact & Address Tab -->
+                            <div class="tab-pane fade" id="patientContactInfo">
+                                <h6 class="mb-3 text-primary">Residential Address</h6>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-12">
+                                        <label class="form-label">Street Address</label>
+                                        <input type="text" class="form-control" id="newPatientStreet">
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label class="form-label">City</label>
+                                        <input type="text" class="form-control" id="newPatientCity">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">State</label>
+                                        <input type="text" class="form-control" id="newPatientState">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">ZIP Code</label>
+                                        <input type="text" class="form-control" id="newPatientZipCode">
+                                    </div>
+                                </div>
                             </div>
 
-                            <!-- Address -->
-                            <h6 class="mb-3">Office Address</h6>
-                            <div class="row mb-3">
-                                <div class="col-md-8">
-                                    <label class="form-label">Street Address <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="newOfficeStreet" required>
+                            <!-- Insurance Tab -->
+                            <div class="tab-pane fade" id="patientInsuranceInfo">
+                                <!-- Primary Insurance -->
+                                <h6 class="mb-3 text-primary">Primary Insurance</h6>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Insurance Provider</label>
+                                        <input type="text" class="form-control" id="newPatientInsuranceProvider" 
+                                               placeholder="e.g., Blue Cross Blue Shield">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Plan Name</label>
+                                        <input type="text" class="form-control" id="newPatientInsurancePlanName">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Policy Number</label>
+                                        <input type="text" class="form-control" id="newPatientPolicyNumber">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Group Number</label>
+                                        <input type="text" class="form-control" id="newPatientGroupNumber">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Subscriber ID</label>
+                                        <input type="text" class="form-control" id="newPatientSubscriberId">
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Suite/Unit</label>
-                                    <input type="text" class="form-control" id="newOfficeSuite">
+
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Subscriber Name</label>
+                                        <input type="text" class="form-control" id="newPatientSubscriberName" 
+                                               placeholder="If different from patient">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Relationship to Subscriber</label>
+                                        <select class="form-select" id="newPatientSubscriberRelationship">
+                                            <option value="self">Self</option>
+                                            <option value="spouse">Spouse</option>
+                                            <option value="child">Child</option>
+                                            <option value="parent">Parent</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Effective Date</label>
+                                        <input type="date" class="form-control" id="newPatientInsuranceEffectiveDate">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Copay Amount</label>
+                                        <input type="number" class="form-control" id="newPatientInsuranceCopay" 
+                                               min="0" step="0.01" placeholder="0.00">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Deductible</label>
+                                        <input type="number" class="form-control" id="newPatientInsuranceDeductible" 
+                                               min="0" step="0.01" placeholder="0.00">
+                                    </div>
+                                </div>
+
+                                <!-- Medicare/Medicaid -->
+                                <h6 class="mb-3 text-primary">Medicare/Medicaid</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="newPatientHasMedicare">
+                                            <label class="form-check-label" for="newPatientHasMedicare">
+                                                Patient has Medicare
+                                            </label>
+                                        </div>
+                                        <input type="text" class="form-control mt-2" id="newPatientMedicareNumber" 
+                                               placeholder="Medicare Number" style="display:none;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="newPatientHasMedicaid">
+                                            <label class="form-check-label" for="newPatientHasMedicaid">
+                                                Patient has Medicaid
+                                            </label>
+                                        </div>
+                                        <input type="text" class="form-control mt-2" id="newPatientMedicaidNumber" 
+                                               placeholder="Medicaid Number" style="display:none;">
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="row mb-3">
-                                <div class="col-md-5">
-                                    <label class="form-label">City <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="newOfficeCity" required>
+                            <!-- Billing Tab -->
+                            <div class="tab-pane fade" id="patientBillingInfo">
+                                <h6 class="mb-3 text-primary">Billing Preferences</h6>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Preferred Payment Method</label>
+                                        <select class="form-select" id="newPatientPaymentMethod">
+                                            <option value="insurance">Insurance</option>
+                                            <option value="self-pay">Self Pay</option>
+                                            <option value="payment-plan">Payment Plan</option>
+                                            <option value="credit-card">Credit Card</option>
+                                            <option value="cash">Cash</option>
+                                            <option value="check">Check</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Billing Email</label>
+                                        <input type="email" class="form-control" id="newPatientBillingEmail" 
+                                               placeholder="For statements and invoices">
+                                    </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">State <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="newOfficeState" maxlength="2" required>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">ZIP Code <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="newOfficeZipCode" pattern="^\d{5}(-\d{4})?$" required>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="newPatientPaperlessBilling">
+                                            <label class="form-check-label" for="newPatientPaperlessBilling">
+                                                Paperless Billing (Email only)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="newPatientIsGuarantor">
+                                            <label class="form-check-label" for="newPatientIsGuarantor">
+                                                Patient is the guarantor
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Contact Details Tab -->
-                        <div class="tab-pane fade" id="officeContactInfo">
-                            <h6 class="mb-3">Phone Numbers</h6>
-                            <div class="row mb-3">
-                                <div class="col-md-4">
-                                    <label class="form-label">Main Phone <span class="text-danger">*</span></label>
-                                    <input type="tel" class="form-control" id="newOfficePhoneMain" required>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Billing Phone</label>
-                                    <input type="tel" class="form-control" id="newOfficePhoneBilling">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Fax</label>
-                                    <input type="tel" class="form-control" id="newOfficeFax">
-                                </div>
-                            </div>
-
-                            <h6 class="mb-3">Email Addresses</h6>
-                            <div class="row mb-3">
-                                <div class="col-md-4">
-                                    <label class="form-label">General Email <span class="text-danger">*</span></label>
-                                    <input type="email" class="form-control" id="newOfficeEmailGeneral" required>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Billing Email</label>
-                                    <input type="email" class="form-control" id="newOfficeEmailBilling">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Results Email</label>
-                                    <input type="email" class="form-control" id="newOfficeEmailResults">
-                                </div>
-                            </div>
-
-                            <h6 class="mb-3">Contact Person</h6>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Contact Name <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="newOfficeContactName" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Title</label>
-                                    <input type="text" class="form-control" id="newOfficeContactTitle">
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Contact Phone</label>
-                                    <input type="tel" class="form-control" id="newOfficeContactPhone">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Contact Email</label>
-                                    <input type="email" class="form-control" id="newOfficeContactEmail">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Business Information Tab -->
-                        <div class="tab-pane fade" id="officeBusinessInfo">
-                            <div class="row mb-3">
-                                <div class="col-md-4">
-                                    <label class="form-label">NPI Number</label>
-                                    <input type="text" class="form-control" id="newOfficeNpiNumber" pattern="^\d{10}$">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Tax ID</label>
-                                    <input type="text" class="form-control" id="newOfficeTaxId">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">License Number</label>
-                                    <input type="text" class="form-control" id="newOfficeLicenseNumber">
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Billing Type</label>
-                                    <select class="form-select" id="newOfficeBillingType">
-                                        <option value="both">Both (Direct & Insurance)</option>
-                                        <option value="direct">Direct Billing Only</option>
-                                        <option value="insurance">Insurance Only</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Payment Terms</label>
-                                    <select class="form-select" id="newOfficePaymentTerms">
-                                        <option value="net30">Net 30</option>
-                                        <option value="net60">Net 60</option>
-                                        <option value="net90">Net 90</option>
-                                        <option value="immediate">Immediate</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Special Instructions</label>
-                                <textarea class="form-control" id="newOfficeSpecialInstructions" rows="2"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="createOfficeBtn">Create Medical Office</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="createPatientBtn">
+                        <i class="fas fa-save me-2"></i>Create Patient
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-    <!-- End Office Modal -->
 
-    <!-- New Doctor Modal -->
-  <div class="modal fade" id="doctorModal" tabindex="-1">
-    <div class="modal-dialog modal-xl">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalTitle">Add Doctor</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form id="doctorForm">
-            <input type="hidden" id="doctorId">
-            
-            <!-- Nav tabs -->
-            <ul class="nav nav-tabs mb-3" role="tablist">
-              <li class="nav-item">
-                <a class="nav-link active" data-bs-toggle="tab" href="#personalInfo">Personal Information</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#professionalInfo">Professional Details</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#contactDetails">Contact Information</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#officeAssociations">Office Associations</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#preferences">Preferences</a>
-              </li>
-            </ul>
-
-            <!-- Tab content -->
-            <div class="tab-content">
-              <!-- Personal Information Tab -->
-              <div class="tab-pane fade show active" id="personalInfo">
-                <div class="row mb-3">
-                  <div class="col-md-2">
-                    <label class="form-label">Title *</label>
-                    <select class="form-select" id="doctorTitle" required>
-                      <option value="MD">MD</option>
-                      <option value="DO">DO</option>
-                      <option value="DPM">DPM</option>
-                      <option value="DDS">DDS</option>
-                      <option value="DMD">DMD</option>
-                      <option value="PhD">PhD</option>
-                      <option value="PA">PA</option>
-                      <option value="NP">NP</option>
-                      <option value="RN">RN</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-                  <div class="col-md-3">
-                    <label class="form-label">First Name *</label>
-                    <input type="text" class="form-control" id="firstName" required>
-                  </div>
-                  <div class="col-md-2">
-                    <label class="form-label">Middle Name</label>
-                    <input type="text" class="form-control" id="middleName">
-                  </div>
-                  <div class="col-md-3">
-                    <label class="form-label">Last Name *</label>
-                    <input type="text" class="form-control" id="lastName" required>
-                  </div>
-                  <div class="col-md-2">
-                    <label class="form-label">Suffix</label>
-                    <input type="text" class="form-control" id="suffix" placeholder="Jr., III, etc.">
-                  </div>
+    <!-- New Office Modal - COMPLETE -->
+    <div class="modal fade" id="newOfficeModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Medical Office</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
+                <div class="modal-body">
+                    <form id="newOfficeForm">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs mb-3" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#officeBasicInfo">Basic Information</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#officeContactInfo">Contact Details</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#officeBusinessInfo">Business Information</a>
+                            </li>
+                        </ul>
 
-                <div class="row mb-3">
-                  <div class="col-md-6">
-                    <label class="form-label">Primary Specialty *</label>
-                    <input type="text" class="form-control" id="primarySpecialty" required placeholder="e.g., Internal Medicine, Cardiology">
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label">Secondary Specialties</label>
-                    <input type="text" class="form-control" id="secondarySpecialties" placeholder="Comma-separated list">
-                  </div>
-                </div>
+                        <!-- Tab content -->
+                        <div class="tab-content">
+                            <!-- Basic Information Tab -->
+                            <div class="tab-pane fade show active" id="officeBasicInfo">
+                                <div class="row mb-3">
+                                    <div class="col-md-8">
+                                        <label class="form-label">Medical Office Name <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="newOfficeName" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Office Code</label>
+                                        <input type="text" class="form-control" id="newOfficeCode" placeholder="Auto-generated">
+                                    </div>
+                                </div>
 
-                <div class="row mb-3">
-                  <div class="col-md-6">
-                    <label class="form-label">Status</label>
-                    <select class="form-select" id="doctorStatus">
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                      <option value="suspended">Suspended</option>
-                      <option value="pending_verification">Pending Verification</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Organization (Optional)</label>
+                                    <select class="form-select" id="newOfficeOrganization">
+                                        <option value="">Independent Office</option>
+                                        <!-- Options will be loaded dynamically -->
+                                    </select>
+                                </div>
 
-              <!-- Professional Details Tab -->
-              <div class="tab-pane fade" id="professionalInfo">
-                <div class="row mb-3">
-                  <div class="col-md-4">
-                    <label class="form-label">NPI Number *</label>
-                    <input type="text" class="form-control" id="npiNumber" pattern="^\d{10}$" required placeholder="10-digit NPI">
-                  </div>
-                  <div class="col-md-4">
-                    <label class="form-label">License Number</label>
-                    <input type="text" class="form-control" id="licenseNumber">
-                  </div>
-                  <div class="col-md-4">
-                    <label class="form-label">License State</label>
-                    <input type="text" class="form-control" id="licenseState" maxlength="2" placeholder="e.g., CA">
-                  </div>
-                </div>
+                                <!-- Address -->
+                                <h6 class="mb-3">Office Address</h6>
+                                <div class="row mb-3">
+                                    <div class="col-md-8">
+                                        <label class="form-label">Street Address <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="newOfficeStreet" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Suite/Unit</label>
+                                        <input type="text" class="form-control" id="newOfficeSuite">
+                                    </div>
+                                </div>
 
-                <div class="row mb-3">
-                  <div class="col-md-4">
-                    <label class="form-label">DEA Number</label>
-                    <input type="text" class="form-control" id="deaNumber">
-                  </div>
-                  <div class="col-md-4">
-                    <label class="form-label">Credentialing Date</label>
-                    <input type="date" class="form-control" id="credentialingDate">
-                  </div>
-                  <div class="col-md-4">
-                    <label class="form-label">Re-credentialing Date</label>
-                    <input type="date" class="form-control" id="recredentialingDate">
-                  </div>
-                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-5">
+                                        <label class="form-label">City <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="newOfficeCity" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">State <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="newOfficeState" maxlength="2" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">ZIP Code <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="newOfficeZipCode" pattern="^\d{5}(-\d{4})?$" required>
+                                    </div>
+                                </div>
+                            </div>
 
-                <div class="row mb-3">
-                  <div class="col-md-12">
-                    <label class="form-label">Notes</label>
-                    <textarea class="form-control" id="doctorNotes" rows="3"></textarea>
-                  </div>
-                </div>
-              </div>
+                            <!-- Contact Details Tab -->
+                            <div class="tab-pane fade" id="officeContactInfo">
+                                <h6 class="mb-3">Phone Numbers</h6>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Main Phone <span class="text-danger">*</span></label>
+                                        <input type="tel" class="form-control" id="newOfficePhoneMain" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Billing Phone</label>
+                                        <input type="tel" class="form-control" id="newOfficePhoneBilling">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Fax</label>
+                                        <input type="tel" class="form-control" id="newOfficeFax">
+                                    </div>
+                                </div>
 
-              <!-- Contact Information Tab -->
-              <div class="tab-pane fade" id="contactDetails">
-                <h6 class="mb-3">Phone Numbers</h6>
-                <div class="row mb-3">
-                  <div class="col-md-4">
-                    <label class="form-label">Office Phone *</label>
-                    <input type="tel" class="form-control" id="phoneOffice" required>
-                  </div>
-                  <div class="col-md-4">
-                    <label class="form-label">Mobile Phone</label>
-                    <input type="tel" class="form-control" id="phoneMobile">
-                  </div>
-                  <div class="col-md-4">
-                    <label class="form-label">Emergency Phone</label>
-                    <input type="tel" class="form-control" id="phoneEmergency">
-                  </div>
-                </div>
+                                <h6 class="mb-3">Email Addresses</h6>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">General Email <span class="text-danger">*</span></label>
+                                        <input type="email" class="form-control" id="newOfficeEmailGeneral" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Billing Email</label>
+                                        <input type="email" class="form-control" id="newOfficeEmailBilling">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Results Email</label>
+                                        <input type="email" class="form-control" id="newOfficeEmailResults">
+                                    </div>
+                                </div>
 
-                <div class="row mb-3">
-                  <div class="col-md-6">
-                    <label class="form-label">Fax</label>
-                    <input type="tel" class="form-control" id="doctorFax">
-                  </div>
-                </div>
+                                <h6 class="mb-3">Contact Person</h6>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Contact Name <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="newOfficeContactName" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Title</label>
+                                        <input type="text" class="form-control" id="newOfficeContactTitle">
+                                    </div>
+                                </div>
 
-                <h6 class="mb-3">Email Addresses</h6>
-                <div class="row mb-3">
-                  <div class="col-md-6">
-                    <label class="form-label">Primary Email *</label>
-                    <input type="email" class="form-control" id="emailPrimary" required>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label">Secondary Email</label>
-                    <input type="email" class="form-control" id="emailSecondary">
-                  </div>
-                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Contact Phone</label>
+                                        <input type="tel" class="form-control" id="newOfficeContactPhone">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Contact Email</label>
+                                        <input type="email" class="form-control" id="newOfficeContactEmail">
+                                    </div>
+                                </div>
+                            </div>
 
-                <h6 class="mb-3">Preferred Contact Time</h6>
-                <div class="row mb-3">
-                  <div class="col-md-6">
-                    <label class="form-label">Start Time</label>
-                    <input type="time" class="form-control" id="contactTimeStart">
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label">End Time</label>
-                    <input type="time" class="form-control" id="contactTimeEnd">
-                  </div>
-                </div>
-              </div>
+                            <!-- Business Information Tab -->
+                            <div class="tab-pane fade" id="officeBusinessInfo">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">NPI Number</label>
+                                        <input type="text" class="form-control" id="newOfficeNpiNumber" pattern="^\d{10}$">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Tax ID</label>
+                                        <input type="text" class="form-control" id="newOfficeTaxId">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">License Number</label>
+                                        <input type="text" class="form-control" id="newOfficeLicenseNumber">
+                                    </div>
+                                </div>
 
-              <!-- Office Associations Tab -->
-              <div class="tab-pane fade" id="officeAssociations">
-                <div class="mb-3">
-                  <label class="form-label">Associated Medical Offices</label>
-                  <select class="form-select" id="medicalOffices" multiple size="8">
-                    <!-- Options will be loaded dynamically -->
-                  </select>
-                  <small class="text-muted">Hold Ctrl/Cmd to select multiple offices</small>
-                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Billing Type</label>
+                                        <select class="form-select" id="newOfficeBillingType">
+                                            <option value="both">Both (Direct & Insurance)</option>
+                                            <option value="direct">Direct Billing Only</option>
+                                            <option value="insurance">Insurance Only</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Payment Terms</label>
+                                        <select class="form-select" id="newOfficePaymentTerms">
+                                            <option value="net30">Net 30</option>
+                                            <option value="net60">Net 60</option>
+                                            <option value="net90">Net 90</option>
+                                            <option value="immediate">Immediate</option>
+                                        </select>
+                                    </div>
+                                </div>
 
-                <div class="mb-3">
-                  <label class="form-label">Primary Office</label>
-                  <select class="form-select" id="primaryOffice">
-                    <option value="">Select Primary Office</option>
-                    <!-- Options will be loaded based on selected offices -->
-                  </select>
+                                <div class="mb-3">
+                                    <label class="form-label">Special Instructions</label>
+                                    <textarea class="form-control" id="newOfficeSpecialInstructions" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-
-                <div class="mb-3">
-                  <label class="form-label">Special Instructions</label>
-                  <textarea class="form-control" id="specialInstructions" rows="3" placeholder="Any special instructions for orders from this doctor"></textarea>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="createOfficeBtn">Create Medical Office</button>
                 </div>
-              </div>
-
-              <!-- Preferences Tab -->
-              <div class="tab-pane fade" id="preferences">
-                <h6 class="mb-3">Result Notification Preferences</h6>
-                <div class="row mb-3">
-                  <div class="col-md-4">
-                    <label class="form-label">Critical Results</label>
-                    <select class="form-select" id="criticalNotification">
-                      <option value="phone">Phone</option>
-                      <option value="email">Email</option>
-                      <option value="both">Both</option>
-                      <option value="none">None</option>
-                    </select>
-                  </div>
-                  <div class="col-md-4">
-                    <label class="form-label">Abnormal Results</label>
-                    <select class="form-select" id="abnormalNotification">
-                      <option value="phone">Phone</option>
-                      <option value="email">Email</option>
-                      <option value="both">Both</option>
-                      <option value="none">None</option>
-                    </select>
-                  </div>
-                  <div class="col-md-4">
-                    <label class="form-label">Normal Results</label>
-                    <select class="form-select" id="normalNotification">
-                      <option value="email">Email</option>
-                      <option value="none">None</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-check mb-3">
-                  <input type="checkbox" class="form-check-input" id="signatureOnFile">
-                  <label class="form-check-label" for="signatureOnFile">
-                    Signature on File
-                  </label>
-                </div>
-              </div>
             </div>
-          </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary" onclick="saveDoctor()">Save Doctor</button>
-        </div>
-      </div>
     </div>
-  </div>
-    <!-- End New Doctor Modal -->
 
-    
+    <!-- New Doctor Modal - COMPLETE -->
+    <div class="modal fade" id="doctorModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Add Doctor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="doctorForm">
+                        <input type="hidden" id="doctorId">
+                        
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs mb-3" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#personalInfo">Personal Information</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#professionalInfo">Professional Details</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#contactDetails">Contact Information</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#officeAssociations">Office Associations</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#preferences">Preferences</a>
+                            </li>
+                        </ul>
+
+                        <!-- Tab content -->
+                        <div class="tab-content">
+                            <!-- Personal Information Tab -->
+                            <div class="tab-pane fade show active" id="personalInfo">
+                                <div class="row mb-3">
+                                    <div class="col-md-2">
+                                        <label class="form-label">Title *</label>
+                                        <select class="form-select" id="doctorTitle" required>
+                                            <option value="MD">MD</option>
+                                            <option value="DO">DO</option>
+                                            <option value="DPM">DPM</option>
+                                            <option value="DDS">DDS</option>
+                                            <option value="DMD">DMD</option>
+                                            <option value="PhD">PhD</option>
+                                            <option value="PA">PA</option>
+                                            <option value="NP">NP</option>
+                                            <option value="RN">RN</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">First Name *</label>
+                                        <input type="text" class="form-control" id="firstName" required>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Middle Name</label>
+                                        <input type="text" class="form-control" id="middleName">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Last Name *</label>
+                                        <input type="text" class="form-control" id="lastName" required>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Suffix</label>
+                                        <input type="text" class="form-control" id="suffix" placeholder="Jr., III, etc.">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Primary Specialty *</label>
+                                        <input type="text" class="form-control" id="primarySpecialty" required placeholder="e.g., Internal Medicine, Cardiology">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Secondary Specialties</label>
+                                        <input type="text" class="form-control" id="secondarySpecialties" placeholder="Comma-separated list">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Status</label>
+                                        <select class="form-select" id="doctorStatus">
+                                            <option value="active">Active</option>
+                                            <option value="inactive">Inactive</option>
+                                            <option value="suspended">Suspended</option>
+                                            <option value="pending_verification">Pending Verification</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Professional Details Tab -->
+                            <div class="tab-pane fade" id="professionalInfo">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">NPI Number *</label>
+                                        <input type="text" class="form-control" id="npiNumber" pattern="^\d{10}$" required placeholder="10-digit NPI">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">License Number</label>
+                                        <input type="text" class="form-control" id="licenseNumber">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">License State</label>
+                                        <input type="text" class="form-control" id="licenseState" maxlength="2" placeholder="e.g., CA">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">DEA Number</label>
+                                        <input type="text" class="form-control" id="deaNumber">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Credentialing Date</label>
+                                        <input type="date" class="form-control" id="credentialingDate">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Re-credentialing Date</label>
+                                        <input type="date" class="form-control" id="recredentialingDate">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <label class="form-label">Notes</label>
+                                        <textarea class="form-control" id="doctorNotes" rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contact Information Tab -->
+                            <div class="tab-pane fade" id="contactDetails">
+                                <h6 class="mb-3">Phone Numbers</h6>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Office Phone *</label>
+                                        <input type="tel" class="form-control" id="phoneOffice" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Mobile Phone</label>
+                                        <input type="tel" class="form-control" id="phoneMobile">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Emergency Phone</label>
+                                        <input type="tel" class="form-control" id="phoneEmergency">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Fax</label>
+                                        <input type="tel" class="form-control" id="doctorFax">
+                                    </div>
+                                </div>
+
+                                <h6 class="mb-3">Email Addresses</h6>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Primary Email *</label>
+                                        <input type="email" class="form-control" id="emailPrimary" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Secondary Email</label>
+                                        <input type="email" class="form-control" id="emailSecondary">
+                                    </div>
+                                </div>
+
+                                <h6 class="mb-3">Preferred Contact Time</h6>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Start Time</label>
+                                        <input type="time" class="form-control" id="contactTimeStart">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">End Time</label>
+                                        <input type="time" class="form-control" id="contactTimeEnd">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Office Associations Tab -->
+                            <div class="tab-pane fade" id="officeAssociations">
+                                <div class="mb-3">
+                                    <label class="form-label">Associated Medical Offices</label>
+                                    <select class="form-select" id="medicalOffices" multiple size="8">
+                                        <!-- Options will be loaded dynamically -->
+                                    </select>
+                                    <small class="text-muted">Hold Ctrl/Cmd to select multiple offices</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Primary Office</label>
+                                    <select class="form-select" id="primaryOffice">
+                                        <option value="">Select Primary Office</option>
+                                        <!-- Options will be loaded based on selected offices -->
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Special Instructions</label>
+                                    <textarea class="form-control" id="specialInstructions" rows="3" placeholder="Any special instructions for orders from this doctor"></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Preferences Tab -->
+                            <div class="tab-pane fade" id="preferences">
+                                <h6 class="mb-3">Result Notification Preferences</h6>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Critical Results</label>
+                                        <select class="form-select" id="criticalNotification">
+                                            <option value="phone">Phone</option>
+                                            <option value="email">Email</option>
+                                            <option value="both">Both</option>
+                                            <option value="none">None</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Abnormal Results</label>
+                                        <select class="form-select" id="abnormalNotification">
+                                            <option value="phone">Phone</option>
+                                            <option value="email">Email</option>
+                                            <option value="both">Both</option>
+                                            <option value="none">None</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Normal Results</label>
+                                        <select class="form-select" id="normalNotification">
+                                            <option value="email">Email</option>
+                                            <option value="none">None</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input type="checkbox" class="form-check-input" id="signatureOnFile">
+                                    <label class="form-check-label" for="signatureOnFile">
+                                        Signature on File
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveDoctor()">Save Doctor</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts in correct order -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -1176,15 +1236,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     <!-- Auth check and setup -->
     <script>
-      // Check authentication using AuthManager
-      if (!AuthManager.isAuthenticated()) {
-        window.location.href = '/login';
-      } else {
-        // Set up jQuery AJAX defaults with auth headers
-        $.ajaxSetup({
-          headers: AuthManager.getAuthHeaders()
-        });
-      }
+        // Check authentication using AuthManager
+        if (!AuthManager.isAuthenticated()) {
+            window.location.href = '/login';
+        } else {
+            // Set up jQuery AJAX defaults with auth headers
+            $.ajaxSetup({
+                headers: AuthManager.getAuthHeaders()
+            });
+        }
     </script>
 
     <!-- Load navbar after auth is confirmed -->
@@ -1192,5 +1252,36 @@ document.addEventListener('DOMContentLoaded', function() {
     
     <!-- Load the order entry script last -->
     <script src="/js/order-entry.js"></script>
+
+    <!-- Medicare/Medicaid checkbox handlers and footer loading -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Medicare/Medicaid checkboxes
+            document.getElementById('newPatientHasMedicare').addEventListener('change', function(e) {
+                document.getElementById('newPatientMedicareNumber').style.display = 
+                    e.target.checked ? 'block' : 'none';
+            });
+
+            document.getElementById('newPatientHasMedicaid').addEventListener('change', function(e) {
+                document.getElementById('newPatientMedicaidNumber').style.display = 
+                    e.target.checked ? 'block' : 'none';
+            });
+
+            // Load footer
+            $('#footer-container').load('/components/footer.html', function(response, status, xhr) {
+                if (status == "error") {
+                    console.error("Footer failed to load:", xhr.status, xhr.statusText);
+                    if (xhr.status === 404) {
+                        console.error("Footer not found at /components/footer.html");
+                    }
+                } else {
+                    console.log("Footer loaded successfully");
+                }
+            });
+        });
+    </script>
+
+    <!-- Footer container -->
+    <div id="footer-container"></div>
 </body>
 </html>

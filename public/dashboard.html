@@ -9,63 +9,23 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   
-  <!-- Custom CSS -->
+  <!-- Main CSS FIRST -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/theme-colors.css">
+  
+  <!-- Component CSS AFTER main.css -->
+  <link rel="stylesheet" href="/css/unified-search.css">
+  <link rel="stylesheet" href="/css/unified-footer.css">
+  
+  <!-- Page-specific styles for dashboard (only unique elements) -->
   <style>
-    /* Quick custom styles for dashboard */
-    .main-content {
-      padding: 20px;
-      min-height: calc(100vh - 64px);
-    }
-    .welcome-section {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 2rem;
-      border-radius: 15px;
-      margin-bottom: 2rem;
-    }
-    .welcome-title {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-    }
-    .welcome-subtitle {
-      opacity: 0.9;
-    }
-    .stat-card {
-      border-radius: 10px;
-      border: none;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      transition: transform 0.3s;
-    }
-    .stat-card:hover {
-      transform: translateY(-5px);
-    }
-    .stat-card-primary { background: linear-gradient(135deg, #667eea, #764ba2); }
-    .stat-card-success { background: linear-gradient(135deg, #48bb78, #38a169); }
-    .stat-card-info { background: linear-gradient(135deg, #4299e1, #3182ce); }
-    .stat-card-warning { background: linear-gradient(135deg, #ed8936, #dd6b20); }
-    .stat-card-body {
-      padding: 1.5rem;
-      color: white;
-    }
-    .stat-title {
-      font-size: 0.875rem;
-      text-transform: uppercase;
-      opacity: 0.9;
-      margin-bottom: 0.5rem;
-    }
-    .stat-number {
-      font-size: 2rem;
-      font-weight: bold;
-    }
-    .stat-icon {
-      font-size: 2rem;
-      opacity: 0.3;
-    }
+    /* Quick Actions Grid */
     .quick-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
     }
+    
     .quick-action-btn {
       padding: 1rem;
       text-align: center;
@@ -75,16 +35,20 @@
       color: #4a5568;
       transition: all 0.3s;
     }
+    
     .quick-action-btn:hover {
       background: #f7fafc;
       border-color: #667eea;
       color: #667eea;
     }
+    
     .quick-action-btn i {
       display: block;
       font-size: 1.5rem;
       margin-bottom: 0.5rem;
     }
+    
+    /* System Status Items */
     .status-item {
       display: flex;
       align-items: center;
@@ -92,44 +56,20 @@
       border-bottom: 1px solid #e2e8f0;
       gap: 0.75rem;
     }
+    
     .status-item:last-child {
       border-bottom: none;
     }
+    
     .status-indicator {
       width: 10px;
       height: 10px;
       border-radius: 50%;
     }
+    
     .status-online { background: #48bb78; }
     .status-warning { background: #ed8936; }
     .status-offline { background: #fc8181; }
-    .order-quick-card {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-      border-radius: 10px;
-      padding: 1.5rem;
-      text-align: center;
-      transition: transform 0.3s;
-      cursor: pointer;
-      text-decoration: none;
-    }
-    .order-quick-card:hover {
-      transform: translateY(-5px);
-      color: white;
-    }
-    .order-quick-card i {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      opacity: 0.9;
-    }
-    .order-quick-card h5 {
-      margin-bottom: 0.5rem;
-    }
-    .order-quick-card p {
-      margin: 0;
-      opacity: 0.9;
-      font-size: 0.9rem;
-    }
   </style>
 </head>
 <body>
@@ -137,93 +77,71 @@
 
   <!-- Main Content -->
   <div class="container-fluid main-content">
-    <!-- Welcome Section -->
-    <div class="row">
-      <div class="col-12">
-        <div class="welcome-section">
-          <h1 class="welcome-title">Welcome back, <span id="welcomeUserName">User</span>!</h1>
-          
-        </div>
-      </div>
+    
+    <!-- Page Header with unified style -->
+    <div class="page-header">
+      <h1 class="page-title">Welcome back, <span id="welcomeUserName">User</span>!</h1>
+      <p class="page-subtitle">Here's your laboratory overview for today</p>
     </div>
 
-    <!-- Statistics Cards -->
+    <!-- Statistics Cards - matching orders.html style -->
     <div class="row mb-4">
-      <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stat-card stat-card-primary">
-          <div class="stat-card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <div class="stat-title">Total Patients</div>
-                <div class="stat-number" id="totalPatients">-</div>
-              </div>
-              <i class="fas fa-users stat-icon"></i>
-            </div>
-          </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-value text-primary" id="totalPatients">-</div>
+          <div class="stat-label">Total Patients</div>
         </div>
       </div>
-
-      <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stat-card stat-card-success">
-          <div class="stat-card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <div class="stat-title">Pending Orders</div>
-                <div class="stat-number" id="pendingOrders">-</div>
-              </div>
-              <i class="fas fa-clipboard-list stat-icon"></i>
-            </div>
-          </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-value text-warning" id="pendingOrders">-</div>
+          <div class="stat-label">Pending Orders</div>
         </div>
       </div>
-
-      <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stat-card stat-card-info">
-          <div class="stat-card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <div class="stat-title">Completed Tests</div>
-                <div class="stat-number" id="completedTests">-</div>
-              </div>
-              <i class="fas fa-vial stat-icon"></i>
-            </div>
-          </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-value text-info" id="completedTests">-</div>
+          <div class="stat-label">Completed Tests</div>
         </div>
       </div>
-
-      <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stat-card stat-card-warning">
-          <div class="stat-card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <div class="stat-title">Critical Results</div>
-                <div class="stat-number" id="criticalResults">-</div>
-              </div>
-              <i class="fas fa-exclamation-triangle stat-icon"></i>
-            </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-value text-danger" id="criticalResults">-</div>
+          <div class="stat-label">Critical Results</div>
+        </div>
+      </div>
+    </div>
+    <!-- Alerts and Notifications -->
+    <div class="section-header">
+      <i class="fas fa-bell"></i> Alerts & Notifications
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div id="alertsContainer">
+          <div class="alert alert-info d-flex align-items-center">
+            <i class="fas fa-info-circle me-2"></i>
+            Welcome to the Laboratory Information System! All systems are operational.
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Lab Operations Row -->
-
-
-    <!-- Charts and Recent Activity -->
+    <!-- Recent Orders Section -->
     <div class="row">
-      <!-- Recent Orders -->
       <div class="col-lg-8 mb-4">
-        <div class="card shadow-sm">
-          <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>Recent Orders</h5>
-            <div>
-              <a href="/orders/new" class="btn btn-sm btn-success me-2">
-                <i class="fas fa-plus"></i> New Order
-              </a>
-              <a href="/orders" class="btn btn-sm btn-outline-primary">View All</a>
-            </div>
-          </div>
+        <div class="section-header">
+          <i class="fas fa-clipboard-list"></i> Recent Orders
+        </div>
+        <div class="card">
           <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h6 class="mb-0">Latest Lab Orders</h6>
+              <div>
+                <a href="/orders/new" class="btn btn-sm btn-success me-2">
+                  <i class="fas fa-plus"></i> New Order
+                </a>
+                <a href="/orders" class="btn btn-sm btn-outline-primary">View All</a>
+              </div>
+            </div>
             <div class="table-responsive">
               <table class="table table-hover" id="recentOrdersTable">
                 <thead>
@@ -253,10 +171,10 @@
       <!-- Quick Actions & System Status -->
       <div class="col-lg-4 mb-4">
         <!-- Quick Actions -->
-        <div class="card shadow-sm mb-4">
-          <div class="card-header bg-white">
-            <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
-          </div>
+        <div class="section-header">
+          <i class="fas fa-bolt"></i> Quick Actions
+        </div>
+        <div class="card mb-4">
           <div class="card-body">
             <div class="quick-actions">
               <a href="/orders/new" class="quick-action-btn" data-role="admin,doctor,receptionist,lab_technician">
@@ -280,10 +198,10 @@
         </div>
 
         <!-- System Status -->
-        <div class="card shadow-sm">
-          <div class="card-header bg-white">
-            <h5 class="mb-0"><i class="fas fa-server me-2"></i>System Status</h5>
-          </div>
+        <div class="section-header">
+          <i class="fas fa-server"></i> System Status
+        </div>
+        <div class="card">
           <div class="card-body">
             <div class="system-status">
               <div class="status-item">
@@ -292,9 +210,9 @@
                 <small class="text-success">Online</small>
               </div>
               <div class="status-item">
-                <div class="status-indicator status-online"></div>
+                <div class="status-indicator status-offline"></div>
                 <span class="flex-grow-1">Lab Equipment</span>
-                <small class="text-success">Operational</small>
+                <small class="text-danger">NOT CONNECTED</small>
               </div>
               <div class="status-item">
                 <div class="status-indicator status-warning"></div>
@@ -307,32 +225,25 @@
       </div>
     </div>
 
-    <!-- Alerts and Notifications -->
-    <div class="row">
-      <div class="col-12">
-        <div class="card shadow-sm">
-          <div class="card-header bg-white">
-            <h5 class="mb-0"><i class="fas fa-bell me-2"></i>Alerts & Notifications</h5>
-          </div>
-          <div class="card-body">
-            <div id="alertsContainer">
-              <div class="alert alert-info d-flex align-items-center">
-                <i class="fas fa-info-circle me-2"></i>
-                Welcome to the Laboratory Information System! All systems are operational.
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+
   </div>
 
- <!-- At the bottom of dashboard.html -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Footer container -->
+  <div id="footer-container"></div>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <script src="/js/auth.js"></script>
   <script src="/js/navbar-loader.js"></script>
+  
+  <!-- Load Footer -->
+  <script>
+    $(document).ready(function() {
+      $('#footer-container').load('/components/footer.html');
+    });
+  </script>
   
   <!-- Page-specific script -->
   <script>
@@ -392,12 +303,13 @@
       },
 
       async loadDashboardData() {
-        await Promise.all([
-          this.loadStatistics(),
-          this.loadRecentOrders(),
-          this.loadAlerts()
-        ]);
-      },
+  await Promise.all([
+    this.loadStatistics(),
+    this.loadRecentOrders(),
+    this.loadAlerts(),
+    this.loadSystemStatus() // Add this line
+  ]);
+},
 
       async loadStatistics() {
         try {
@@ -529,6 +441,75 @@
           console.error('Failed to load alerts:', error);
         }
       },
+// ADD THESE NEW METHODS HERE:
+async loadSystemStatus() {
+  try {
+    const response = await fetch('/api/system/status', {
+      headers: AuthManager.getAuthHeaders()
+    });
+    
+    if (response.ok) {
+      const status = await response.json();
+      this.updateSystemStatus(status);
+    }
+  } catch (error) {
+    console.error('Failed to load system status:', error);
+    this.updateSystemStatus({
+      database: 'error',
+      labelPrinter: 'unknown',
+      labEquipment: 'unknown'
+    });
+  }
+},
+
+updateSystemStatus(status) {
+  const statusContainer = document.querySelector('.system-status');
+  if (!statusContainer) return;
+  
+  const getStatusInfo = (statusValue) => {
+    const statusMap = {
+      'online': { class: 'status-online', text: 'Online', color: 'text-success' },
+      'ready': { class: 'status-online', text: 'Ready', color: 'text-success' },
+      'offline': { class: 'status-offline', text: 'Offline', color: 'text-danger' },
+      'error': { class: 'status-offline', text: 'Error', color: 'text-danger' },
+      'not_connected': { class: 'status-offline', text: 'Not Connected', color: 'text-danger' },
+      'warning': { class: 'status-warning', text: 'Warning', color: 'text-warning' },
+      'connecting': { class: 'status-warning', text: 'Connecting...', color: 'text-warning' },
+      'unknown': { class: 'status-warning', text: 'Unknown', color: 'text-muted' }
+    };
+    
+    return statusMap[statusValue] || statusMap['unknown'];
+  };
+  
+  const dbStatus = getStatusInfo(status.database);
+  const printerStatus = getStatusInfo(status.labelPrinter);
+  const equipmentStatus = getStatusInfo(status.labEquipment);
+  
+  statusContainer.innerHTML = `
+    <div class="status-item">
+      <div class="status-indicator ${dbStatus.class}"></div>
+      <span class="flex-grow-1">Database Connection</span>
+      <small class="${dbStatus.color}">${dbStatus.text}</small>
+    </div>
+    <div class="status-item">
+      <div class="status-indicator ${equipmentStatus.class}"></div>
+      <span class="flex-grow-1">Lab Equipment</span>
+      <small class="${equipmentStatus.color}">${equipmentStatus.text}</small>
+    </div>
+    <div class="status-item">
+      <div class="status-indicator ${printerStatus.class}"></div>
+      <span class="flex-grow-1">Label Printer</span>
+      <small class="${printerStatus.color}">${printerStatus.text}</small>
+    </div>
+  `;
+},
+
+
+
+
+
+
+
 
       displayAlerts(alerts) {
         const container = document.getElementById('alertsContainer');
@@ -579,18 +560,20 @@
         });
       },
 
-      setupEventHandlers() {
-        // Refresh data every 5 minutes
-        setInterval(() => this.loadDashboardData(), 5 * 60 * 1000);
+ setupEventHandlers() {
+  // Refresh data every 5 minutes
+  setInterval(() => this.loadDashboardData(), 5 * 60 * 1000);
+  
+  // Refresh system status every 30 seconds
+  setInterval(() => this.loadSystemStatus(), 30 * 1000);
 
-        // Listen for lab settings updates
-        window.addEventListener('labSettingsUpdated', () => {
-          this.updateWelcomeMessage();
-          this.ensureNavbarUpdate();
-        });
-      }
-    };
-
+  // Listen for lab settings updates
+  window.addEventListener('labSettingsUpdated', () => {
+    this.updateWelcomeMessage();
+    this.ensureNavbarUpdate();
+  });
+}
+}; 
     // Initialize when DOM is ready
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => DashboardManager.init());

@@ -6,128 +6,129 @@
   <title>Organizations - Laboratory Information System</title>
   
   <!-- Bootstrap 5 CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
+  <!-- Main CSS FIRST -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/theme-colors.css">
+  
+  <!-- Component CSS AFTER main.css -->
+  <link rel="stylesheet" href="/css/unified-search.css">
+  <link rel="stylesheet" href="/css/unified-footer.css">
+  
+  <!-- Page-specific styles (only unique elements) -->
   <style>
-    body { padding-top: 70px; }
-    .main-content { padding: 20px; }
-    .card { margin-bottom: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    .table-actions { white-space: nowrap; }
-    .status-badge { padding: 5px 10px; border-radius: 15px; font-size: 0.85em; }
-    .status-active { background-color: #d4edda; color: #155724; }
-    .status-inactive { background-color: #f8d7da; color: #721c24; }
-    .status-suspended { background-color: #fff3cd; color: #856404; }
-    .search-controls { display: flex; gap: 10px; margin-bottom: 20px; }
-    .organization-details { padding: 15px; background: #f8f9fa; border-radius: 5px; }
-    .contact-info { margin-top: 10px; }
-    .office-count { background: #e7f3ff; padding: 5px 10px; border-radius: 15px; font-size: 0.9em; }
+    /* Organization-specific styles */
+    .office-count {
+      background: #e7f3ff;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 0.9em;
+    }
+    
+    .organization-details {
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 5px;
+    }
+    
+    .contact-info {
+      margin-top: 10px;
+    }
   </style>
-  
-  <!-- jQuery (load first) -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
   <!-- Navbar will be loaded here -->
   <div id="navbar-placeholder"></div>
 
   <div class="container-fluid main-content">
-    <!-- Page Header -->
-    <div class="row mb-4">
-      <div class="col-md-12">
-        <h2><i class="fas fa-building me-2"></i>Organizations</h2>
-        <p class="text-muted">Manage healthcare organizations and their associated medical offices</p>
-      </div>
-    </div>
-
-    <!-- Statistics Cards -->
-    <div class="row mb-4">
-      <div class="col-md-3">
-        <div class="card bg-primary text-white">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <h6 class="mb-0">Total Organizations</h6>
-                <h3 class="mb-0" id="totalOrganizations">0</h3>
-              </div>
-              <i class="fas fa-building fa-2x opacity-50"></i>
-            </div>
-          </div>
+    <!-- Page Header with unified style -->
+    <div class="page-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="page-title"><i class="fas fa-building me-2"></i>Organizations</h1>
+          <p class="page-subtitle">Manage healthcare organizations and their associated medical offices</p>
         </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card bg-success text-white">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <h6 class="mb-0">Active</h6>
-                <h3 class="mb-0" id="activeOrganizations">0</h3>
-              </div>
-              <i class="fas fa-check-circle fa-2x opacity-50"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card bg-info text-white">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <h6 class="mb-0">Total Offices</h6>
-                <h3 class="mb-0" id="totalOffices">0</h3>
-              </div>
-              <i class="fas fa-hospital fa-2x opacity-50"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card bg-warning text-white">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <h6 class="mb-0">Total Doctors</h6>
-                <h3 class="mb-0" id="totalDoctors">0</h3>
-              </div>
-              <i class="fas fa-user-md fa-2x opacity-50"></i>
-            </div>
-          </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-light" onclick="showAddOrganizationModal()">
+            <i class="fas fa-plus"></i> Add Organization
+          </button>
+          <button class="btn btn-outline-light" onclick="exportOrganizations()">
+            <i class="fas fa-download"></i> Export
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Search and Add Controls -->
-    <div class="card">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-md-8">
-            <div class="search-controls">
-              <input type="text" id="searchInput" class="form-control" placeholder="Search by name, code, or contact...">
-              <select id="statusFilter" class="form-select" style="width: 200px;">
-                <option value="">All Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-                <option value="suspended">Suspended</option>
-              </select>
-              <button class="btn btn-primary" onclick="searchOrganizations()">
-                <i class="fas fa-search"></i> Search
-              </button>
-            </div>
-          </div>
-          <div class="col-md-4 text-end">
-            <button class="btn btn-success" onclick="showAddOrganizationModal()">
-              <i class="fas fa-plus"></i> Add Organization
-            </button>
-            <button class="btn btn-outline-secondary" onclick="exportOrganizations()">
-              <i class="fas fa-download"></i> Export
+    <!-- Statistics Cards - matching orders.html style -->
+    <div class="row mb-4">
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-value text-primary" id="totalOrganizations">0</div>
+          <div class="stat-label">Total Organizations</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-value text-success" id="activeOrganizations">0</div>
+          <div class="stat-label">Active</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-value text-info" id="totalOffices">0</div>
+          <div class="stat-label">Total Offices</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-value text-warning" id="totalDoctors">0</div>
+          <div class="stat-label">Total Doctors</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search and Filters Section -->
+    <div class="section-header">
+      <i class="fas fa-filter"></i> Search & Filters
+    </div>
+    <div class="card unified-search-card">
+      <div class="unified-search-filters">
+        <div class="search-group search-main">
+          <label for="searchInput">Search</label>
+          <div class="search-input-wrapper">
+            <input type="text" id="searchInput" class="form-control" 
+                   placeholder="Search by name, code, or contact...">
+            <button class="search-icon" type="button" onclick="searchOrganizations()">
+              <i class="fas fa-search"></i>
             </button>
           </div>
         </div>
+        <div class="search-group">
+          <label for="statusFilter">Status</label>
+          <select id="statusFilter" class="form-select">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="suspended">Suspended</option>
+          </select>
+        </div>
+        <div class="search-actions">
+          <button class="btn btn-primary btn-search-primary" onclick="searchOrganizations()">
+            <i class="fas fa-search me-1"></i>Search
+          </button>
+          <button class="btn btn-outline-secondary btn-search-secondary" onclick="resetFilters()">
+            <i class="fas fa-redo me-1"></i>Reset
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- Organizations List -->
+    <!-- Organizations List Section -->
+    <div class="section-header">
+      <i class="fas fa-list"></i> Organizations List
+    </div>
     <div class="card">
       <div class="card-body">
         <div class="table-responsive">
@@ -158,6 +159,9 @@
       </div>
     </div>
   </div>
+
+  <!-- Footer container -->
+  <div id="footer-container"></div>
 
   <!-- Add/Edit Organization Modal -->
   <div class="modal fade" id="organizationModal" tabindex="-1">
@@ -290,450 +294,484 @@
     </div>
   </div>
 
-  <!-- Bootstrap JS -->
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Replace everything from the first <script> tag to </body> with this: -->
+  <!-- Load auth.js first to set up AuthManager -->
+  <script src="/js/auth.js"></script>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Load auth.js first to set up AuthManager -->
-<script src="/js/auth.js"></script>
-
-<!-- Auth check and setup -->
-<script>
-  // Check authentication using AuthManager
-  if (!AuthManager.isAuthenticated()) {
-    window.location.href = '/login';
-  } else {
-    // Set up jQuery AJAX defaults with auth headers
-    $.ajaxSetup({
-      headers: AuthManager.getAuthHeaders()
-    });
-  }
-</script>
-
-<!-- Load navbar after auth is confirmed -->
-<script src="/js/navbar-loader.js"></script>
-
-<!-- Organizations Page Specific Functions -->
-<script>
-  // Variables for organizations page
-  let currentPage = 1;
-  const limit = 10;
-
-  // Initialize when ready
-  $(document).ready(function() {
-    loadOrganizations();
-    loadStatistics();
-  });
-
-// FOR ORGANIZATIONS.HTML - Replace the loadStatistics function with this:
-
-function loadStatistics() {
-  $.get('/api/organizations?limit=100')  // Changed from 1000 to 100
-    .done(function(response) {
-      const orgs = response.organizations || [];
-      $('#totalOrganizations').text(orgs.length);
-      $('#activeOrganizations').text(orgs.filter(o => o.status === 'active').length);
-      
-      let totalOfficeCount = 0;
-      orgs.forEach(org => {
-        totalOfficeCount += org.officeCount || 0;
+  <!-- Auth check and setup -->
+  <script>
+    // Check authentication using AuthManager
+    if (!AuthManager.isAuthenticated()) {
+      window.location.href = '/login';
+    } else {
+      // Set up jQuery AJAX defaults with auth headers
+      $.ajaxSetup({
+        headers: AuthManager.getAuthHeaders()
       });
-      $('#totalOffices').text(totalOfficeCount);
-      
-      // If we got 100 results, there might be more - get the actual total from pagination
-      if (response.pagination && response.pagination.total) {
-        $('#totalOrganizations').text(response.pagination.total);
-      }
-    })
-    .fail(function(xhr) {
-      console.error('Failed to load statistics:', xhr.status, xhr.responseText);
-      // Set default values on error
-      $('#totalOrganizations').text('0');
-      $('#activeOrganizations').text('0');
-      $('#totalOffices').text('0');
+    }
+  </script>
+
+  <!-- Load navbar after auth is confirmed -->
+  <script src="/js/navbar-loader.js"></script>
+
+  <!-- Load Footer -->
+  <script>
+    $(document).ready(function() {
+      $('#footer-container').load('/components/footer.html');
     });
-}
+  </script>
 
-  function loadOrganizations(page = 1) {
-    currentPage = page;
-    const search = $('#searchInput').val();
-    const status = $('#statusFilter').val();
-    
-    let url = `/api/organizations?page=${page}&limit=${limit}`;
-    if (search) url += `&search=${encodeURIComponent(search)}`;
-    if (status) url += `&status=${status}`;
+  <!-- Organizations Page Specific Functions -->
+  <script>
+    // Variables for organizations page
+    let currentPage = 1;
+    const limit = 10;
 
-    $.get(url)
-      .done(function(response) {
-        displayOrganizations(response.organizations || []);
-        displayPagination(response.pagination || {});
-      })
-      .fail(function(xhr) {
-        console.error('Failed to load organizations');
-        $('#organizationsTableBody').html('<tr><td colspan="7" class="text-center">Failed to load organizations</td></tr>');
-      });
-  }
-
-  function displayOrganizations(organizations) {
-    const tbody = $('#organizationsTableBody');
-    tbody.empty();
-
-    if (!organizations || organizations.length === 0) {
-      tbody.append(`
-        <tr>
-          <td colspan="7" class="text-center py-4">
-            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-            <p class="text-muted">No organizations found</p>
-          </td>
-        </tr>
-      `);
-      return;
-    }
-
-    organizations.forEach(org => {
-      const statusClass = `status-${org.status}`;
-      const row = `
-        <tr>
-          <td><strong>${org.code || ''}</strong></td>
-          <td>
-            <div>
-              <strong>${org.name || ''}</strong>
-              ${org.description ? `<br><small class="text-muted">${org.description}</small>` : ''}
-            </div>
-          </td>
-          <td>
-            <div>
-              ${org.primaryContact ? org.primaryContact.name : ''}
-              ${org.primaryContact && org.primaryContact.title ? `<br><small class="text-muted">${org.primaryContact.title}</small>` : ''}
-              ${org.primaryContact && org.primaryContact.phone ? `<br><small><i class="fas fa-phone"></i> ${org.primaryContact.phone}</small>` : ''}
-              ${org.primaryContact && org.primaryContact.email ? `<br><small><i class="fas fa-envelope"></i> ${org.primaryContact.email}</small>` : ''}
-            </div>
-          </td>
-          <td>
-            <small>
-              ${org.headquarters ? `
-                ${org.headquarters.street || ''}${org.headquarters.suite ? ', ' + org.headquarters.suite : ''}<br>
-                ${org.headquarters.city || ''}, ${org.headquarters.state || ''} ${org.headquarters.zipCode || ''}
-              ` : ''}
-            </small>
-          </td>
-          <td>
-            <span class="office-count">
-              <i class="fas fa-hospital"></i> ${org.officeCount || 0} offices
-            </span>
-          </td>
-          <td>
-            <span class="status-badge ${statusClass}">
-              ${org.status ? org.status.charAt(0).toUpperCase() + org.status.slice(1) : ''}
-            </span>
-          </td>
-          <td class="table-actions">
-            <button class="btn btn-sm btn-info" onclick="viewOrganization('${org._id}')" title="View">
-              <i class="fas fa-eye"></i>
-            </button>
-            <button class="btn btn-sm btn-warning" onclick="editOrganization('${org._id}')" title="Edit">
-              <i class="fas fa-edit"></i>
-            </button>
-            <button class="btn btn-sm btn-danger" onclick="deleteOrganization('${org._id}')" title="Delete">
-              <i class="fas fa-trash"></i>
-            </button>
-          </td>
-        </tr>
-      `;
-      tbody.append(row);
-    });
-  }
-
-  function displayPagination(pagination) {
-    const paginationEl = $('#pagination');
-    paginationEl.empty();
-
-    if (!pagination || pagination.pages <= 1) return;
-
-    if (pagination.current > 1) {
-      paginationEl.append(`
-        <li class="page-item">
-          <a class="page-link" href="#" onclick="loadOrganizations(${pagination.current - 1}); return false;">Previous</a>
-        </li>
-      `);
-    }
-
-    for (let i = 1; i <= Math.min(pagination.pages, 10); i++) {
-      paginationEl.append(`
-        <li class="page-item ${pagination.current === i ? 'active' : ''}">
-          <a class="page-link" href="#" onclick="loadOrganizations(${i}); return false;">${i}</a>
-        </li>
-      `);
-    }
-
-    if (pagination.current < pagination.pages) {
-      paginationEl.append(`
-        <li class="page-item">
-          <a class="page-link" href="#" onclick="loadOrganizations(${pagination.current + 1}); return false;">Next</a>
-        </li>
-      `);
-    }
-  }
-
-  function searchOrganizations() {
-    loadOrganizations(1);
-  }
-
-  function showAddOrganizationModal() {
-    $('#modalTitle').text('Add Organization');
-    $('#organizationForm')[0].reset();
-    $('#organizationId').val('');
-    $('#organizationModal').modal('show');
-  }
-
-  function editOrganization(id) {
-    $.get(`/api/organizations/${id}`)
-      .done(function(response) {
-        const org = response.organization;
-        $('#modalTitle').text('Edit Organization');
-        $('#organizationId').val(org._id);
-        $('#orgName').val(org.name);
-        $('#orgCode').val(org.code);
-        $('#orgDescription').val(org.description || '');
-        $('#orgStreet').val(org.headquarters ? org.headquarters.street : '');
-        $('#orgSuite').val(org.headquarters ? org.headquarters.suite : '');
-        $('#orgCity').val(org.headquarters ? org.headquarters.city : '');
-        $('#orgState').val(org.headquarters ? org.headquarters.state : '');
-        $('#orgZipCode').val(org.headquarters ? org.headquarters.zipCode : '');
-        $('#contactName').val(org.primaryContact ? org.primaryContact.name : '');
-        $('#contactTitle').val(org.primaryContact ? org.primaryContact.title : '');
-        $('#contactPhone').val(org.primaryContact ? org.primaryContact.phone : '');
-        $('#contactEmail').val(org.primaryContact ? org.primaryContact.email : '');
-        $('#orgTaxId').val(org.taxId || '');
-        $('#businessType').val(org.businessType || 'medical_group');
-        $('#orgNotes').val(org.notes || '');
-        $('#organizationModal').modal('show');
-      })
-      .fail(function(xhr) {
-        alert('Failed to load organization details');
-      });
-  }
-
-// Replace the saveOrganization function in organizations.html with this debug version:
-
-// Replace the saveOrganization function in organizations.html with this version:
-
-// Replace the data building section in saveOrganization function with this:
-
-function saveOrganization() {
-  // ... (keep all the validation code from before) ...
-
-  const id = $('#organizationId').val();
-  
-  // Generate a code if not provided
-  let orgCode = $('#orgCode').val().trim();
-  if (!orgCode) {
-    // Generate code from organization name (e.g., "Memorial Hospital" -> "MH-001")
-    const nameParts = $('#orgName').val().trim().split(' ');
-    const initials = nameParts.map(word => word.charAt(0).toUpperCase()).join('');
-    const timestamp = Date.now().toString().slice(-3); // Last 3 digits of timestamp
-    orgCode = `${initials}-${timestamp}`;
-  }
-  
-  // Build the data object with validated values
-  const data = {
-    name: $('#orgName').val().trim(),
-    code: orgCode,  // Now always has a value
-    description: $('#orgDescription').val().trim(),
-    headquarters: {
-      street: $('#orgStreet').val().trim(),
-      suite: $('#orgSuite').val().trim(),
-      city: $('#orgCity').val().trim(),
-      state: $('#orgState').val().trim().toUpperCase(),
-      zipCode: $('#orgZipCode').val().trim()
-    },
-    primaryContact: {
-      name: $('#contactName').val().trim(),
-      title: $('#contactTitle').val().trim(),
-      phone: $('#contactPhone').val().trim(),
-      email: $('#contactEmail').val().trim()
-    },
-    businessType: $('#businessType').val() || 'medical_group',
-    status: 'active'
-  };
-
-  // Add optional fields only if they have values
-  const taxId = $('#orgTaxId').val().trim();
-  if (taxId) data.taxId = taxId;
-
-  const notes = $('#orgNotes').val().trim();
-  if (notes) data.notes = notes;
-
-  // Remove empty optional nested fields
-  if (!data.headquarters.suite) delete data.headquarters.suite;
-  if (!data.primaryContact.title) delete data.primaryContact.title;
-  if (!data.description) delete data.description;
-
-  console.log('Saving organization with validated data:', JSON.stringify(data, null, 2));
-
-  const url = id ? `/api/organizations/${id}` : '/api/organizations';
-  const method = id ? 'PUT' : 'POST';
-
-  $.ajax({
-    url: url,
-    method: method,
-    contentType: 'application/json',
-    data: JSON.stringify(data),
-    success: function(response) {
-      console.log('Save successful:', response);
-      $('#organizationModal').modal('hide');
-      loadOrganizations(currentPage);
+    // Initialize when ready
+    $(document).ready(function() {
+      loadOrganizations();
       loadStatistics();
-      alert('Organization saved successfully');
-    },
-    error: function(xhr) {
-      console.error('Save failed:', xhr.status, xhr.responseText);
       
-      let errorMessage = 'Failed to save organization';
-      
-      if (xhr.responseJSON) {
-        if (xhr.responseJSON.message) {
-          errorMessage = xhr.responseJSON.message;
-        } else if (xhr.responseJSON.errors && Array.isArray(xhr.responseJSON.errors)) {
-          const errors = xhr.responseJSON.errors.map(err => 
-            `${err.param || err.field || 'Field'}: ${err.msg || err.message}`
-          );
-          errorMessage = 'Validation errors:\n' + errors.join('\n');
+      // Add enter key support for search
+      $('#searchInput').on('keypress', function(e) {
+        if (e.which === 13) {
+          searchOrganizations();
         }
-      }
+      });
+    });
+
+    function resetFilters() {
+      $('#searchInput').val('');
+      $('#statusFilter').val('');
+      loadOrganizations(1);
+    }
+
+    function loadStatistics() {
+      $.get('/api/organizations?limit=100')
+        .done(function(response) {
+          const orgs = response.organizations || [];
+          $('#totalOrganizations').text(orgs.length);
+          $('#activeOrganizations').text(orgs.filter(o => o.status === 'active').length);
+          
+          let totalOfficeCount = 0;
+          orgs.forEach(org => {
+            totalOfficeCount += org.officeCount || 0;
+          });
+          $('#totalOffices').text(totalOfficeCount);
+          
+          // If we got 100 results, there might be more - get the actual total from pagination
+          if (response.pagination && response.pagination.total) {
+            $('#totalOrganizations').text(response.pagination.total);
+          }
+        })
+        .fail(function(xhr) {
+          console.error('Failed to load statistics:', xhr.status, xhr.responseText);
+          // Set default values on error
+          $('#totalOrganizations').text('0');
+          $('#activeOrganizations').text('0');
+          $('#totalOffices').text('0');
+        });
+    }
+
+    function loadOrganizations(page = 1) {
+      currentPage = page;
+      const search = $('#searchInput').val();
+      const status = $('#statusFilter').val();
       
-      // If it's a duplicate code error, generate a new one
-      if (errorMessage.includes('duplicate') && errorMessage.includes('code')) {
-        alert('Organization code already exists. Please enter a unique code or leave blank for auto-generation.');
-        $('#orgCode').focus();
+      let url = `/api/organizations?page=${page}&limit=${limit}`;
+      if (search) url += `&search=${encodeURIComponent(search)}`;
+      if (status) url += `&status=${status}`;
+
+      $.get(url)
+        .done(function(response) {
+          displayOrganizations(response.organizations || []);
+          displayPagination(response.pagination || {});
+        })
+        .fail(function(xhr) {
+          console.error('Failed to load organizations');
+          $('#organizationsTableBody').html('<tr><td colspan="7" class="text-center">Failed to load organizations</td></tr>');
+        });
+    }
+
+    function displayOrganizations(organizations) {
+      const tbody = $('#organizationsTableBody');
+      tbody.empty();
+
+      if (!organizations || organizations.length === 0) {
+        tbody.append(`
+          <tr>
+            <td colspan="7" class="text-center py-4">
+              <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+              <p class="text-muted">No organizations found</p>
+            </td>
+          </tr>
+        `);
         return;
       }
-      
-      alert('Error: ' + errorMessage);
-    }
-  });
-}
 
-  function viewOrganization(id) {
-    $.get(`/api/organizations/${id}`)
-      .done(function(response) {
-        const org = response.organization;
-        const offices = response.medicalOffices || [];
-        
-        let officesList = '';
-        if (offices.length > 0) {
-          officesList = '<h6 class="mt-3">Associated Medical Offices:</h6><ul>';
-          offices.forEach(office => {
-            officesList += `<li>${office.name} (${office.officeCode}) - ${office.status}</li>`;
-          });
-          officesList += '</ul>';
-        }
-
-        const details = `
-          <div class="organization-details">
-            <h5>${org.name}</h5>
-            <p class="text-muted">${org.description || 'No description'}</p>
-            
-            <div class="row">
-              <div class="col-md-6">
-                <h6>Organization Code:</h6>
-                <p>${org.code}</p>
-                
-                <h6>Business Type:</h6>
-                <p>${org.businessType ? org.businessType.replace('_', ' ').toUpperCase() : ''}</p>
-                
-                <h6>Status:</h6>
-                <p><span class="status-badge status-${org.status}">${org.status ? org.status.toUpperCase() : ''}</span></p>
+      organizations.forEach(org => {
+        const statusClass = `status-${org.status}`;
+        const row = `
+          <tr>
+            <td><strong>${org.code || ''}</strong></td>
+            <td>
+              <div>
+                <strong>${org.name || ''}</strong>
+                ${org.description ? `<br><small class="text-muted">${org.description}</small>` : ''}
               </div>
-              
-              <div class="col-md-6">
-                <h6>Headquarters:</h6>
-                <p>
-                  ${org.headquarters ? `
-                    ${org.headquarters.street}${org.headquarters.suite ? ', ' + org.headquarters.suite : ''}<br>
-                    ${org.headquarters.city}, ${org.headquarters.state} ${org.headquarters.zipCode}
-                  ` : 'Not provided'}
-                </p>
-                
-                <h6>Primary Contact:</h6>
-                <p>
-                  ${org.primaryContact ? `
-                    ${org.primaryContact.name}${org.primaryContact.title ? ' - ' + org.primaryContact.title : ''}<br>
-                    <i class="fas fa-phone"></i> ${org.primaryContact.phone}<br>
-                    <i class="fas fa-envelope"></i> ${org.primaryContact.email}
-                  ` : 'Not provided'}
-                </p>
+            </td>
+            <td>
+              <div>
+                ${org.primaryContact ? org.primaryContact.name : ''}
+                ${org.primaryContact && org.primaryContact.title ? `<br><small class="text-muted">${org.primaryContact.title}</small>` : ''}
+                ${org.primaryContact && org.primaryContact.phone ? `<br><small><i class="fas fa-phone"></i> ${org.primaryContact.phone}</small>` : ''}
+                ${org.primaryContact && org.primaryContact.email ? `<br><small><i class="fas fa-envelope"></i> ${org.primaryContact.email}</small>` : ''}
               </div>
-            </div>
-            
-            ${officesList}
-            
-            ${org.notes ? `<h6 class="mt-3">Notes:</h6><p>${org.notes}</p>` : ''}
-          </div>
+            </td>
+            <td>
+              <small>
+                ${org.headquarters ? `
+                  ${org.headquarters.street || ''}${org.headquarters.suite ? ', ' + org.headquarters.suite : ''}<br>
+                  ${org.headquarters.city || ''}, ${org.headquarters.state || ''} ${org.headquarters.zipCode || ''}
+                ` : ''}
+              </small>
+            </td>
+            <td>
+              <span class="office-count">
+                <i class="fas fa-hospital"></i> ${org.officeCount || 0} offices
+              </span>
+            </td>
+            <td>
+              <span class="status-badge ${statusClass}">
+                ${org.status ? org.status.charAt(0).toUpperCase() + org.status.slice(1) : ''}
+              </span>
+            </td>
+            <td class="table-actions">
+              <button class="btn btn-sm btn-info" onclick="viewOrganization('${org._id}')" title="View">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-sm btn-warning" onclick="editOrganization('${org._id}')" title="Edit">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-danger" onclick="deleteOrganization('${org._id}')" title="Delete">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
         `;
-        
-        $('#organizationDetails').html(details);
-        $('#viewOrganizationModal').modal('show');
-      })
-      .fail(function(xhr) {
-        alert('Failed to load organization details');
+        tbody.append(row);
       });
-  }
+    }
 
-  function deleteOrganization(id) {
-    if (confirm('Are you sure you want to deactivate this organization?')) {
+    function displayPagination(pagination) {
+      const paginationEl = $('#pagination');
+      paginationEl.empty();
+
+      if (!pagination || pagination.pages <= 1) return;
+
+      if (pagination.current > 1) {
+        paginationEl.append(`
+          <li class="page-item">
+            <a class="page-link" href="#" onclick="loadOrganizations(${pagination.current - 1}); return false;">Previous</a>
+          </li>
+        `);
+      }
+
+      for (let i = 1; i <= Math.min(pagination.pages, 10); i++) {
+        paginationEl.append(`
+          <li class="page-item ${pagination.current === i ? 'active' : ''}">
+            <a class="page-link" href="#" onclick="loadOrganizations(${i}); return false;">${i}</a>
+          </li>
+        `);
+      }
+
+      if (pagination.current < pagination.pages) {
+        paginationEl.append(`
+          <li class="page-item">
+            <a class="page-link" href="#" onclick="loadOrganizations(${pagination.current + 1}); return false;">Next</a>
+          </li>
+        `);
+      }
+    }
+
+    function searchOrganizations() {
+      loadOrganizations(1);
+    }
+
+    function showAddOrganizationModal() {
+      $('#modalTitle').text('Add Organization');
+      $('#organizationForm')[0].reset();
+      $('#organizationId').val('');
+      $('#organizationModal').modal('show');
+    }
+
+    function editOrganization(id) {
+      $.get(`/api/organizations/${id}`)
+        .done(function(response) {
+          const org = response.organization;
+          $('#modalTitle').text('Edit Organization');
+          $('#organizationId').val(org._id);
+          $('#orgName').val(org.name);
+          $('#orgCode').val(org.code);
+          $('#orgDescription').val(org.description || '');
+          $('#orgStreet').val(org.headquarters ? org.headquarters.street : '');
+          $('#orgSuite').val(org.headquarters ? org.headquarters.suite : '');
+          $('#orgCity').val(org.headquarters ? org.headquarters.city : '');
+          $('#orgState').val(org.headquarters ? org.headquarters.state : '');
+          $('#orgZipCode').val(org.headquarters ? org.headquarters.zipCode : '');
+          $('#contactName').val(org.primaryContact ? org.primaryContact.name : '');
+          $('#contactTitle').val(org.primaryContact ? org.primaryContact.title : '');
+          $('#contactPhone').val(org.primaryContact ? org.primaryContact.phone : '');
+          $('#contactEmail').val(org.primaryContact ? org.primaryContact.email : '');
+          $('#orgTaxId').val(org.taxId || '');
+          $('#businessType').val(org.businessType || 'medical_group');
+          $('#orgNotes').val(org.notes || '');
+          $('#organizationModal').modal('show');
+        })
+        .fail(function(xhr) {
+          alert('Failed to load organization details');
+        });
+    }
+
+    function saveOrganization() {
+      // Validation
+      if (!$('#orgName').val().trim()) {
+        alert('Organization name is required');
+        return;
+      }
+
+      const id = $('#organizationId').val();
+      
+      // Generate a code if not provided
+      let orgCode = $('#orgCode').val().trim();
+      if (!orgCode) {
+        // Generate code from organization name
+        const nameParts = $('#orgName').val().trim().split(' ');
+        const initials = nameParts.map(word => word.charAt(0).toUpperCase()).join('');
+        const timestamp = Date.now().toString().slice(-3);
+        orgCode = `${initials}-${timestamp}`;
+      }
+      
+      // Build the data object with validated values
+      const data = {
+        name: $('#orgName').val().trim(),
+        code: orgCode,
+        description: $('#orgDescription').val().trim(),
+        headquarters: {
+          street: $('#orgStreet').val().trim(),
+          suite: $('#orgSuite').val().trim(),
+          city: $('#orgCity').val().trim(),
+          state: $('#orgState').val().trim().toUpperCase(),
+          zipCode: $('#orgZipCode').val().trim()
+        },
+        primaryContact: {
+          name: $('#contactName').val().trim(),
+          title: $('#contactTitle').val().trim(),
+          phone: $('#contactPhone').val().trim(),
+          email: $('#contactEmail').val().trim()
+        },
+        businessType: $('#businessType').val() || 'medical_group',
+        status: 'active'
+      };
+
+      // Add optional fields only if they have values
+      const taxId = $('#orgTaxId').val().trim();
+      if (taxId) data.taxId = taxId;
+
+      const notes = $('#orgNotes').val().trim();
+      if (notes) data.notes = notes;
+
+      // Remove empty optional nested fields
+      if (!data.headquarters.suite) delete data.headquarters.suite;
+      if (!data.primaryContact.title) delete data.primaryContact.title;
+      if (!data.description) delete data.description;
+
+      console.log('Saving organization with validated data:', JSON.stringify(data, null, 2));
+
+      const url = id ? `/api/organizations/${id}` : '/api/organizations';
+      const method = id ? 'PUT' : 'POST';
+
       $.ajax({
-        url: `/api/organizations/${id}`,
-        method: 'DELETE',
+        url: url,
+        method: method,
+        contentType: 'application/json',
+        data: JSON.stringify(data),
         success: function(response) {
+          console.log('Save successful:', response);
+          $('#organizationModal').modal('hide');
           loadOrganizations(currentPage);
           loadStatistics();
-          alert('Organization deactivated successfully');
+          showMessage('Organization saved successfully', 'success');
         },
         error: function(xhr) {
-          const error = xhr.responseJSON?.message || 'Failed to delete organization';
-          alert('Error: ' + error);
+          console.error('Save failed:', xhr.status, xhr.responseText);
+          
+          let errorMessage = 'Failed to save organization';
+          
+          if (xhr.responseJSON) {
+            if (xhr.responseJSON.message) {
+              errorMessage = xhr.responseJSON.message;
+            } else if (xhr.responseJSON.errors && Array.isArray(xhr.responseJSON.errors)) {
+              const errors = xhr.responseJSON.errors.map(err => 
+                `${err.param || err.field || 'Field'}: ${err.msg || err.message}`
+              );
+              errorMessage = 'Validation errors:\n' + errors.join('\n');
+            }
+          }
+          
+          // If it's a duplicate code error, generate a new one
+          if (errorMessage.includes('duplicate') && errorMessage.includes('code')) {
+            alert('Organization code already exists. Please enter a unique code or leave blank for auto-generation.');
+            $('#orgCode').focus();
+            return;
+          }
+          
+          showMessage('Error: ' + errorMessage, 'danger');
         }
       });
     }
-  }
-function exportOrganizations() {
-  const token = AuthManager.getToken();
-  if (!token) {
-    alert('Authentication required');
-    return;
-  }
 
-  // Method 1: Create a download link with auth header (using fetch)
-  fetch('/api/organizations?limit=100&format=csv', {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`
+    function viewOrganization(id) {
+      $.get(`/api/organizations/${id}`)
+        .done(function(response) {
+          const org = response.organization;
+          const offices = response.medicalOffices || [];
+          
+          let officesList = '';
+          if (offices.length > 0) {
+            officesList = '<h6 class="mt-3">Associated Medical Offices:</h6><ul>';
+            offices.forEach(office => {
+              officesList += `<li>${office.name} (${office.officeCode}) - ${office.status}</li>`;
+            });
+            officesList += '</ul>';
+          }
+
+          const details = `
+            <div class="organization-details">
+              <h5>${org.name}</h5>
+              <p class="text-muted">${org.description || 'No description'}</p>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <h6>Organization Code:</h6>
+                  <p>${org.code}</p>
+                  
+                  <h6>Business Type:</h6>
+                  <p>${org.businessType ? org.businessType.replace('_', ' ').toUpperCase() : ''}</p>
+                  
+                  <h6>Status:</h6>
+                  <p><span class="status-badge status-${org.status}">${org.status ? org.status.toUpperCase() : ''}</span></p>
+                </div>
+                
+                <div class="col-md-6">
+                  <h6>Headquarters:</h6>
+                  <p>
+                    ${org.headquarters ? `
+                      ${org.headquarters.street}${org.headquarters.suite ? ', ' + org.headquarters.suite : ''}<br>
+                      ${org.headquarters.city}, ${org.headquarters.state} ${org.headquarters.zipCode}
+                    ` : 'Not provided'}
+                  </p>
+                  
+                  <h6>Primary Contact:</h6>
+                  <p>
+                    ${org.primaryContact ? `
+                      ${org.primaryContact.name}${org.primaryContact.title ? ' - ' + org.primaryContact.title : ''}<br>
+                      <i class="fas fa-phone"></i> ${org.primaryContact.phone}<br>
+                      <i class="fas fa-envelope"></i> ${org.primaryContact.email}
+                    ` : 'Not provided'}
+                  </p>
+                </div>
+              </div>
+              
+              ${officesList}
+              
+              ${org.notes ? `<h6 class="mt-3">Notes:</h6><p>${org.notes}</p>` : ''}
+            </div>
+          `;
+          
+          $('#organizationDetails').html(details);
+          $('#viewOrganizationModal').modal('show');
+        })
+        .fail(function(xhr) {
+          alert('Failed to load organization details');
+        });
     }
-  })
-  .then(response => {
-    if (!response.ok) throw new Error('Export failed');
-    return response.blob();
-  })
-  .then(blob => {
-    // Create a download link
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `organizations_${new Date().toISOString().split('T')[0]}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
-  })
-  .catch(error => {
-    console.error('Export error:', error);
-    alert('Failed to export organizations');
-  });
-}
-</script>
+
+    function deleteOrganization(id) {
+      if (confirm('Are you sure you want to deactivate this organization?')) {
+        $.ajax({
+          url: `/api/organizations/${id}`,
+          method: 'DELETE',
+          success: function(response) {
+            loadOrganizations(currentPage);
+            loadStatistics();
+            showMessage('Organization deactivated successfully', 'success');
+          },
+          error: function(xhr) {
+            const error = xhr.responseJSON?.message || 'Failed to delete organization';
+            showMessage('Error: ' + error, 'danger');
+          }
+        });
+      }
+    }
+
+    function exportOrganizations() {
+      const token = AuthManager.getToken();
+      if (!token) {
+        alert('Authentication required');
+        return;
+      }
+
+      // Create a download link with auth header (using fetch)
+      fetch('/api/organizations?limit=100&format=csv', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(response => {
+        if (!response.ok) throw new Error('Export failed');
+        return response.blob();
+      })
+      .then(blob => {
+        // Create a download link
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `organizations_${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      })
+      .catch(error => {
+        console.error('Export error:', error);
+        alert('Failed to export organizations');
+      });
+    }
+
+    // Helper function to show messages
+    function showMessage(message, type = 'info') {
+      const alertClass = type === 'success' ? 'alert-success' : 
+                        type === 'warning' ? 'alert-warning' : 
+                        type === 'danger' ? 'alert-danger' : 'alert-info';
+      
+      const alertHtml = `
+        <div class="alert ${alertClass} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-5" style="z-index: 9999;">
+          ${message}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      `;
+      
+      $('body').append(alertHtml);
+      
+      setTimeout(() => {
+        $('.alert').fadeOut(() => $('.alert').remove());
+      }, 3000);
+    }
+  </script>
 </body>
 </html>

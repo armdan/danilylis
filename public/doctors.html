@@ -6,163 +6,174 @@
   <title>Doctors - Laboratory Information System</title>
   
   <!-- Bootstrap 5 CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Unified CSS files -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/theme-colors.css">
+  <link rel="stylesheet" href="/css/unified-search.css">
+  <link rel="stylesheet" href="/css/unified-footer.css">
   
   <style>
-    body { padding-top: 70px; }
-    .main-content { padding: 20px; }
-    .card { margin-bottom: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    .table-actions { white-space: nowrap; }
-    .status-badge { padding: 5px 10px; border-radius: 15px; font-size: 0.85em; }
-    .status-active { background-color: #d4edda; color: #155724; }
-    .status-inactive { background-color: #f8d7da; color: #721c24; }
-    .status-suspended { background-color: #fff3cd; color: #856404; }
-    .status-pending_verification { background-color: #cce5ff; color: #004085; }
-    .search-controls { display: flex; gap: 10px; margin-bottom: 20px; }
-    .doctor-details { padding: 15px; background: #f8f9fa; border-radius: 5px; }
-    .title-badge { background: #007bff; color: white; padding: 3px 8px; border-radius: 10px; font-size: 0.85em; }
-    .specialty-badge { background: #6c757d; color: white; padding: 3px 8px; border-radius: 10px; font-size: 0.85em; }
-    .office-badge { background: #e7f3ff; padding: 3px 8px; border-radius: 10px; font-size: 0.85em; margin: 2px; }
-    .stat-card { text-align: center; padding: 10px; }
-    .stat-value { font-size: 1.5rem; font-weight: bold; color: #007bff; }
-    .stat-label { font-size: 0.9rem; color: #6c757d; }
+    /* Page-specific styles only */
+    .doctor-details { 
+      padding: 15px; 
+      background: #f8f9fa; 
+      border-radius: 5px; 
+    }
+    .title-badge { 
+      background: #007bff; 
+      color: white; 
+      padding: 3px 8px; 
+      border-radius: 10px; 
+      font-size: 0.85em; 
+    }
+    .specialty-badge { 
+      background: #6c757d; 
+      color: white; 
+      padding: 3px 8px; 
+      border-radius: 10px; 
+      font-size: 0.85em; 
+    }
+    .office-badge { 
+      background: #e7f3ff; 
+      padding: 3px 8px; 
+      border-radius: 10px; 
+      font-size: 0.85em; 
+      margin: 2px; 
+      display: inline-block;
+    }
+    .table-actions { 
+      white-space: nowrap; 
+    }
+    .table-actions .btn {
+      padding: 4px 8px;
+      margin: 0 2px;
+    }
   </style>
 </head>
 <body>
-  <!-- Navbar placeholder -->
-  <div id="navbar-placeholder"></div>
+  <!-- Navbar will be injected here -->
 
   <div class="container-fluid main-content">
     <!-- Page Header -->
-    <div class="row mb-4">
-      <div class="col-md-12">
-        <h2><i class="fas fa-user-md me-2"></i>Doctors</h2>
-        <p class="text-muted">Manage healthcare providers and their medical office associations</p>
+    <div class="page-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <h1><i class="fas fa-user-md me-2"></i>Doctors</h1>
+        <div class="d-flex gap-3">
+          <button class="btn btn-success" onclick="showAddDoctorModal()">
+            <i class="fas fa-plus me-2"></i>Add Doctor
+          </button>
+          <button class="btn btn-light btn-sm" onclick="exportDoctors()">
+            <i class="fas fa-download me-1"></i>Export
+          </button>
+        </div>
       </div>
     </div>
 
     <!-- Statistics Cards -->
     <div class="row mb-4">
       <div class="col-md-3">
-        <div class="card bg-primary text-white">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <h6 class="mb-0">Total Doctors</h6>
-                <h3 class="mb-0" id="totalDoctors">0</h3>
-              </div>
-              <i class="fas fa-user-md fa-2x opacity-50"></i>
-            </div>
-          </div>
+        <div class="stat-card">
+          <div class="stat-value text-primary" id="totalDoctors">0</div>
+          <div class="stat-label">Total Doctors</div>
         </div>
       </div>
       <div class="col-md-3">
-        <div class="card bg-success text-white">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <h6 class="mb-0">Active</h6>
-                <h3 class="mb-0" id="activeDoctors">0</h3>
-              </div>
-              <i class="fas fa-check-circle fa-2x opacity-50"></i>
-            </div>
-          </div>
+        <div class="stat-card">
+          <div class="stat-value text-success" id="activeDoctors">0</div>
+          <div class="stat-label">Active</div>
         </div>
       </div>
       <div class="col-md-3">
-        <div class="card bg-info text-white">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <h6 class="mb-0">Total Orders</h6>
-                <h3 class="mb-0" id="totalOrders">0</h3>
-              </div>
-              <i class="fas fa-clipboard-list fa-2x opacity-50"></i>
-            </div>
-          </div>
+        <div class="stat-card">
+          <div class="stat-value text-info" id="totalOrders">0</div>
+          <div class="stat-label">Total Orders</div>
         </div>
       </div>
       <div class="col-md-3">
-        <div class="card bg-warning text-white">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <h6 class="mb-0">Pending Verification</h6>
-                <h3 class="mb-0" id="pendingDoctors">0</h3>
-              </div>
-              <i class="fas fa-clock fa-2x opacity-50"></i>
-            </div>
-          </div>
+        <div class="stat-card">
+          <div class="stat-value text-warning" id="pendingDoctors">0</div>
+          <div class="stat-label">Pending Verification</div>
         </div>
       </div>
     </div>
 
-    <!-- Search and Add Controls -->
-    <div class="card">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-md-8">
-            <div class="search-controls">
-              <input type="text" id="searchInput" class="form-control" placeholder="Search by name, NPI, or specialty...">
-              <select id="officeFilter" class="form-select" style="width: 250px;">
-                <option value="">All Medical Offices</option>
-              </select>
-              <select id="statusFilter" class="form-select" style="width: 180px;">
-                <option value="">All Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-                <option value="suspended">Suspended</option>
-                <option value="pending_verification">Pending Verification</option>
-              </select>
-              <button class="btn btn-primary" onclick="searchDoctors()">
-                <i class="fas fa-search"></i> Search
-              </button>
-            </div>
-          </div>
-          <div class="col-md-4 text-end">
-            <button class="btn btn-success" onclick="showAddDoctorModal()">
-              <i class="fas fa-plus"></i> Add Doctor
-            </button>
-            <button class="btn btn-outline-secondary" onclick="exportDoctors()">
-              <i class="fas fa-download"></i> Export
+    <!-- Search and Filters -->
+    <div class="section-header">
+      <i class="fas fa-filter"></i> Search & Filters
+    </div>
+    <div class="card unified-search-card">
+      <div class="unified-search-filters">
+        <div class="search-group search-main">
+          <label for="searchInput">Search Doctors</label>
+          <div class="search-input-wrapper">
+            <input type="text" id="searchInput" class="form-control" 
+                   placeholder="Name, NPI, or specialty...">
+            <button class="search-icon" type="button" onclick="searchDoctors()">
+              <i class="fas fa-search"></i>
             </button>
           </div>
+        </div>
+        <div class="search-group">
+          <label for="officeFilter">Medical Office</label>
+          <select id="officeFilter" class="form-select">
+            <option value="">All Medical Offices</option>
+          </select>
+        </div>
+        <div class="search-group">
+          <label for="statusFilter">Status</label>
+          <select id="statusFilter" class="form-select">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="suspended">Suspended</option>
+            <option value="pending_verification">Pending Verification</option>
+          </select>
+        </div>
+        <div class="search-actions">
+          <button class="btn-search-primary" onclick="searchDoctors()">
+            <i class="fas fa-search me-1"></i>Search
+          </button>
+          <button class="btn-search-secondary" onclick="resetFilters()">
+            <i class="fas fa-redo me-1"></i>Reset
+          </button>
         </div>
       </div>
     </div>
 
     <!-- Doctors List -->
+    <div class="section-header">
+      <i class="fas fa-list"></i> Doctor List
+    </div>
     <div class="card">
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>Doctor Name</th>
-                <th>NPI Number</th>
-                <th>Specialty</th>
-                <th>Medical Offices</th>
-                <th>Contact</th>
-                <th>Orders</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="doctorsTableBody">
-              <!-- Doctors will be loaded here -->
-            </tbody>
-          </table>
-        </div>
-        
-        <!-- Pagination -->
-        <nav>
-          <ul class="pagination justify-content-center" id="pagination">
-            <!-- Pagination will be loaded here -->
-          </ul>
-        </nav>
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Doctor Name</th>
+              <th>NPI Number</th>
+              <th>Specialty</th>
+              <th>Medical Offices</th>
+              <th>Contact</th>
+              <th>Orders</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="doctorsTableBody">
+            <!-- Doctors will be loaded here -->
+          </tbody>
+        </table>
       </div>
+      
+      <!-- Pagination -->
+      <nav>
+        <ul class="pagination justify-content-center" id="pagination">
+          <!-- Pagination will be loaded here -->
+        </ul>
+      </nav>
     </div>
   </div>
 
@@ -440,632 +451,652 @@
     </div>
   </div>
 
-  <!-- Bootstrap JS -->
-  <!-- Replace everything from the first <script> tag to </body> with this: -->
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Load auth.js first to set up AuthManager -->
+  <script src="/js/auth.js"></script>
 
-<!-- Load auth.js first to set up AuthManager -->
-<script src="/js/auth.js"></script>
-
-<!-- Auth check and setup -->
-<script>
-  // Check authentication using AuthManager
-  if (!AuthManager.isAuthenticated()) {
-    window.location.href = '/login';
-  } else {
-    // Set up jQuery AJAX defaults with auth headers
-    $.ajaxSetup({
-      headers: AuthManager.getAuthHeaders()
-    });
-  }
-</script>
-
-<!-- Load navbar after auth is confirmed -->
-<script src="/js/navbar-loader.js"></script>
-
-<!-- Doctors Page Specific Functions -->
-<script>
-  // Variables for doctors page
-  let currentPage = 1;
-  const limit = 10;
-
-  $(document).ready(function() {
-    loadDoctors();
-    loadStatistics();
-    loadMedicalOffices();
-  });
-
- function loadStatistics() {
-  $.get('/api/doctors?limit=100')  // Changed from 1000 to 100
-    .done(function(response) {
-      const doctors = response.doctors || [];
-      $('#totalDoctors').text(doctors.length);
-      $('#activeDoctors').text(doctors.filter(d => d.status === 'active').length);
-      $('#pendingDoctors').text(doctors.filter(d => d.status === 'pending_verification').length);
-      
-      // If we got 100 results, there might be more - get the actual total from pagination
-      if (response.pagination && response.pagination.total) {
-        $('#totalDoctors').text(response.pagination.total);
-      }
-    })
-    .fail(function(xhr) {
-      console.error('Failed to load statistics:', xhr.status, xhr.responseText);
-      // Set default values on error
-      $('#totalDoctors').text('0');
-      $('#activeDoctors').text('0');
-      $('#pendingDoctors').text('0');
-    });
-}
-
-function loadMedicalOffices() {
-  $.get('/api/medical-offices?limit=100&status=active')  // Changed from 1000 to 100
-    .done(function(response) {
-      const selectFilter = $('#officeFilter');
-      const selectOffices = $('#medicalOffices');
-      
-      selectFilter.empty();
-      selectFilter.append('<option value="">All Medical Offices</option>');
-      
-      selectOffices.empty();
-      
-      if (response.medicalOffices) {
-        response.medicalOffices.forEach(office => {
-          selectFilter.append(`<option value="${office._id}">${office.name}</option>`);
-          selectOffices.append(`<option value="${office._id}">${office.name} (${office.officeCode})</option>`);
-        });
-      }
-    })
-    .fail(function(xhr) {
-      console.error('Failed to load medical offices:', xhr.status, xhr.responseText);
-      // Keep the default "All Medical Offices" option on error
-    });
-}
-
-  function loadDoctors(page = 1) {
-    currentPage = page;
-    const search = $('#searchInput').val();
-    const status = $('#statusFilter').val();
-    const medicalOffice = $('#officeFilter').val();
-    
-    let url = `/api/doctors?page=${page}&limit=${limit}`;
-    if (search) url += `&search=${encodeURIComponent(search)}`;
-    if (status) url += `&status=${status}`;
-    if (medicalOffice) url += `&medicalOffice=${medicalOffice}`;
-
-    $.get(url)
-      .done(function(response) {
-        displayDoctors(response.doctors || []);
-        displayPagination(response.pagination || {});
-      })
-      .fail(function(xhr) {
-        console.error('Failed to load doctors');
-        $('#doctorsTableBody').html('<tr><td colspan="8" class="text-center">Failed to load doctors</td></tr>');
+  <!-- Auth check and setup -->
+  <script>
+    // Check authentication using AuthManager
+    if (!AuthManager.isAuthenticated()) {
+      window.location.href = '/login';
+    } else {
+      // Set up jQuery AJAX defaults with auth headers
+      $.ajaxSetup({
+        headers: AuthManager.getAuthHeaders()
       });
-  }
-
-  function displayDoctors(doctors) {
-    const tbody = $('#doctorsTableBody');
-    tbody.empty();
-
-    if (!doctors || doctors.length === 0) {
-      tbody.append(`
-        <tr>
-          <td colspan="8" class="text-center py-4">
-            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-            <p class="text-muted">No doctors found</p>
-          </td>
-        </tr>
-      `);
-      return;
     }
+  </script>
 
-    doctors.forEach(doctor => {
-      const statusClass = `status-${doctor.status.replace('_', '')}`;
-      
-      let officesList = '';
-      if (doctor.medicalOffices && doctor.medicalOffices.length > 0) {
-        doctor.medicalOffices.forEach(office => {
-          officesList += `<span class="office-badge">${office.name}</span>`;
-        });
-      } else {
-        officesList = '<span class="text-muted">No offices assigned</span>';
-      }
-      
-      const row = `
-        <tr>
-          <td>
-            <div>
-              <span class="title-badge">${doctor.title}</span>
-              <strong>${doctor.firstName} ${doctor.middleName ? doctor.middleName + ' ' : ''}${doctor.lastName}</strong>
-              ${doctor.suffix ? ', ' + doctor.suffix : ''}
-            </div>
-          </td>
-          <td><strong>${doctor.npiNumber}</strong></td>
-          <td>
-            <span class="specialty-badge">${doctor.primarySpecialty}</span>
-          </td>
-          <td>
-            <div style="max-width: 250px;">
-              ${officesList}
-            </div>
-          </td>
-          <td>
-            <small>
-              ${doctor.phone ? `<i class="fas fa-phone"></i> ${doctor.phone.office || doctor.phone.mobile || 'N/A'}<br>` : ''}
-              ${doctor.email ? `<i class="fas fa-envelope"></i> ${doctor.email.primary || 'N/A'}` : ''}
-            </small>
-          </td>
-          <td>
-            <span class="badge bg-info">${doctor.statistics?.totalOrders || 0}</span>
-          </td>
-          <td>
-            <span class="status-badge ${statusClass}">
-              ${doctor.status.replace('_', ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
-            </span>
-          </td>
-          <td class="table-actions">
-            <button class="btn btn-sm btn-info" onclick="viewDoctor('${doctor._id}')" title="View">
-              <i class="fas fa-eye"></i>
-            </button>
-            <button class="btn btn-sm btn-warning" onclick="editDoctor('${doctor._id}')" title="Edit">
-              <i class="fas fa-edit"></i>
-            </button>
-            <button class="btn btn-sm btn-danger" onclick="deleteDoctor('${doctor._id}')" title="Delete">
-              <i class="fas fa-trash"></i>
-            </button>
-          </td>
-        </tr>
-      `;
-      tbody.append(row);
-    });
-  }
+  <!-- Load navbar after auth is confirmed -->
+  <script src="/js/navbar-loader.js"></script>
 
-  function displayPagination(pagination) {
-    const paginationEl = $('#pagination');
-    paginationEl.empty();
+  <!-- Doctors Page Specific Functions -->
+  <script>
+    // Variables for doctors page
+    let currentPage = 1;
+    const limit = 10;
 
-    if (!pagination || pagination.pages <= 1) return;
-
-    if (pagination.current > 1) {
-      paginationEl.append(`
-        <li class="page-item">
-          <a class="page-link" href="#" onclick="loadDoctors(${pagination.current - 1}); return false;">Previous</a>
-        </li>
-      `);
-    }
-
-    for (let i = 1; i <= Math.min(pagination.pages, 10); i++) {
-      paginationEl.append(`
-        <li class="page-item ${pagination.current === i ? 'active' : ''}">
-          <a class="page-link" href="#" onclick="loadDoctors(${i}); return false;">${i}</a>
-        </li>
-      `);
-    }
-
-    if (pagination.current < pagination.pages) {
-      paginationEl.append(`
-        <li class="page-item">
-          <a class="page-link" href="#" onclick="loadDoctors(${pagination.current + 1}); return false;">Next</a>
-        </li>
-      `);
-    }
-  }
-
-  function searchDoctors() {
-    loadDoctors(1);
-  }
-
-  function showAddDoctorModal() {
-    $('#modalTitle').text('Add Doctor');
-    $('#doctorForm')[0].reset();
-    $('#doctorId').val('');
-    $('#doctorModal').modal('show');
-    updatePrimaryOfficeOptions();
-  }
-
-  // Update primary office dropdown based on selected offices
-  $('#medicalOffices').on('change', function() {
-    updatePrimaryOfficeOptions();
-  });
-
-  function updatePrimaryOfficeOptions() {
-    const selectedOffices = $('#medicalOffices').val();
-    const primarySelect = $('#primaryOffice');
-    const currentPrimary = primarySelect.val();
-    
-    primarySelect.empty();
-    primarySelect.append('<option value="">Select Primary Office</option>');
-    
-    if (selectedOffices && selectedOffices.length > 0) {
-      $('#medicalOffices option:selected').each(function() {
-        primarySelect.append(`<option value="${$(this).val()}">${$(this).text()}</option>`);
-      });
-      
-      if (selectedOffices.includes(currentPrimary)) {
-        primarySelect.val(currentPrimary);
-      }
-    }
-  }
-
-  function editDoctor(id) {
-    $.get(`/api/doctors/${id}`)
-      .done(function(response) {
-        const doctor = response.doctor;
-        $('#modalTitle').text('Edit Doctor');
-        $('#doctorId').val(doctor._id);
-        
-        // Personal Info
-        $('#doctorTitle').val(doctor.title);
-        $('#firstName').val(doctor.firstName);
-        $('#middleName').val(doctor.middleName);
-        $('#lastName').val(doctor.lastName);
-        $('#suffix').val(doctor.suffix);
-        $('#primarySpecialty').val(doctor.primarySpecialty);
-        $('#secondarySpecialties').val(doctor.secondarySpecialties ? doctor.secondarySpecialties.join(', ') : '');
-        $('#doctorStatus').val(doctor.status);
-        
-        // Professional Info
-        $('#npiNumber').val(doctor.npiNumber);
-        $('#licenseNumber').val(doctor.licenseNumber);
-        $('#licenseState').val(doctor.licenseState);
-        $('#deaNumber').val(doctor.deaNumber);
-        $('#credentialingDate').val(doctor.credentialingDate ? doctor.credentialingDate.split('T')[0] : '');
-        $('#recredentialingDate').val(doctor.recredentialingDate ? doctor.recredentialingDate.split('T')[0] : '');
-        $('#doctorNotes').val(doctor.notes);
-        
-        // Contact Info
-        $('#phoneOffice').val(doctor.phone ? doctor.phone.office : '');
-        $('#phoneMobile').val(doctor.phone ? doctor.phone.mobile : '');
-        $('#phoneEmergency').val(doctor.phone ? doctor.phone.emergency : '');
-        $('#doctorFax').val(doctor.fax);
-        $('#emailPrimary').val(doctor.email ? doctor.email.primary : '');
-        $('#emailSecondary').val(doctor.email ? doctor.email.secondary : '');
-        
-        if (doctor.preferences && doctor.preferences.preferredContactTime) {
-          $('#contactTimeStart').val(doctor.preferences.preferredContactTime.start);
-          $('#contactTimeEnd').val(doctor.preferences.preferredContactTime.end);
-        }
-        
-        // Office Associations
-        const officeIds = doctor.medicalOffices ? doctor.medicalOffices.map(o => o._id) : [];
-        $('#medicalOffices').val(officeIds);
-        updatePrimaryOfficeOptions();
-        $('#primaryOffice').val(doctor.primaryOffice?._id);
-        $('#specialInstructions').val(doctor.specialInstructions);
-        
-        // Preferences
-        if (doctor.preferences && doctor.preferences.resultNotification) {
-          $('#criticalNotification').val(doctor.preferences.resultNotification.critical);
-          $('#abnormalNotification').val(doctor.preferences.resultNotification.abnormal);
-          $('#normalNotification').val(doctor.preferences.resultNotification.normal);
-        }
-        $('#signatureOnFile').prop('checked', doctor.signatureOnFile);
-        
-        $('#doctorModal').modal('show');
-      })
-      .fail(function(xhr) {
-        alert('Failed to load doctor details');
-      });
-  }
-
-// Replace the saveDoctor function in doctors.html with this complete version:
-
-function saveDoctor() {
-  const id = $('#doctorId').val();
-  
-  // Validate required fields first
-  const requiredFields = [
-    { id: 'firstName', name: 'First Name' },
-    { id: 'lastName', name: 'Last Name' },
-    { id: 'npiNumber', name: 'NPI Number' },
-    { id: 'primarySpecialty', name: 'Primary Specialty' },
-    { id: 'phoneOffice', name: 'Office Phone' },
-    { id: 'emailPrimary', name: 'Primary Email' }
-  ];
-
-  for (let field of requiredFields) {
-    const value = $(`#${field.id}`).val();
-    if (!value || value.trim() === '') {
-      alert(`${field.name} is required`);
-      $(`#${field.id}`).focus();
-      return;
-    }
-  }
-
-  // Validate NPI (10 digits)
-  const npi = $('#npiNumber').val().trim();
-  if (!/^\d{10}$/.test(npi)) {
-    alert('NPI Number must be exactly 10 digits');
-    $('#npiNumber').focus();
-    return;
-  }
-
-  // Validate email
-  const email = $('#emailPrimary').val().trim();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    alert('Please enter a valid primary email address');
-    $('#emailPrimary').focus();
-    return;
-  }
-  
-  // Generate doctor code if your backend requires it
-  // Format: DR-[initials]-[last 4 of NPI]
-  const firstName = $('#firstName').val().trim();
-  const lastName = $('#lastName').val().trim();
-  const doctorCode = `DR-${firstName.charAt(0)}${lastName.charAt(0)}-${npi.slice(-4)}`.toUpperCase();
-  
-  const secondarySpecs = $('#secondarySpecialties').val();
-  
-  const data = {
-    code: doctorCode,  // Add this if your backend requires a doctor code
-    title: $('#doctorTitle').val() || 'MD',
-    firstName: firstName,
-    middleName: $('#middleName').val().trim(),
-    lastName: lastName,
-    suffix: $('#suffix').val().trim(),
-    npiNumber: npi,
-    licenseNumber: $('#licenseNumber').val().trim(),
-    licenseState: $('#licenseState').val().trim().toUpperCase(),
-    deaNumber: $('#deaNumber').val().trim(),
-    primarySpecialty: $('#primarySpecialty').val().trim(),
-    secondarySpecialties: secondarySpecs ? secondarySpecs.split(',').map(s => s.trim()).filter(s => s) : [],
-    phone: {
-      office: $('#phoneOffice').val().trim(),
-      mobile: $('#phoneMobile').val().trim(),
-      emergency: $('#phoneEmergency').val().trim()
-    },
-    email: {
-      primary: email,
-      secondary: $('#emailSecondary').val().trim()
-    },
-    fax: $('#doctorFax').val().trim(),
-    medicalOffices: $('#medicalOffices').val() || [],
-    primaryOffice: $('#primaryOffice').val() || null,
-    preferences: {
-      resultNotification: {
-        critical: $('#criticalNotification').val() || 'phone',
-        abnormal: $('#abnormalNotification').val() || 'email',
-        normal: $('#normalNotification').val() || 'none'
-      },
-      preferredContactTime: {
-        start: $('#contactTimeStart').val() || '',
-        end: $('#contactTimeEnd').val() || ''
-      }
-    },
-    status: $('#doctorStatus').val() || 'active',
-    notes: $('#doctorNotes').val().trim(),
-    specialInstructions: $('#specialInstructions').val().trim(),
-    signatureOnFile: $('#signatureOnFile').is(':checked'),
-    credentialingDate: $('#credentialingDate').val() || null,
-    recredentialingDate: $('#recredentialingDate').val() || null
-  };
-
-  // Remove empty optional fields to prevent validation issues
-  const optionalFields = [
-    'middleName', 'suffix', 'licenseNumber', 'licenseState', 
-    'deaNumber', 'fax', 'notes', 'specialInstructions'
-  ];
-  
-  optionalFields.forEach(field => {
-    if (!data[field]) delete data[field];
-  });
-
-  // Remove empty phone fields
-  if (!data.phone.mobile) delete data.phone.mobile;
-  if (!data.phone.emergency) delete data.phone.emergency;
-  
-  // Remove empty email field
-  if (!data.email.secondary) delete data.email.secondary;
-  
-  // Remove empty dates
-  if (!data.credentialingDate) delete data.credentialingDate;
-  if (!data.recredentialingDate) delete data.recredentialingDate;
-  
-  // Clean up preferences
-  if (!data.preferences.preferredContactTime.start && !data.preferences.preferredContactTime.end) {
-    delete data.preferences.preferredContactTime;
-  }
-
-  // If you don't need doctor code, remove this line:
-  // delete data.code;
-
-  console.log('Saving doctor with data:', JSON.stringify(data, null, 2));
-
-  const url = id ? `/api/doctors/${id}` : '/api/doctors';
-  const method = id ? 'PUT' : 'POST';
-
-  $.ajax({
-    url: url,
-    method: method,
-    contentType: 'application/json',
-    data: JSON.stringify(data),
-    success: function(response) {
-      $('#doctorModal').modal('hide');
-      loadDoctors(currentPage);
+    $(document).ready(function() {
+      loadDoctors();
       loadStatistics();
-      alert('Doctor saved successfully');
-    },
-    error: function(xhr) {
-      console.error('Save failed:', xhr.status, xhr.responseText);
-      console.error('Full response:', xhr.responseJSON);
+      loadMedicalOffices();
       
-      let errorMessage = 'Failed to save doctor';
-      
-      if (xhr.responseJSON) {
-        if (xhr.responseJSON.message) {
-          errorMessage = xhr.responseJSON.message;
-        } else if (xhr.responseJSON.error) {
-          errorMessage = xhr.responseJSON.error;
-        } else if (xhr.responseJSON.errors) {
-          // Handle both array and object error formats
-          if (Array.isArray(xhr.responseJSON.errors)) {
-            const errors = xhr.responseJSON.errors.map(err => {
-              const field = err.param || err.path || err.field || 'Field';
-              const msg = err.msg || err.message || 'Invalid value';
-              return `${field}: ${msg}`;
-            });
-            errorMessage = 'Validation errors:\n' + errors.join('\n');
-          } else if (typeof xhr.responseJSON.errors === 'object') {
-            const errors = Object.keys(xhr.responseJSON.errors).map(key => {
-              const err = xhr.responseJSON.errors[key];
-              const msg = err.message || err.msg || err;
-              return `${key}: ${msg}`;
-            });
-            errorMessage = 'Validation errors:\n' + errors.join('\n');
-          }
+      // Load footer
+      $('#footer-container').load('/components/footer.html', function(response, status, xhr) {
+        if (status == "error") {
+          console.error("Footer failed to load:", xhr.status, xhr.statusText);
+        } else {
+          console.log("Footer loaded successfully");
         }
-      }
+      });
       
-      // Handle specific error cases
-      if (errorMessage.includes('duplicate') && errorMessage.includes('npiNumber')) {
-        alert('A doctor with this NPI number already exists.');
-        $('#npiNumber').focus();
-        return;
-      }
-      
-      if (errorMessage.includes('duplicate') && errorMessage.includes('code')) {
-        // If doctor code is duplicate, try regenerating with timestamp
-        const newCode = `DR-${firstName.charAt(0)}${lastName.charAt(0)}-${Date.now().toString().slice(-4)}`.toUpperCase();
-        data.code = newCode;
-        console.log('Retrying with new code:', newCode);
-        // Could retry the save here, but for now just alert the user
-        alert('Doctor code already exists. Please try again.');
-        return;
-      }
-      
-      alert('Error: ' + errorMessage);
-    }
-  });
-}
+      // Enable Enter key search
+      $('#searchInput').on('keypress', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          searchDoctors();
+        }
+      });
+    });
 
-  function viewDoctor(id) {
-    $.get(`/api/doctors/${id}`)
-      .done(function(response) {
-        const doctor = response.doctor;
+    function resetFilters() {
+      $('#searchInput').val('');
+      $('#officeFilter').val('');
+      $('#statusFilter').val('');
+      loadDoctors(1);
+    }
+
+    function loadStatistics() {
+      $.get('/api/doctors?limit=100')
+        .done(function(response) {
+          const doctors = response.doctors || [];
+          $('#totalDoctors').text(doctors.length);
+          $('#activeDoctors').text(doctors.filter(d => d.status === 'active').length);
+          $('#pendingDoctors').text(doctors.filter(d => d.status === 'pending_verification').length);
+          
+          if (response.pagination && response.pagination.total) {
+            $('#totalDoctors').text(response.pagination.total);
+          }
+        })
+        .fail(function(xhr) {
+          console.error('Failed to load statistics:', xhr.status, xhr.responseText);
+          $('#totalDoctors').text('0');
+          $('#activeDoctors').text('0');
+          $('#pendingDoctors').text('0');
+        });
+    }
+
+    function loadMedicalOffices() {
+      $.get('/api/medical-offices?limit=100&status=active')
+        .done(function(response) {
+          const selectFilter = $('#officeFilter');
+          const selectOffices = $('#medicalOffices');
+          
+          selectFilter.empty();
+          selectFilter.append('<option value="">All Medical Offices</option>');
+          
+          selectOffices.empty();
+          
+          if (response.medicalOffices) {
+            response.medicalOffices.forEach(office => {
+              selectFilter.append(`<option value="${office._id}">${office.name}</option>`);
+              selectOffices.append(`<option value="${office._id}">${office.name} (${office.officeCode})</option>`);
+            });
+          }
+        })
+        .fail(function(xhr) {
+          console.error('Failed to load medical offices:', xhr.status, xhr.responseText);
+        });
+    }
+
+    function loadDoctors(page = 1) {
+      currentPage = page;
+      const search = $('#searchInput').val();
+      const status = $('#statusFilter').val();
+      const medicalOffice = $('#officeFilter').val();
+      
+      let url = `/api/doctors?page=${page}&limit=${limit}`;
+      if (search) url += `&search=${encodeURIComponent(search)}`;
+      if (status) url += `&status=${status}`;
+      if (medicalOffice) url += `&medicalOffice=${medicalOffice}`;
+
+      $.get(url)
+        .done(function(response) {
+          displayDoctors(response.doctors || []);
+          displayPagination(response.pagination || {});
+        })
+        .fail(function(xhr) {
+          console.error('Failed to load doctors');
+          $('#doctorsTableBody').html('<tr><td colspan="8" class="text-center">Failed to load doctors</td></tr>');
+        });
+    }
+
+    function displayDoctors(doctors) {
+      const tbody = $('#doctorsTableBody');
+      tbody.empty();
+
+      if (!doctors || doctors.length === 0) {
+        tbody.append(`
+          <tr>
+            <td colspan="8" class="text-center py-4">
+              <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+              <p class="text-muted">No doctors found</p>
+            </td>
+          </tr>
+        `);
+        return;
+      }
+
+      doctors.forEach(doctor => {
+        const statusClass = `status-${doctor.status.replace('_', '')}`;
         
         let officesList = '';
         if (doctor.medicalOffices && doctor.medicalOffices.length > 0) {
-          officesList = '<h6 class="mt-3">Associated Medical Offices:</h6><ul>';
           doctor.medicalOffices.forEach(office => {
-            const isPrimary = doctor.primaryOffice?._id === office._id;
-            officesList += `<li>${office.name} (${office.officeCode})${isPrimary ? ' - <strong>PRIMARY</strong>' : ''}</li>`;
+            officesList += `<span class="office-badge">${office.name}</span>`;
           });
-          officesList += '</ul>';
+        } else {
+          officesList = '<span class="text-muted">No offices assigned</span>';
         }
-
-        const details = `
-          <div class="doctor-details">
-            <h5>${doctor.title} ${doctor.firstName} ${doctor.middleName ? doctor.middleName + ' ' : ''}${doctor.lastName}${doctor.suffix ? ', ' + doctor.suffix : ''}</h5>
-            <p class="text-muted">NPI: ${doctor.npiNumber}</p>
-            
-            <div class="row">
-              <div class="col-md-6">
-                <h6>Specialty:</h6>
-                <p>${doctor.primarySpecialty}</p>
-                ${doctor.secondarySpecialties && doctor.secondarySpecialties.length > 0 ? 
-                  `<h6>Secondary Specialties:</h6><p>${doctor.secondarySpecialties.join(', ')}</p>` : ''}
-                
-                <h6>License:</h6>
-                <p>${doctor.licenseNumber ? `${doctor.licenseNumber} (${doctor.licenseState})` : 'Not provided'}</p>
-                
-                <h6>Status:</h6>
-                <p><span class="status-badge status-${doctor.status.replace('_', '')}">${doctor.status.replace('_', ' ').toUpperCase()}</span></p>
+        
+        const row = `
+          <tr>
+            <td>
+              <div>
+                <span class="title-badge">${doctor.title}</span>
+                <strong>${doctor.firstName} ${doctor.middleName ? doctor.middleName + ' ' : ''}${doctor.lastName}</strong>
+                ${doctor.suffix ? ', ' + doctor.suffix : ''}
               </div>
+            </td>
+            <td><strong>${doctor.npiNumber}</strong></td>
+            <td>
+              <span class="specialty-badge">${doctor.primarySpecialty}</span>
+            </td>
+            <td>
+              <div style="max-width: 250px;">
+                ${officesList}
+              </div>
+            </td>
+            <td>
+              <small>
+                ${doctor.phone ? `<i class="fas fa-phone"></i> ${doctor.phone.office || doctor.phone.mobile || 'N/A'}<br>` : ''}
+                ${doctor.email ? `<i class="fas fa-envelope"></i> ${doctor.email.primary || 'N/A'}` : ''}
+              </small>
+            </td>
+            <td>
+              <span class="badge bg-info">${doctor.statistics?.totalOrders || 0}</span>
+            </td>
+            <td>
+              <span class="status-badge ${statusClass}">
+                ${doctor.status.replace('_', ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+              </span>
+            </td>
+            <td class="table-actions">
+              <button class="btn btn-sm btn-info" onclick="viewDoctor('${doctor._id}')" title="View">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-sm btn-warning" onclick="editDoctor('${doctor._id}')" title="Edit">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-danger" onclick="deleteDoctor('${doctor._id}')" title="Delete">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+        tbody.append(row);
+      });
+    }
+
+    function displayPagination(pagination) {
+      const paginationEl = $('#pagination');
+      paginationEl.empty();
+
+      if (!pagination || pagination.pages <= 1) return;
+
+      if (pagination.current > 1) {
+        paginationEl.append(`
+          <li class="page-item">
+            <a class="page-link" href="#" onclick="loadDoctors(${pagination.current - 1}); return false;">Previous</a>
+          </li>
+        `);
+      }
+
+      for (let i = 1; i <= Math.min(pagination.pages, 10); i++) {
+        paginationEl.append(`
+          <li class="page-item ${pagination.current === i ? 'active' : ''}">
+            <a class="page-link" href="#" onclick="loadDoctors(${i}); return false;">${i}</a>
+          </li>
+        `);
+      }
+
+      if (pagination.current < pagination.pages) {
+        paginationEl.append(`
+          <li class="page-item">
+            <a class="page-link" href="#" onclick="loadDoctors(${pagination.current + 1}); return false;">Next</a>
+          </li>
+        `);
+      }
+    }
+
+    function searchDoctors() {
+      loadDoctors(1);
+    }
+
+    function showAddDoctorModal() {
+      $('#modalTitle').text('Add Doctor');
+      $('#doctorForm')[0].reset();
+      $('#doctorId').val('');
+      $('#doctorModal').modal('show');
+      updatePrimaryOfficeOptions();
+    }
+
+    $('#medicalOffices').on('change', function() {
+      updatePrimaryOfficeOptions();
+    });
+
+    function updatePrimaryOfficeOptions() {
+      const selectedOffices = $('#medicalOffices').val();
+      const primarySelect = $('#primaryOffice');
+      const currentPrimary = primarySelect.val();
+      
+      primarySelect.empty();
+      primarySelect.append('<option value="">Select Primary Office</option>');
+      
+      if (selectedOffices && selectedOffices.length > 0) {
+        $('#medicalOffices option:selected').each(function() {
+          primarySelect.append(`<option value="${$(this).val()}">${$(this).text()}</option>`);
+        });
+        
+        if (selectedOffices.includes(currentPrimary)) {
+          primarySelect.val(currentPrimary);
+        }
+      }
+    }
+
+    function editDoctor(id) {
+      $.get(`/api/doctors/${id}`)
+        .done(function(response) {
+          const doctor = response.doctor;
+          $('#modalTitle').text('Edit Doctor');
+          $('#doctorId').val(doctor._id);
+          
+          // Personal Info
+          $('#doctorTitle').val(doctor.title);
+          $('#firstName').val(doctor.firstName);
+          $('#middleName').val(doctor.middleName);
+          $('#lastName').val(doctor.lastName);
+          $('#suffix').val(doctor.suffix);
+          $('#primarySpecialty').val(doctor.primarySpecialty);
+          $('#secondarySpecialties').val(doctor.secondarySpecialties ? doctor.secondarySpecialties.join(', ') : '');
+          $('#doctorStatus').val(doctor.status);
+          
+          // Professional Info
+          $('#npiNumber').val(doctor.npiNumber);
+          $('#licenseNumber').val(doctor.licenseNumber);
+          $('#licenseState').val(doctor.licenseState);
+          $('#deaNumber').val(doctor.deaNumber);
+          $('#credentialingDate').val(doctor.credentialingDate ? doctor.credentialingDate.split('T')[0] : '');
+          $('#recredentialingDate').val(doctor.recredentialingDate ? doctor.recredentialingDate.split('T')[0] : '');
+          $('#doctorNotes').val(doctor.notes);
+          
+          // Contact Info
+          $('#phoneOffice').val(doctor.phone ? doctor.phone.office : '');
+          $('#phoneMobile').val(doctor.phone ? doctor.phone.mobile : '');
+          $('#phoneEmergency').val(doctor.phone ? doctor.phone.emergency : '');
+          $('#doctorFax').val(doctor.fax);
+          $('#emailPrimary').val(doctor.email ? doctor.email.primary : '');
+          $('#emailSecondary').val(doctor.email ? doctor.email.secondary : '');
+          
+          if (doctor.preferences && doctor.preferences.preferredContactTime) {
+            $('#contactTimeStart').val(doctor.preferences.preferredContactTime.start);
+            $('#contactTimeEnd').val(doctor.preferences.preferredContactTime.end);
+          }
+          
+          // Office Associations
+          const officeIds = doctor.medicalOffices ? doctor.medicalOffices.map(o => o._id) : [];
+          $('#medicalOffices').val(officeIds);
+          updatePrimaryOfficeOptions();
+          $('#primaryOffice').val(doctor.primaryOffice?._id);
+          $('#specialInstructions').val(doctor.specialInstructions);
+          
+          // Preferences
+          if (doctor.preferences && doctor.preferences.resultNotification) {
+            $('#criticalNotification').val(doctor.preferences.resultNotification.critical);
+            $('#abnormalNotification').val(doctor.preferences.resultNotification.abnormal);
+            $('#normalNotification').val(doctor.preferences.resultNotification.normal);
+          }
+          $('#signatureOnFile').prop('checked', doctor.signatureOnFile);
+          
+          $('#doctorModal').modal('show');
+        })
+        .fail(function(xhr) {
+          alert('Failed to load doctor details');
+        });
+    }
+
+    function saveDoctor() {
+      const id = $('#doctorId').val();
+      
+      // Validate required fields first
+      const requiredFields = [
+        { id: 'firstName', name: 'First Name' },
+        { id: 'lastName', name: 'Last Name' },
+        { id: 'npiNumber', name: 'NPI Number' },
+        { id: 'primarySpecialty', name: 'Primary Specialty' },
+        { id: 'phoneOffice', name: 'Office Phone' },
+        { id: 'emailPrimary', name: 'Primary Email' }
+      ];
+
+      for (let field of requiredFields) {
+        const value = $(`#${field.id}`).val();
+        if (!value || value.trim() === '') {
+          alert(`${field.name} is required`);
+          $(`#${field.id}`).focus();
+          return;
+        }
+      }
+
+      // Validate NPI (10 digits)
+      const npi = $('#npiNumber').val().trim();
+      if (!/^\d{10}$/.test(npi)) {
+        alert('NPI Number must be exactly 10 digits');
+        $('#npiNumber').focus();
+        return;
+      }
+
+      // Validate email
+      const email = $('#emailPrimary').val().trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        alert('Please enter a valid primary email address');
+        $('#emailPrimary').focus();
+        return;
+      }
+      
+      const firstName = $('#firstName').val().trim();
+      const lastName = $('#lastName').val().trim();
+      const doctorCode = `DR-${firstName.charAt(0)}${lastName.charAt(0)}-${npi.slice(-4)}`.toUpperCase();
+      
+      const secondarySpecs = $('#secondarySpecialties').val();
+      
+      const data = {
+        code: doctorCode,
+        title: $('#doctorTitle').val() || 'MD',
+        firstName: firstName,
+        middleName: $('#middleName').val().trim(),
+        lastName: lastName,
+        suffix: $('#suffix').val().trim(),
+        npiNumber: npi,
+        licenseNumber: $('#licenseNumber').val().trim(),
+        licenseState: $('#licenseState').val().trim().toUpperCase(),
+        deaNumber: $('#deaNumber').val().trim(),
+        primarySpecialty: $('#primarySpecialty').val().trim(),
+        secondarySpecialties: secondarySpecs ? secondarySpecs.split(',').map(s => s.trim()).filter(s => s) : [],
+        phone: {
+          office: $('#phoneOffice').val().trim(),
+          mobile: $('#phoneMobile').val().trim(),
+          emergency: $('#phoneEmergency').val().trim()
+        },
+        email: {
+          primary: email,
+          secondary: $('#emailSecondary').val().trim()
+        },
+        fax: $('#doctorFax').val().trim(),
+        medicalOffices: $('#medicalOffices').val() || [],
+        primaryOffice: $('#primaryOffice').val() || null,
+        preferences: {
+          resultNotification: {
+            critical: $('#criticalNotification').val() || 'phone',
+            abnormal: $('#abnormalNotification').val() || 'email',
+            normal: $('#normalNotification').val() || 'none'
+          },
+          preferredContactTime: {
+            start: $('#contactTimeStart').val() || '',
+            end: $('#contactTimeEnd').val() || ''
+          }
+        },
+        status: $('#doctorStatus').val() || 'active',
+        notes: $('#doctorNotes').val().trim(),
+        specialInstructions: $('#specialInstructions').val().trim(),
+        signatureOnFile: $('#signatureOnFile').is(':checked'),
+        credentialingDate: $('#credentialingDate').val() || null,
+        recredentialingDate: $('#recredentialingDate').val() || null
+      };
+
+      // Remove empty optional fields
+      const optionalFields = [
+        'middleName', 'suffix', 'licenseNumber', 'licenseState', 
+        'deaNumber', 'fax', 'notes', 'specialInstructions'
+      ];
+      
+      optionalFields.forEach(field => {
+        if (!data[field]) delete data[field];
+      });
+
+      if (!data.phone.mobile) delete data.phone.mobile;
+      if (!data.phone.emergency) delete data.phone.emergency;
+      if (!data.email.secondary) delete data.email.secondary;
+      if (!data.credentialingDate) delete data.credentialingDate;
+      if (!data.recredentialingDate) delete data.recredentialingDate;
+      
+      if (!data.preferences.preferredContactTime.start && !data.preferences.preferredContactTime.end) {
+        delete data.preferences.preferredContactTime;
+      }
+
+      console.log('Saving doctor with data:', JSON.stringify(data, null, 2));
+
+      const url = id ? `/api/doctors/${id}` : '/api/doctors';
+      const method = id ? 'PUT' : 'POST';
+
+      $.ajax({
+        url: url,
+        method: method,
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function(response) {
+          $('#doctorModal').modal('hide');
+          loadDoctors(currentPage);
+          loadStatistics();
+          showMessage('Doctor saved successfully', 'success');
+        },
+        error: function(xhr) {
+          console.error('Save failed:', xhr.status, xhr.responseText);
+          console.error('Full response:', xhr.responseJSON);
+          
+          let errorMessage = 'Failed to save doctor';
+          
+          if (xhr.responseJSON) {
+            if (xhr.responseJSON.message) {
+              errorMessage = xhr.responseJSON.message;
+            } else if (xhr.responseJSON.error) {
+              errorMessage = xhr.responseJSON.error;
+            } else if (xhr.responseJSON.errors) {
+              if (Array.isArray(xhr.responseJSON.errors)) {
+                const errors = xhr.responseJSON.errors.map(err => {
+                  const field = err.param || err.path || err.field || 'Field';
+                  const msg = err.msg || err.message || 'Invalid value';
+                  return `${field}: ${msg}`;
+                });
+                errorMessage = 'Validation errors:\n' + errors.join('\n');
+              } else if (typeof xhr.responseJSON.errors === 'object') {
+                const errors = Object.keys(xhr.responseJSON.errors).map(key => {
+                  const err = xhr.responseJSON.errors[key];
+                  const msg = err.message || err.msg || err;
+                  return `${key}: ${msg}`;
+                });
+                errorMessage = 'Validation errors:\n' + errors.join('\n');
+              }
+            }
+          }
+          
+          if (errorMessage.includes('duplicate') && errorMessage.includes('npiNumber')) {
+            alert('A doctor with this NPI number already exists.');
+            $('#npiNumber').focus();
+            return;
+          }
+          
+          if (errorMessage.includes('duplicate') && errorMessage.includes('code')) {
+            const newCode = `DR-${firstName.charAt(0)}${lastName.charAt(0)}-${Date.now().toString().slice(-4)}`.toUpperCase();
+            data.code = newCode;
+            console.log('Retrying with new code:', newCode);
+            alert('Doctor code already exists. Please try again.');
+            return;
+          }
+          
+          alert('Error: ' + errorMessage);
+        }
+      });
+    }
+
+    function viewDoctor(id) {
+      $.get(`/api/doctors/${id}`)
+        .done(function(response) {
+          const doctor = response.doctor;
+          
+          let officesList = '';
+          if (doctor.medicalOffices && doctor.medicalOffices.length > 0) {
+            officesList = '<h6 class="mt-3">Associated Medical Offices:</h6><ul>';
+            doctor.medicalOffices.forEach(office => {
+              const isPrimary = doctor.primaryOffice?._id === office._id;
+              officesList += `<li>${office.name} (${office.officeCode})${isPrimary ? ' - <strong>PRIMARY</strong>' : ''}</li>`;
+            });
+            officesList += '</ul>';
+          }
+
+          const details = `
+            <div class="doctor-details">
+              <h5>${doctor.title} ${doctor.firstName} ${doctor.middleName ? doctor.middleName + ' ' : ''}${doctor.lastName}${doctor.suffix ? ', ' + doctor.suffix : ''}</h5>
+              <p class="text-muted">NPI: ${doctor.npiNumber}</p>
               
-              <div class="col-md-6">
-                <h6>Contact Information:</h6>
-                <p>
-                  ${doctor.phone ? `<i class="fas fa-phone"></i> Office: ${doctor.phone.office || 'N/A'}<br>` : ''}
-                  ${doctor.phone && doctor.phone.mobile ? `<i class="fas fa-mobile"></i> Mobile: ${doctor.phone.mobile}<br>` : ''}
-                  ${doctor.fax ? `<i class="fas fa-fax"></i> Fax: ${doctor.fax}<br>` : ''}
-                  ${doctor.email ? `<i class="fas fa-envelope"></i> ${doctor.email.primary || 'N/A'}` : ''}
-                </p>
+              <div class="row">
+                <div class="col-md-6">
+                  <h6>Specialty:</h6>
+                  <p>${doctor.primarySpecialty}</p>
+                  ${doctor.secondarySpecialties && doctor.secondarySpecialties.length > 0 ? 
+                    `<h6>Secondary Specialties:</h6><p>${doctor.secondarySpecialties.join(', ')}</p>` : ''}
+                  
+                  <h6>License:</h6>
+                  <p>${doctor.licenseNumber ? `${doctor.licenseNumber} (${doctor.licenseState})` : 'Not provided'}</p>
+                  
+                  <h6>Status:</h6>
+                  <p><span class="status-badge status-${doctor.status.replace('_', '')}">${doctor.status.replace('_', ' ').toUpperCase()}</span></p>
+                </div>
                 
-                <h6>Statistics:</h6>
-                <div class="row">
-                  <div class="col-6">
-                    <div class="stat-card">
-                      <div class="stat-value">${doctor.statistics?.totalOrders || 0}</div>
-                      <div class="stat-label">Total Orders</div>
+                <div class="col-md-6">
+                  <h6>Contact Information:</h6>
+                  <p>
+                    ${doctor.phone ? `<i class="fas fa-phone"></i> Office: ${doctor.phone.office || 'N/A'}<br>` : ''}
+                    ${doctor.phone && doctor.phone.mobile ? `<i class="fas fa-mobile"></i> Mobile: ${doctor.phone.mobile}<br>` : ''}
+                    ${doctor.fax ? `<i class="fas fa-fax"></i> Fax: ${doctor.fax}<br>` : ''}
+                    ${doctor.email ? `<i class="fas fa-envelope"></i> ${doctor.email.primary || 'N/A'}` : ''}
+                  </p>
+                  
+                  <h6>Statistics:</h6>
+                  <div class="row">
+                    <div class="col-6">
+                      <div class="stat-card">
+                        <div class="stat-value">${doctor.statistics?.totalOrders || 0}</div>
+                        <div class="stat-label">Total Orders</div>
+                      </div>
                     </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="stat-card">
-                      <div class="stat-value">${doctor.statistics?.averageOrdersPerMonth || 0}</div>
-                      <div class="stat-label">Avg/Month</div>
+                    <div class="col-6">
+                      <div class="stat-card">
+                        <div class="stat-value">${doctor.statistics?.averageOrdersPerMonth || 0}</div>
+                        <div class="stat-label">Avg/Month</div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
+              
+              ${officesList}
+              
+              ${doctor.notes ? `<h6 class="mt-3">Notes:</h6><p>${doctor.notes}</p>` : ''}
+              ${doctor.specialInstructions ? `<h6 class="mt-3">Special Instructions:</h6><p>${doctor.specialInstructions}</p>` : ''}
             </div>
-            
-            ${officesList}
-            
-            ${doctor.notes ? `<h6 class="mt-3">Notes:</h6><p>${doctor.notes}</p>` : ''}
-            ${doctor.specialInstructions ? `<h6 class="mt-3">Special Instructions:</h6><p>${doctor.specialInstructions}</p>` : ''}
-          </div>
-        `;
-        
-        $('#doctorDetails').html(details);
-        $('#viewDoctorModal').modal('show');
-      })
-      .fail(function(xhr) {
-        alert('Failed to load doctor details');
-      });
-  }
+          `;
+          
+          $('#doctorDetails').html(details);
+          $('#viewDoctorModal').modal('show');
+        })
+        .fail(function(xhr) {
+          alert('Failed to load doctor details');
+        });
+    }
 
-  function deleteDoctor(id) {
-    if (confirm('Are you sure you want to deactivate this doctor? This action cannot be undone if the doctor has recent orders.')) {
-      $.ajax({
-        url: `/api/doctors/${id}`,
-        method: 'DELETE',
-        success: function(response) {
-          loadDoctors(currentPage);
-          loadStatistics();
-          alert('Doctor deactivated successfully');
-        },
-        error: function(xhr) {
-          const error = xhr.responseJSON?.message || 'Failed to delete doctor';
-          alert('Error: ' + error);
+    function deleteDoctor(id) {
+      if (confirm('Are you sure you want to deactivate this doctor? This action cannot be undone if the doctor has recent orders.')) {
+        $.ajax({
+          url: `/api/doctors/${id}`,
+          method: 'DELETE',
+          success: function(response) {
+            loadDoctors(currentPage);
+            loadStatistics();
+            showMessage('Doctor deactivated successfully', 'warning');
+          },
+          error: function(xhr) {
+            const error = xhr.responseJSON?.message || 'Failed to delete doctor';
+            alert('Error: ' + error);
+          }
+        });
+      }
+    }
+
+    function exportDoctors() {
+      const token = AuthManager.getToken();
+      if (!token) {
+        alert('Authentication required');
+        return;
+      }
+
+      fetch('/api/doctors?limit=100&format=csv', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
+      })
+      .then(response => {
+        if (!response.ok) throw new Error('Export failed');
+        return response.blob();
+      })
+      .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `doctors_${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      })
+      .catch(error => {
+        console.error('Export error:', error);
+        alert('Failed to export doctors');
       });
     }
-  }
 
-function exportDoctors() {
-  const token = AuthManager.getToken();
-  if (!token) {
-    alert('Authentication required');
-    return;
-  }
-
-  fetch('/api/doctors?limit=100&format=csv', {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`
+    // Helper function to show success/error messages
+    function showMessage(message, type) {
+      const alertClass = type === 'success' ? 'alert-success' : 
+                        type === 'warning' ? 'alert-warning' : 'alert-danger';
+      const alertHtml = `
+        <div class="alert ${alertClass} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-5" style="z-index: 9999;">
+          ${message}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      `;
+      $('body').append(alertHtml);
+      setTimeout(() => {
+        $('.alert').fadeOut(() => $('.alert').remove());
+      }, 3000);
     }
-  })
-  .then(response => {
-    if (!response.ok) throw new Error('Export failed');
-    return response.blob();
-  })
-  .then(blob => {
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `doctors_${new Date().toISOString().split('T')[0]}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
-  })
-  .catch(error => {
-    console.error('Export error:', error);
-    alert('Failed to export doctors');
-  });
-}
-</script>
+  </script>
+
+  <!-- Footer container -->
+  <div id="footer-container"></div>
 </body>
 </html>

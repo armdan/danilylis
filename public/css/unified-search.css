@@ -1,0 +1,111 @@
+
+/* Unified Search Component - Specific styles only */
+.unified-search-card {
+    /* Inherits card styles from main.css, just add specific overrides */
+    padding: 1.25rem;
+    margin-bottom: 1.5rem; /* Add this back */
+}
+
+.unified-search-filters {
+    display: flex;
+    gap: 1rem;
+    align-items: end;
+    flex-wrap: wrap;
+}
+
+
+
+.search-group {
+    flex: 1;
+    min-width: 180px;
+}
+
+.search-group.search-main {
+    flex: 2;
+    min-width: 300px;
+}
+
+.search-group label {
+    /* Inherits form-label styles from main.css */
+    display: block;
+}
+
+.search-input-wrapper {
+    position: relative;
+}
+
+.search-input-wrapper input {
+    /* Inherits form-control styles from main.css */
+    padding-right: 2.5rem;
+}
+
+.search-input-wrapper .search-icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    border: none;
+    background: transparent;
+    color: #6c757d;
+    padding: 0 0.75rem;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.search-input-wrapper .search-icon:hover {
+    color: #667eea;
+}
+
+.search-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: end;
+}
+
+.btn-search-primary {
+    /* Specific gradient for search button */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    height: 38px;
+}
+
+.btn-search-secondary {
+    /* Specific styles for reset button */
+    background: white;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+    height: 38px;
+}
+
+.btn-search-secondary:hover {
+    background: #f8f9fa;
+    border-color: #adb5bd;
+}
+
+@media (max-width: 992px) {
+    .search-group {
+        min-width: calc(50% - 0.5rem);
+    }
+}
+
+@media (max-width: 768px) {
+    .unified-search-filters {
+        flex-direction: column;
+    }
+    
+    .search-group {
+        width: 100%;
+        min-width: 100%;
+    }
+    
+    .search-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+    
+    .search-actions button {
+        flex: 1;
+    }
+}

@@ -289,7 +289,9 @@ router.get('/results', [
     const results = await PCRResult.find(queryObj)
       .populate('patient', 'firstName lastName patientId')
       .populate('test', 'testName panel')
+      .populate('order', 'orderNumber orderingPhysician medicalOffice')
       .populate('performedBy reviewedBy approvedBy', 'firstName lastName')
+      .populate('patient', 'firstName lastName patientId dateOfBirth gender')  // Add gender here too
       .sort({ performedDate: -1 });
 
     res.json({ results });
@@ -303,7 +305,7 @@ router.get('/results', [
 router.get('/results/:id', async (req, res) => {
   try {
     const result = await PCRResult.findById(req.params.id)
-      .populate('patient', 'firstName lastName patientId dateOfBirth')
+      .populate('patient', 'firstName lastName patientId dateOfBirth gender')
       .populate('test')
       .populate('order', 'orderNumber orderingPhysician')
       .populate('performedBy reviewedBy approvedBy', 'firstName lastName');

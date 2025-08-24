@@ -1,631 +1,619 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PCR Tests - Laboratory Information System</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        .main-content {
-            padding: 20px;
-            margin-top: 60px;
-        }
-        .panel-card {
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 2px solid transparent;
-        }
-        .panel-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            border-color: #007bff;
-        }
-        .panel-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        .target-badge {
-            margin: 2px;
-            font-size: 0.85rem;
-        }
-        .resistance-marker {
-            background-color: #dc3545;
-            color: white;
-        }
-        .pathogen-category {
-            font-size: 0.75rem;
-            padding: 2px 6px;
-            border-radius: 3px;
-            margin-left: 5px;
-        }
-        .category-bacteria { background-color: #28a745; color: white; }
-        .category-virus { background-color: #ffc107; color: black; }
-        .category-fungus { background-color: #6c757d; color: white; }
-        .category-parasite { background-color: #17a2b8; color: white; }
-        .test-details-modal .modal-dialog {
-            max-width: 900px;
-        }
-        .result-entry-section {
-            border: 1px solid #dee2e6;
-            border-radius: 0.375rem;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-        .ct-value-input {
-            width: 80px;
-        }
-        .detected-positive { color: #dc3545; font-weight: bold; }
-        .not-detected { color: #28a745; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PCR Tests - Laboratory Information System</title>
+  
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Unified CSS files -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/theme-colors.css">
+  <link rel="stylesheet" href="/css/unified-search.css">
+  <link rel="stylesheet" href="/css/unified-footer.css">
+  
+  <style>
+    /* Page-specific styles only */
+    .test-details { 
+      padding: 15px; 
+      background: #f8f9fa; 
+      border-radius: 5px; 
+    }
+    .panel-badge { 
+      background: #007bff; 
+      color: white; 
+      padding: 3px 8px; 
+      border-radius: 10px; 
+      font-size: 0.85em; 
+    }
+    .target-badge { 
+      background: #e7f3ff; 
+      padding: 3px 8px; 
+      border-radius: 10px; 
+      font-size: 0.85em; 
+      margin: 2px; 
+      display: inline-block;
+    }
+    .resistance-badge { 
+      background: #dc3545; 
+      color: white;
+      padding: 3px 8px; 
+      border-radius: 10px; 
+      font-size: 0.85em; 
+      margin: 2px; 
+      display: inline-block;
+    }
+    .pathogen-category {
+      font-size: 0.75rem;
+      padding: 2px 6px;
+      border-radius: 3px;
+      margin-left: 5px;
+    }
+    .category-bacteria { background-color: #28a745; color: white; }
+    .category-virus { background-color: #ffc107; color: black; }
+    .category-fungus { background-color: #6c757d; color: white; }
+    .category-parasite { background-color: #17a2b8; color: white; }
+    .table-actions { 
+      white-space: nowrap; 
+    }
+    .table-actions .btn {
+      padding: 4px 8px;
+      margin: 0 2px;
+    }
+    .panel-icon {
+      font-size: 1.2rem;
+    }
+  </style>
 </head>
 <body>
-    <!-- Navbar will be injected by navbar-loader.js -->
+  <!-- Navbar will be injected here -->
 
-    <!-- Main Content -->
-    <div class="container-fluid main-content">
-        <div class="row mb-4">
-            <div class="col">
-                <h2><i class="fas fa-dna"></i> PCR Test Management</h2>
-                <p class="text-muted">Molecular diagnostic panels with pathogen and resistance detection</p>
-            </div>
-            <div class="col-auto">
-                <button class="btn btn-primary" onclick="PCRTestManager.initializeTests()" id="initBtn">
-                    <i class="fas fa-database"></i> Initialize Test Panels
-                </button>
-                <button class="btn btn-success" onclick="PCRTestManager.showResultEntry()">
-                    <i class="fas fa-plus"></i> Enter Results
-                </button>
-            </div>
+  <div class="container-fluid main-content">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <h1><i class="fas fa-dna me-2"></i>PCR Tests</h1>
+        <div class="d-flex gap-3">
+          <button class="btn btn-success" onclick="PCRTestManager.initializeTests()" id="initBtn">
+            <i class="fas fa-database me-2"></i>Initialize Test Panels
+          </button>
+          <button class="btn btn-light btn-sm" onclick="exportTests()">
+            <i class="fas fa-download me-1"></i>Export
+          </button>
         </div>
-
-        <!-- Test Table -->
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-list"></i> All PCR Tests</h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover" id="testsTable">
-                        <thead>
-                            <tr>
-                                <th width="60">Panel</th>
-                                <th>Test Name</th>
-                                <th>Targets</th>
-                                <th>Resistance Markers</th>
-                                <th>Price</th>
-                                <th>Sample Type</th>
-                                <th width="100">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="testsTableBody">
-                            <!-- Test rows will be loaded here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
 
-    <!-- Test Details Modal -->
-    <div class="modal fade" id="testDetailsModal" tabindex="-1">
-        <div class="modal-dialog test-details-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Test Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body" id="testDetailsBody">
-                    <!-- Test details will be loaded here -->
-                </div>
-            </div>
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-value text-primary" id="totalTests">0</div>
+          <div class="stat-label">Total Tests</div>
         </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-value text-success" id="totalPanels">0</div>
+          <div class="stat-label">Test Panels</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-value text-info" id="totalTargets">0</div>
+          <div class="stat-label">Total Targets</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-value text-warning" id="totalResistance">0</div>
+          <div class="stat-label">Resistance Markers</div>
+        </div>
+      </div>
     </div>
 
-    <!-- Result Entry Modal -->
-    <div class="modal fade" id="resultEntryModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">PCR Result Entry</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="resultEntryForm">
-                        <!-- Patient and Order Info -->
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <label class="form-label">Patient ID</label>
-                                <input type="text" class="form-control" id="patientId" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Order Number</label>
-                                <input type="text" class="form-control" id="orderNumber" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Test Panel</label>
-                                <select class="form-select" id="testPanel" onchange="PCRTestManager.loadTestTargets()" required>
-                                    <option value="">Select Panel</option>
-                                    <option value="UTI">UTI Panel</option>
-                                    <option value="Nail_Fungus">Nail Fungus Panel</option>
-                                    <option value="Pneumonia">Pneumonia Panel</option>
-                                    <option value="Wound">Wound Panel</option>
-                                    <option value="GI">GI Panel</option>
-                                    <option value="COVID_FLU_RSV">COVID/Flu/RSV Panel</option>
-                                    <option value="STI">STI Panel</option>
-                                    <option value="Respiratory">Respiratory Panel</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Sample Info -->
-                        <div class="result-entry-section">
-                            <h6>Sample Information</h6>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <label class="form-label">Sample Type</label>
-                                    <select class="form-select" id="sampleType" required>
-                                        <option value="">Select</option>
-                                        <option value="urine">Urine</option>
-                                        <option value="nail_clipping">Nail Clipping</option>
-                                        <option value="sputum">Sputum</option>
-                                        <option value="wound_swab">Wound Swab</option>
-                                        <option value="stool">Stool</option>
-                                        <option value="nasopharyngeal_swab">Nasopharyngeal Swab</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Collection Date</label>
-                                    <input type="datetime-local" class="form-control" id="collectionDate" required>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Sample Quality</label>
-                                    <select class="form-select" id="sampleQuality">
-                                        <option value="Adequate">Adequate</option>
-                                        <option value="Marginal">Marginal</option>
-                                        <option value="Inadequate">Inadequate</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Internal Control</label>
-                                    <select class="form-select" id="internalControl" required>
-                                        <option value="Pass">Pass</option>
-                                        <option value="Fail">Fail</option>
-                                        <option value="Invalid">Invalid</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Target Results -->
-                        <div class="result-entry-section">
-                            <h6>Pathogen Detection Results</h6>
-                            <div id="targetResultsContainer">
-                                <!-- Target results will be loaded based on selected panel -->
-                            </div>
-                        </div>
-
-                        <!-- Resistance Markers -->
-                        <div class="result-entry-section" id="resistanceSection" style="display:none;">
-                            <h6>Resistance Markers</h6>
-                            <div id="resistanceResultsContainer">
-                                <!-- Resistance marker results will be loaded -->
-                            </div>
-                        </div>
-
-                        <!-- Clinical Interpretation -->
-                        <div class="result-entry-section">
-                            <h6>Clinical Interpretation</h6>
-                            <div class="mb-3">
-                                <label class="form-label">Overall Result</label>
-                                <select class="form-select" id="overallResult" required>
-                                    <option value="Negative">Negative</option>
-                                    <option value="Positive">Positive</option>
-                                    <option value="Indeterminate">Indeterminate</option>
-                                    <option value="Invalid">Invalid</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Clinical Interpretation</label>
-                                <textarea class="form-control" id="clinicalInterpretation" rows="3"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Recommendations</label>
-                                <textarea class="form-control" id="recommendations" rows="2"></textarea>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="PCRTestManager.saveResult()">Save Result</button>
-                </div>
-            </div>
+    <!-- Search and Filters -->
+    <div class="section-header">
+      <i class="fas fa-filter"></i> Search & Filters
+    </div>
+    <div class="card unified-search-card">
+      <div class="unified-search-filters">
+        <div class="search-group search-main">
+          <label for="searchInput">Search Tests</label>
+          <div class="search-input-wrapper">
+            <input type="text" id="searchInput" class="form-control" 
+                   placeholder="Test name, code, or panel...">
+            <button class="search-icon" type="button" onclick="searchTests()">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
         </div>
+        <div class="search-group">
+          <label for="panelFilter">Test Panel</label>
+          <select id="panelFilter" class="form-select">
+            <option value="">All Panels</option>
+            <option value="UTI">UTI Panel</option>
+            <option value="Nail_Fungus">Nail Fungus Panel</option>
+            <option value="Pneumonia">Pneumonia Panel</option>
+            <option value="Wound">Wound Panel</option>
+            <option value="GI">GI Panel</option>
+            <option value="COVID_FLU_RSV">COVID/Flu/RSV Panel</option>
+            <option value="STI">STI Panel</option>
+            <option value="Respiratory">Respiratory Panel</option>
+          </select>
+        </div>
+        <div class="search-group">
+          <label for="sampleFilter">Sample Type</label>
+          <select id="sampleFilter" class="form-select">
+            <option value="">All Sample Types</option>
+            <option value="urine">Urine</option>
+            <option value="nail_clipping">Nail Clipping</option>
+            <option value="sputum">Sputum</option>
+            <option value="wound_swab">Wound Swab</option>
+            <option value="stool">Stool</option>
+            <option value="nasopharyngeal_swab">Nasopharyngeal Swab</option>
+          </select>
+        </div>
+        <div class="search-actions">
+          <button class="btn-search-primary" onclick="searchTests()">
+            <i class="fas fa-search me-1"></i>Search
+          </button>
+          <button class="btn-search-secondary" onclick="resetFilters()">
+            <i class="fas fa-redo me-1"></i>Reset
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- Scripts in correct order -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/auth.js"></script>
-    <script src="/js/navbar-loader.js"></script>
-    
-    <!-- Page-specific script -->
-    <script>
-        // PCR Test Management System
-        const PCRTestManager = {
-            currentTests: [],
-            panelConfigs: {
-                'UTI': { icon: 'fa-bacterium', color: 'primary', name: 'Urinary Tract Infection' },
-                'Nail_Fungus': { icon: 'fa-disease', color: 'warning', name: 'Nail Fungus' },
-                'Pneumonia': { icon: 'fa-lungs', color: 'danger', name: 'Pneumonia' },
-                'Wound': { icon: 'fa-band-aid', color: 'info', name: 'Wound Infection' },
-                'GI': { icon: 'fa-stomach', color: 'success', name: 'Gastrointestinal' },
-                'COVID_FLU_RSV': { icon: 'fa-virus', color: 'dark', name: 'COVID/Flu/RSV' },
-                'STI': { icon: 'fa-shield-virus', color: 'secondary', name: 'STI Panel' },
-                'Respiratory': { icon: 'fa-head-side-cough', color: 'primary', name: 'Respiratory' }
-            },
+    <!-- Tests List -->
+    <div class="section-header">
+      <i class="fas fa-list"></i> Test List
+    </div>
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th width="60">Panel</th>
+              <th>Test Name</th>
+              <th>Test Code</th>
+              <th>Targets</th>
+              <th>Resistance Markers</th>
+              <th>Sample Type</th>
+              <th>Price</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="testsTableBody">
+            <!-- Tests will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Pagination -->
+      <nav>
+        <ul class="pagination justify-content-center" id="pagination">
+          <!-- Pagination will be loaded here -->
+        </ul>
+      </nav>
+    </div>
+  </div>
 
-            init() {
-                // Check authentication
-                if (!this.checkAuth()) return;
-                
-                // Load PCR tests
-                this.loadPCRTests();
-            },
-            
-            checkAuth() {
-                if (!AuthManager.isAuthenticated()) {
-                    window.location.href = '/login';
-                    return false;
-                }
-                return true;
-            },
+  <!-- Test Details Modal -->
+  <div class="modal fade" id="testDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Test Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="testDetails">
+          <!-- Details will be loaded here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-            async loadPCRTests() {
-                try {
-                    const response = await fetch('/api/pcr/tests', {
-                        headers: AuthManager.getAuthHeaders()
-                    });
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-                    if (!response.ok) throw new Error('Failed to load tests');
+  <!-- Load auth.js first to set up AuthManager -->
+  <script src="/js/auth.js"></script>
 
-                    const data = await response.json();
-                    this.currentTests = data.tests || [];
-                    this.displayTestsTable(this.currentTests);
-                } catch (error) {
-                    console.error('Error loading tests:', error);
-                    this.showAlert('PCR tests will appear here once configured', 'info');
-                }
-            },
+  <!-- Auth check and setup -->
+  <script>
+    // Check authentication using AuthManager
+    if (!AuthManager.isAuthenticated()) {
+      window.location.href = '/login';
+    } else {
+      // Set up jQuery AJAX defaults with auth headers
+      $.ajaxSetup({
+        headers: AuthManager.getAuthHeaders()
+      });
+    }
+  </script>
 
-            displayTestsTable(tests) {
-                const tbody = document.getElementById('testsTableBody');
-                
-                if (tests.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" class="text-center">No tests configured. Click "Initialize Test Panels" to get started.</td></tr>';
-                    return;
-                }
+  <!-- Load navbar after auth is confirmed -->
+  <script src="/js/navbar-loader.js"></script>
 
-                tbody.innerHTML = tests.map(test => {
-                    const config = this.panelConfigs[test.panel] || { icon: 'fa-vial', color: 'secondary' };
-                    return `
-                        <tr>
-                            <td class="text-center">
-                                <i class="fas ${config.icon} fa-lg text-${config.color}" title="${test.panel}"></i>
-                            </td>
-                            <td>
-                                <strong>${test.testName}</strong>
-                                <br><small class="text-muted">${test.testCode}</small>
-                            </td>
-                            <td>
-                                <span class="badge bg-primary">${test.targets?.length || 0}</span>
-                            </td>
-                            <td>
-                                ${test.resistanceMarkers?.length > 0 
-                                    ? `<span class="badge bg-danger">${test.resistanceMarkers.length}</span>`
-                                    : '<span class="text-muted">-</span>'}
-                            </td>
-                            <td>${test.price}</td>
-                            <td>${test.preferredSampleType || test.sampleTypes?.[0] || 'N/A'}</td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-primary" onclick="PCRTestManager.viewTestDetails('${test._id}')" title="View Details">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-success" onclick="PCRTestManager.quickResult('${test._id}')" title="Enter Result">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
-            },
+  <!-- PCR Tests Page Specific Functions -->
+  <script>
+    // Variables for PCR tests page
+    let currentPage = 1;
+    const limit = 10;
+    let currentTests = [];
 
-            async viewTestDetails(testId) {
-                try {
-                    const response = await fetch(`/api/pcr/tests/${testId}`, {
-                        headers: AuthManager.getAuthHeaders()
-                    });
+    const panelConfigs = {
+      'UTI': { icon: 'fa-bacterium', color: 'primary', name: 'Urinary Tract Infection' },
+      'Nail_Fungus': { icon: 'fa-disease', color: 'warning', name: 'Nail Fungus' },
+      'Pneumonia': { icon: 'fa-lungs', color: 'danger', name: 'Pneumonia' },
+      'Wound': { icon: 'fa-band-aid', color: 'info', name: 'Wound Infection' },
+      'GI': { icon: 'fa-stomach', color: 'success', name: 'Gastrointestinal' },
+      'COVID_FLU_RSV': { icon: 'fa-virus', color: 'dark', name: 'COVID/Flu/RSV' },
+      'STI': { icon: 'fa-shield-virus', color: 'secondary', name: 'STI Panel' },
+      'Respiratory': { icon: 'fa-head-side-cough', color: 'primary', name: 'Respiratory' }
+    };
 
-                    if (!response.ok) throw new Error('Failed to load test details');
-
-                    const data = await response.json();
-                    const test = data.test;
-
-                    let targetsHtml = '<h6>Pathogen Targets:</h6><div class="mb-3">';
-                    test.targets.forEach(target => {
-                        const categoryClass = `category-${target.category}`;
-                        targetsHtml += `
-                            <span class="badge bg-light text-dark target-badge">
-                                ${target.name}
-                                <span class="pathogen-category ${categoryClass}">${target.category}</span>
-                            </span>
-                        `;
-                    });
-                    targetsHtml += '</div>';
-
-                    let resistanceHtml = '';
-                    if (test.resistanceMarkers && test.resistanceMarkers.length > 0) {
-                        resistanceHtml = '<h6>Resistance Markers:</h6><div class="mb-3">';
-                        test.resistanceMarkers.forEach(marker => {
-                            resistanceHtml += `
-                                <span class="badge resistance-marker target-badge">
-                                    ${marker.marker} (${marker.gene || 'N/A'})
-                                </span>
-                            `;
-                        });
-                        resistanceHtml += '</div>';
-                    }
-
-                    const detailsHtml = `
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p><strong>Test Code:</strong> ${test.testCode}</p>
-                                <p><strong>Panel:</strong> ${test.panel}</p>
-                                <p><strong>Price:</strong> $${test.price}</p>
-                                <p><strong>Sample Type:</strong> ${test.preferredSampleType || 'Various'}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <p><strong>CPT Code:</strong> ${test.billingCodes?.cptCode || 'N/A'}</p>
-                                <p><strong>LOINC Code:</strong> ${test.billingCodes?.loincCode || 'N/A'}</p>
-                                <p><strong>TAT:</strong> ${test.specifications?.turnaroundTime?.value || 24} ${test.specifications?.turnaroundTime?.unit || 'hours'}</p>
-                            </div>
-                        </div>
-                        ${targetsHtml}
-                        ${resistanceHtml}
-                        <div class="mt-3">
-                            <p><strong>Description:</strong> ${test.description || 'No description available'}</p>
-                        </div>
-                    `;
-
-                    document.getElementById('testDetailsBody').innerHTML = detailsHtml;
-                    new bootstrap.Modal(document.getElementById('testDetailsModal')).show();
-                } catch (error) {
-                    console.error('Error loading test details:', error);
-                    this.showAlert('Failed to load test details', 'danger');
-                }
-            },
-
-            async initializeTests() {
-                if (!confirm('This will initialize all PCR test panels. Continue?')) return;
-
-                const btn = document.getElementById('initBtn');
-                btn.disabled = true;
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Initializing...';
-
-                try {
-                    const response = await fetch('/api/pcr/initialize', {
-                        method: 'POST',
-                        headers: AuthManager.getAuthHeaders()
-                    });
-
-                    if (!response.ok) throw new Error('Failed to initialize tests');
-
-                    const data = await response.json();
-                    this.showAlert('PCR tests initialized successfully', 'success');
-                    this.loadPCRTests();
-                } catch (error) {
-                    console.error('Error initializing tests:', error);
-                    this.showAlert('Failed to initialize tests', 'danger');
-                } finally {
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-database"></i> Initialize Test Panels';
-                }
-            },
-
-            showResultEntry() {
-                document.getElementById('resultEntryForm').reset();
-                new bootstrap.Modal(document.getElementById('resultEntryModal')).show();
-            },
-
-            async loadTestTargets() {
-                const panel = document.getElementById('testPanel').value;
-                if (!panel) return;
-
-                try {
-                    const response = await fetch(`/api/pcr/tests/panel/${panel}`, {
-                        headers: AuthManager.getAuthHeaders()
-                    });
-
-                    if (!response.ok) throw new Error('Failed to load test targets');
-
-                    const data = await response.json();
-                    if (data.tests && data.tests.length > 0) {
-                        const test = data.tests[0];
-                        this.displayTargetInputs(test);
-                        this.displayResistanceInputs(test);
-                    }
-                } catch (error) {
-                    console.error('Error loading test targets:', error);
-                }
-            },
-
-            displayTargetInputs(test) {
-                const container = document.getElementById('targetResultsContainer');
-                let html = '<div class="row">';
-
-                test.targets.forEach((target, index) => {
-                    html += `
-                        <div class="col-md-6 mb-3">
-                            <div class="input-group">
-                                <span class="input-group-text">${target.name}</span>
-                                <select class="form-select target-result" data-target="${target.name}" data-category="${target.category}">
-                                    <option value="not-detected">Not Detected</option>
-                                    <option value="detected">Detected</option>
-                                    <option value="indeterminate">Indeterminate</option>
-                                </select>
-                                <input type="number" class="form-control ct-value-input" placeholder="Ct" min="0" max="50" step="0.1">
-                            </div>
-                        </div>
-                    `;
-                    if ((index + 1) % 2 === 0) {
-                        html += '</div><div class="row">';
-                    }
-                });
-
-                html += '</div>';
-                container.innerHTML = html;
-            },
-
-            displayResistanceInputs(test) {
-                if (!test.resistanceMarkers || test.resistanceMarkers.length === 0) {
-                    document.getElementById('resistanceSection').style.display = 'none';
-                    return;
-                }
-
-                document.getElementById('resistanceSection').style.display = 'block';
-                const container = document.getElementById('resistanceResultsContainer');
-                let html = '<div class="row">';
-
-                test.resistanceMarkers.forEach((marker, index) => {
-                    html += `
-                        <div class="col-md-6 mb-3">
-                            <div class="input-group">
-                                <span class="input-group-text">${marker.marker}</span>
-                                <select class="form-select resistance-result" data-marker="${marker.marker}" data-gene="${marker.gene}">
-                                    <option value="not-detected">Not Detected</option>
-                                    <option value="detected">Detected</option>
-                                </select>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                html += '</div>';
-                container.innerHTML = html;
-            },
-
-            async saveResult() {
-                // Collect form data
-                const targetResults = [];
-                document.querySelectorAll('.target-result').forEach((select, index) => {
-                    const ctInput = select.parentElement.querySelector('.ct-value-input');
-                    const detected = select.value === 'detected';
-                    targetResults.push({
-                        targetName: select.dataset.target,
-                        targetCategory: select.dataset.category,
-                        detected: detected,
-                        ctValue: detected && ctInput.value ? parseFloat(ctInput.value) : null,
-                        interpretation: select.value === 'detected' ? 'Detected' : 
-                                       select.value === 'indeterminate' ? 'Indeterminate' : 'Not Detected'
-                    });
-                });
-
-                const resistanceResults = [];
-                document.querySelectorAll('.resistance-result').forEach(select => {
-                    resistanceResults.push({
-                        markerName: select.dataset.marker,
-                        gene: select.dataset.gene,
-                        detected: select.value === 'detected',
-                        interpretation: select.value === 'detected' ? 'Detected' : 'Not Detected'
-                    });
-                });
-
-                const resultData = {
-                    patient: document.getElementById('patientId').value,
-                    order: document.getElementById('orderNumber').value,
-                    test: document.getElementById('testPanel').value,
-                    sampleInfo: {
-                        sampleType: document.getElementById('sampleType').value,
-                        collectionDate: document.getElementById('collectionDate').value,
-                        receivedDate: new Date().toISOString(),
-                        sampleQuality: document.getElementById('sampleQuality').value
-                    },
-                    targetResults: targetResults,
-                    resistanceResults: resistanceResults,
-                    qualityControl: {
-                        internalControlResult: document.getElementById('internalControl').value
-                    },
-                    overallResult: {
-                        status: document.getElementById('overallResult').value,
-                        clinicalInterpretation: document.getElementById('clinicalInterpretation').value,
-                        recommendations: document.getElementById('recommendations').value
-                    }
-                };
-
-                try {
-                    const response = await fetch('/api/pcr/results', {
-                        method: 'POST',
-                        headers: {
-                            ...AuthManager.getAuthHeaders(),
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(resultData)
-                    });
-
-                    if (!response.ok) throw new Error('Failed to save result');
-
-                    const data = await response.json();
-                    this.showAlert('Result saved successfully', 'success');
-                    bootstrap.Modal.getInstance(document.getElementById('resultEntryModal')).hide();
-                    
-                    if (data.criticalValues && data.criticalValues.length > 0) {
-                        this.showAlert('CRITICAL VALUES DETECTED! Immediate notification required.', 'danger');
-                    }
-                } catch (error) {
-                    console.error('Error saving result:', error);
-                    this.showAlert('Failed to save result', 'danger');
-                }
-            },
-
-            quickResult(testId) {
-                // Pre-select the test in the result entry form
-                const test = this.currentTests?.find(t => t._id === testId);
-                if (test) {
-                    document.getElementById('testPanel').value = test.panel;
-                    this.loadTestTargets();
-                }
-                this.showResultEntry();
-            },
-
-            showPanelDetails(panel) {
-                // You can implement panel-specific view if needed
-                console.log('Panel clicked:', panel);
-            },
-
-            showAlert(message, type) {
-                const alertDiv = document.createElement('div');
-                alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3`;
-                alertDiv.style.zIndex = '9999';
-                alertDiv.innerHTML = `
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                `;
-                document.body.appendChild(alertDiv);
-                setTimeout(() => alertDiv.remove(), 5000);
-            }
-        };
-
-        // Initialize when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => PCRTestManager.init());
+    $(document).ready(function() {
+      loadTests();
+      loadStatistics();
+      
+      // Load footer
+      $('#footer-container').load('/components/footer.html', function(response, status, xhr) {
+        if (status == "error") {
+          console.error("Footer failed to load:", xhr.status, xhr.statusText);
         } else {
-            PCRTestManager.init();
+          console.log("Footer loaded successfully");
         }
-    </script>
+      });
+      
+      // Enable Enter key search
+      $('#searchInput').on('keypress', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          searchTests();
+        }
+      });
+    });
+
+    const PCRTestManager = {
+      async initializeTests() {
+        if (!confirm('This will initialize all PCR test panels. Continue?')) return;
+
+        const btn = document.getElementById('initBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Initializing...';
+
+        try {
+          const response = await fetch('/api/pcr/initialize', {
+            method: 'POST',
+            headers: AuthManager.getAuthHeaders()
+          });
+
+          if (!response.ok) throw new Error('Failed to initialize tests');
+
+          const data = await response.json();
+          showMessage('PCR tests initialized successfully', 'success');
+          loadTests();
+          loadStatistics();
+        } catch (error) {
+          console.error('Error initializing tests:', error);
+          showMessage('Failed to initialize tests', 'danger');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-database me-2"></i>Initialize Test Panels';
+        }
+      },
+
+      async loadTestTargets(panel) {
+        if (!panel) return null;
+
+        try {
+          const response = await fetch(`/api/pcr/tests/panel/${panel}`, {
+            headers: AuthManager.getAuthHeaders()
+          });
+
+          if (!response.ok) throw new Error('Failed to load test targets');
+
+          const data = await response.json();
+          if (data.tests && data.tests.length > 0) {
+            return data.tests[0];
+          }
+          return null;
+        } catch (error) {
+          console.error('Error loading test targets:', error);
+          return null;
+        }
+      },
+
+      showPanelDetails(panel) {
+        // Filter tests by panel
+        $('#panelFilter').val(panel);
+        searchTests();
+      }
+    };
+
+    function resetFilters() {
+      $('#searchInput').val('');
+      $('#panelFilter').val('');
+      $('#sampleFilter').val('');
+      loadTests(1);
+    }
+
+    function loadStatistics() {
+      $.get('/api/pcr/tests?limit=100')
+        .done(function(response) {
+          const tests = response.tests || [];
+          $('#totalTests').text(tests.length);
+          
+          // Count unique panels
+          const panels = [...new Set(tests.map(t => t.panel))];
+          $('#totalPanels').text(panels.length);
+          
+          // Count total targets
+          let totalTargets = 0;
+          let totalResistance = 0;
+          tests.forEach(test => {
+            totalTargets += test.targets?.length || 0;
+            totalResistance += test.resistanceMarkers?.length || 0;
+          });
+          $('#totalTargets').text(totalTargets);
+          $('#totalResistance').text(totalResistance);
+        })
+        .fail(function(xhr) {
+          console.error('Failed to load statistics:', xhr.status, xhr.responseText);
+          $('#totalTests').text('0');
+          $('#totalPanels').text('0');
+          $('#totalTargets').text('0');
+          $('#totalResistance').text('0');
+        });
+    }
+
+    function loadTests(page = 1) {
+      currentPage = page;
+      const search = $('#searchInput').val();
+      const panel = $('#panelFilter').val();
+      const sampleType = $('#sampleFilter').val();
+      
+      let url = `/api/pcr/tests?page=${page}&limit=${limit}`;
+      if (search) url += `&search=${encodeURIComponent(search)}`;
+      if (panel) url += `&panel=${panel}`;
+      if (sampleType) url += `&sampleType=${sampleType}`;
+
+      $.get(url)
+        .done(function(response) {
+          currentTests = response.tests || [];
+          displayTests(currentTests);
+          displayPagination(response.pagination || {});
+        })
+        .fail(function(xhr) {
+          console.error('Failed to load tests');
+          $('#testsTableBody').html('<tr><td colspan="8" class="text-center">Failed to load tests</td></tr>');
+        });
+    }
+
+    function displayTests(tests) {
+      const tbody = $('#testsTableBody');
+      tbody.empty();
+
+      if (!tests || tests.length === 0) {
+        tbody.append(`
+          <tr>
+            <td colspan="8" class="text-center py-4">
+              <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+              <p class="text-muted">No tests found. Click "Initialize Test Panels" to get started.</p>
+            </td>
+          </tr>
+        `);
+        return;
+      }
+
+      tests.forEach(test => {
+        const config = panelConfigs[test.panel] || { icon: 'fa-vial', color: 'secondary' };
+        
+        const row = `
+          <tr>
+            <td class="text-center">
+              <i class="fas ${config.icon} panel-icon text-${config.color}" title="${test.panel}"></i>
+            </td>
+            <td>
+              <strong>${test.testName}</strong>
+            </td>
+            <td>
+              <code>${test.testCode}</code>
+            </td>
+            <td>
+              <span class="badge bg-primary">${test.targets?.length || 0}</span>
+            </td>
+            <td>
+              ${test.resistanceMarkers?.length > 0 
+                ? `<span class="badge bg-danger">${test.resistanceMarkers.length}</span>`
+                : '<span class="text-muted">-</span>'}
+            </td>
+            <td>${test.preferredSampleType || test.sampleTypes?.[0] || 'N/A'}</td>
+            <td>$${test.price}</td>
+            <td class="table-actions">
+              <button class="btn btn-sm btn-info" onclick="viewTest('${test._id}')" title="View Details">
+                <i class="fas fa-eye"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+        tbody.append(row);
+      });
+    }
+
+    function displayPagination(pagination) {
+      const paginationEl = $('#pagination');
+      paginationEl.empty();
+
+      if (!pagination || pagination.pages <= 1) return;
+
+      if (pagination.current > 1) {
+        paginationEl.append(`
+          <li class="page-item">
+            <a class="page-link" href="#" onclick="loadTests(${pagination.current - 1}); return false;">Previous</a>
+          </li>
+        `);
+      }
+
+      for (let i = 1; i <= Math.min(pagination.pages, 10); i++) {
+        paginationEl.append(`
+          <li class="page-item ${pagination.current === i ? 'active' : ''}">
+            <a class="page-link" href="#" onclick="loadTests(${i}); return false;">${i}</a>
+          </li>
+        `);
+      }
+
+      if (pagination.current < pagination.pages) {
+        paginationEl.append(`
+          <li class="page-item">
+            <a class="page-link" href="#" onclick="loadTests(${pagination.current + 1}); return false;">Next</a>
+          </li>
+        `);
+      }
+    }
+
+    function searchTests() {
+      loadTests(1);
+    }
+
+    function viewTest(testId) {
+      $.get(`/api/pcr/tests/${testId}`)
+        .done(function(response) {
+          const test = response.test;
+          const config = panelConfigs[test.panel] || { icon: 'fa-vial', color: 'secondary', name: 'Test Panel' };
+          
+          let targetsHtml = '';
+          if (test.targets && test.targets.length > 0) {
+            targetsHtml = '<h6 class="mt-3">Pathogen Targets:</h6><div>';
+            test.targets.forEach(target => {
+              const categoryClass = `category-${target.category}`;
+              targetsHtml += `
+                <span class="target-badge">
+                  ${target.name}
+                  <span class="pathogen-category ${categoryClass}">${target.category}</span>
+                </span>
+              `;
+            });
+            targetsHtml += '</div>';
+          }
+
+          let resistanceHtml = '';
+          if (test.resistanceMarkers && test.resistanceMarkers.length > 0) {
+            resistanceHtml = '<h6 class="mt-3">Resistance Markers:</h6><div>';
+            test.resistanceMarkers.forEach(marker => {
+              resistanceHtml += `
+                <span class="resistance-badge">
+                  ${marker.marker} (${marker.gene || 'N/A'})
+                </span>
+              `;
+            });
+            resistanceHtml += '</div>';
+          }
+
+          const details = `
+            <div class="test-details">
+              <h5><i class="fas ${config.icon} text-${config.color}"></i> ${test.testName}</h5>
+              <p class="text-muted">Test Code: ${test.testCode}</p>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <h6>Panel:</h6>
+                  <p><span class="panel-badge">${config.name}</span></p>
+                  
+                  <h6>Price:</h6>
+                  <p>$${test.price}</p>
+                  
+                  <h6>Sample Type:</h6>
+                  <p>${test.preferredSampleType || 'Various'}</p>
+                </div>
+                
+                <div class="col-md-6">
+                  <h6>CPT Code:</h6>
+                  <p>${test.billingCodes?.cptCode || 'N/A'}</p>
+                  
+                  <h6>LOINC Code:</h6>
+                  <p>${test.billingCodes?.loincCode || 'N/A'}</p>
+                  
+                  <h6>Turnaround Time:</h6>
+                  <p>${test.specifications?.turnaroundTime?.value || 24} ${test.specifications?.turnaroundTime?.unit || 'hours'}</p>
+                </div>
+              </div>
+              
+              ${targetsHtml}
+              ${resistanceHtml}
+              
+              ${test.description ? `<h6 class="mt-3">Description:</h6><p>${test.description}</p>` : ''}
+            </div>
+          `;
+          
+          $('#testDetails').html(details);
+          $('#testDetailsModal').modal('show');
+        })
+        .fail(function(xhr) {
+          alert('Failed to load test details');
+        });
+    }
+
+    function exportTests() {
+      const token = AuthManager.getToken();
+      if (!token) {
+        alert('Authentication required');
+        return;
+      }
+
+      fetch('/api/pcr/tests?limit=100&format=csv', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(response => {
+        if (!response.ok) throw new Error('Export failed');
+        return response.blob();
+      })
+      .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `pcr_tests_${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      })
+      .catch(error => {
+        console.error('Export error:', error);
+        alert('Failed to export tests');
+      });
+    }
+
+    // Helper function to show success/error messages
+    function showMessage(message, type) {
+      const alertClass = type === 'success' ? 'alert-success' : 
+                        type === 'warning' ? 'alert-warning' : 'alert-danger';
+      const alertHtml = `
+        <div class="alert ${alertClass} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-5" style="z-index: 9999;">
+          ${message}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      `;
+      $('body').append(alertHtml);
+      setTimeout(() => {
+        $('.alert').fadeOut(() => $('.alert').remove());
+      }, 3000);
+    }
+  </script>
+
+  <!-- Footer container -->
+  <div id="footer-container"></div>
 </body>
 </html>

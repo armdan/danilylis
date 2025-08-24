@@ -3,54 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reports - Lab Management System</title>
+  <title>Reports - Laboratory Information System</title>
   
-  <!-- Bootstrap CSS -->
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Unified CSS files -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/theme-colors.css">
+  <link rel="stylesheet" href="/css/unified-search.css">
+  <link rel="stylesheet" href="/css/unified-footer.css">
   
   <style>
-    body {
-      background-color: #f8f9fa;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
-
-    .page-header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 2rem 0;
-      margin-bottom: 2rem;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-
-    .filter-card {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      margin-bottom: 2rem;
-    }
-
+    /* Page-specific styles only */
     .result-card {
       background: white;
-      border-radius: 12px;
+      border-radius: 10px;
       padding: 1.5rem;
       margin-bottom: 1rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      transition: box-shadow 0.2s;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      transition: all 0.3s;
       cursor: pointer;
+      border: 2px solid transparent;
     }
 
     .result-card:hover {
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    .status-badge {
-      padding: 0.25rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.875rem;
-      font-weight: 500;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
     }
 
     .status-preliminary {
@@ -70,6 +50,70 @@
 
     .result-negative {
       color: #28a745;
+    }
+
+    .table-actions .btn {
+      padding: 4px 8px;
+      margin: 0 2px;
+    }
+
+    /* Report Styles */
+    .report-container {
+      background: white;
+      padding: 2rem;
+      margin: 2rem 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .report-header {
+      border-bottom: 3px solid #2196F3;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+
+    .report-table th {
+      background-color: #f5f5f5;
+      padding: 0.5rem;
+      text-align: left;
+      border: 1px solid #ddd;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .report-table td {
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      font-size: 0.875rem;
+    }
+
+    .lab-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 1rem;
+    }
+
+    .interpretation-box {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1.5rem 0;
+      border-left: 4px solid #2196F3;
+      font-size: 0.875rem;
+    }
+
+    .signature-line {
+      border-top: 1px solid #000;
+      width: 200px;
+      margin-top: 3rem;
+      display: inline-block;
     }
 
     /* Print Styles - Optimized for single page */
@@ -107,7 +151,7 @@
         margin-top: 0 !important;
       }
       
-      .container {
+      .container-fluid {
         width: 100% !important;
         max-width: 100% !important;
         padding: 0 !important;
@@ -186,130 +230,83 @@
         margin-bottom: 0.3rem !important;
       }
     }
-
-    .report-container {
-      background: white;
-      padding: 2rem;
-      margin: 2rem 0;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .report-header {
-      border-bottom: 3px solid #2196F3;
-      padding-bottom: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .report-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1rem 0;
-    }
-
-    .report-table th {
-      background-color: #f5f5f5;
-      padding: 0.5rem;
-      text-align: left;
-      border: 1px solid #ddd;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-
-    .report-table td {
-      padding: 0.5rem;
-      border: 1px solid #ddd;
-      font-size: 0.875rem;
-    }
-
-    .lab-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      margin-bottom: 1rem;
-    }
-
-    .interpretation-box {
-      background: #f8f9fa;
-      padding: 1rem;
-      border-radius: 8px;
-      margin: 1.5rem 0;
-      border-left: 4px solid #2196F3;
-      font-size: 0.875rem;
-    }
-
-    .signature-line {
-      border-top: 1px solid #000;
-      width: 200px;
-      margin-top: 3rem;
-      display: inline-block;
-    }
   </style>
 </head>
 <body>
-  <!-- Navbar placeholder -->
-  <div id="navbar-container"></div>
+  <!-- Navbar will be injected here -->
 
-  <!-- Page Header -->
-  <div class="page-header no-print">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-md-6">
-          <h1><i class="fas fa-file-medical me-3"></i>PCR Test Reports</h1>
-          <p class="mb-0">View and print test results</p>
-        </div>
-        <div class="col-md-6 text-md-end">
-          <button class="btn btn-light" onclick="ReportsManager.loadResults()">
-            <i class="fas fa-sync"></i> Refresh
-          </button>
-        </div>
+  <div class="container-fluid main-content">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <h1><i class="fas fa-file-medical me-2"></i>PCR Test Reports</h1>
+        <button class="btn btn-success" onclick="ReportsManager.loadResults()">
+          <i class="fas fa-sync me-2"></i>Refresh
+        </button>
       </div>
     </div>
-  </div>
 
-  <div class="container">
-    <!-- Filter Section -->
-    <div class="filter-card no-print">
-      <div class="row">
-        <div class="col-md-3">
-          <label class="form-label">Patient Name/ID</label>
-          <input type="text" class="form-control" id="patientSearch" placeholder="Search...">
+    <!-- Search and Filters -->
+    <div class="section-header no-print">
+      <i class="fas fa-filter"></i> Search & Filters
+    </div>
+    <div class="card unified-search-card no-print">
+      <div class="unified-search-filters">
+        <div class="search-group search-main">
+          <label for="patientSearch">Patient Name/ID</label>
+          <div class="search-input-wrapper">
+            <input type="text" id="patientSearch" class="form-control" 
+                   placeholder="Search patient...">
+            <button class="search-icon" type="button" onclick="ReportsManager.applyFilters()">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
         </div>
-        <div class="col-md-2">
-          <label class="form-label">Status</label>
-          <select class="form-select" id="statusFilter">
-            <option value="">All</option>
+        <div class="search-group">
+          <label for="statusFilter">Status</label>
+          <select id="statusFilter" class="form-select">
+            <option value="">All Status</option>
             <option value="Final">Final Only</option>
             <option value="Preliminary">Preliminary</option>
           </select>
         </div>
-        <div class="col-md-2">
-          <label class="form-label">Result</label>
-          <select class="form-select" id="resultFilter">
-            <option value="">All</option>
+        <div class="search-group">
+          <label for="resultFilter">Result</label>
+          <select id="resultFilter" class="form-select">
+            <option value="">All Results</option>
             <option value="Positive">Positive</option>
             <option value="Negative">Negative</option>
           </select>
         </div>
-        <div class="col-md-2">
-          <label class="form-label">From Date</label>
+        <div class="search-group">
+          <label for="fromDate">From Date</label>
           <input type="date" class="form-control" id="fromDate">
         </div>
-        <div class="col-md-2">
-          <label class="form-label">To Date</label>
+        <div class="search-group">
+          <label for="toDate">To Date</label>
           <input type="date" class="form-control" id="toDate">
         </div>
-        <div class="col-md-1 d-flex align-items-end">
-          <button class="btn btn-primary w-100" onclick="ReportsManager.applyFilters()">
-            <i class="fas fa-search"></i>
+        <div class="search-actions">
+          <button class="btn-search-primary" onclick="ReportsManager.applyFilters()">
+            <i class="fas fa-search me-1"></i>Search
+          </button>
+          <button class="btn-search-secondary" onclick="ReportsManager.resetFilters()">
+            <i class="fas fa-redo me-1"></i>Reset
           </button>
         </div>
       </div>
     </div>
 
     <!-- Results List -->
-    <div id="resultsList" class="no-print">
-      <!-- Results will be loaded here -->
+    <div class="section-header no-print">
+      <i class="fas fa-list"></i> Test Results
+    </div>
+    <div class="card no-print">
+      <div class="card-body">
+        <div id="resultsList">
+          <!-- Results will be loaded here -->
+        </div>
+      </div>
     </div>
 
     <!-- Report View (Hidden by default, shown when viewing a specific report) -->
@@ -335,9 +332,30 @@
   <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- jsPDF for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <!-- Load auth.js first to set up AuthManager -->
   <script src="/js/auth.js"></script>
+
+  <!-- Auth check and setup -->
+  <script>
+    // Check authentication using AuthManager
+    if (!AuthManager.isAuthenticated()) {
+      window.location.href = '/login';
+    } else {
+      // Set up jQuery AJAX defaults with auth headers
+      $.ajaxSetup({
+        headers: AuthManager.getAuthHeaders()
+      });
+    }
+  </script>
+
+  <!-- Load navbar after auth is confirmed -->
   <script src="/js/navbar-loader.js"></script>
 
+  <!-- Reports Page Specific Functions -->
   <script>
     const ReportsManager = {
       results: [],
@@ -345,17 +363,23 @@
       labSettings: null,
 
       init: function() {
-        if (!AuthManager.isAuthenticated()) {
-          window.location.href = '/login';
-          return;
-        }
-
-        $.ajaxSetup({
-          headers: AuthManager.getAuthHeaders()
-        });
-
         this.loadLabSettings();
         this.loadResults();
+        
+        // Load footer
+        $('#footer-container').load('/components/footer.html', function(response, status, xhr) {
+          if (status == "error") {
+            console.error("Footer failed to load:", xhr.status, xhr.statusText);
+          }
+        });
+        
+        // Enable Enter key search
+        $('#patientSearch').on('keypress', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            ReportsManager.applyFilters();
+          }
+        });
       },
 
       loadLabSettings: async function() {
@@ -369,13 +393,12 @@
 
       loadResults: async function() {
         try {
-          // Load PCR results
+          // Load PCR results - both Final and Preliminary (including partial results)
           const response = await $.ajax({
             url: '/api/pcr/results',
             method: 'GET',
             data: { 
-              status: 'Final',
-              limit: 100 
+              limit: 200
             }
           });
 
@@ -391,7 +414,12 @@
         const container = $('#resultsList');
         
         if (this.results.length === 0) {
-          container.html('<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i>No finalized reports available.</div>');
+          container.html(`
+            <div class="alert alert-info">
+              <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+              <p class="text-muted">No reports available.</p>
+            </div>
+          `);
           return;
         }
 
@@ -401,11 +429,12 @@
           const patient = result.patient || {};
           const overallStatus = result.overallResult?.status || 'Unknown';
           const statusClass = overallStatus === 'Positive' ? 'result-positive' : 'result-negative';
+          const resultStatus = result.status || 'Preliminary';
           
           html += '<div class="result-card" onclick="ReportsManager.viewReport(\'' + result._id + '\')">';
           html += '<div class="row align-items-center">';
           html += '<div class="col-md-2">';
-          html += '<strong>Result #:</strong> ' + (result.resultNumber || 'N/A') + '<br>';
+          html += '<strong>Order #:</strong> ' + (result.order?.orderNumber || 'N/A') + '<br>';
           html += '<small>' + date.toLocaleDateString() + '</small>';
           html += '</div>';
           html += '<div class="col-md-3">';
@@ -420,10 +449,10 @@
           html += '<span class="' + statusClass + '">' + overallStatus.toUpperCase() + '</span>';
           html += '</div>';
           html += '<div class="col-md-2">';
-          html += '<span class="status-badge status-' + result.status.toLowerCase() + '">' + result.status + '</span>';
+          html += '<span class="status-badge status-' + resultStatus.toLowerCase() + '">' + resultStatus + '</span>';
           html += '</div>';
           html += '<div class="col-md-1 text-end">';
-          html += '<button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); ReportsManager.viewReport(\'' + result._id + '\')">';
+          html += '<button class="btn btn-sm btn-info" onclick="event.stopPropagation(); ReportsManager.viewReport(\'' + result._id + '\')">';
           html += '<i class="fas fa-eye"></i>';
           html += '</button>';
           html += '</div>';
@@ -451,11 +480,13 @@
           
           this.generateReport(response.result);
           
-          $('#resultsList').hide();
+          $('#resultsList').parent().parent().hide();
+          $('.section-header.no-print').hide();
+          $('.unified-search-card').hide();
           $('#reportView').show();
         } catch (error) {
           console.error('Error loading result details:', error);
-          alert('Failed to load report details');
+          this.showMessage('Failed to load report details', 'danger');
         }
       },
 
@@ -471,6 +502,11 @@
         // Get the actual order number
         const orderNumber = result.order?.orderNumber || result.resultNumber || 'N/A';
         
+        // Determine if this is a partial result (Preliminary status)
+        const isPartialResult = result.status === 'Preliminary';
+        const statusText = isPartialResult ? 'PRELIMINARY' : 'FINAL';
+        const statusColor = isPartialResult ? '#ffc107' : '#28a745';
+        
         // Get patient sex/gender - handle all variations
         let displaySex = 'N/A';
         if (patient.gender) {
@@ -483,31 +519,52 @@
                       patient.sex.charAt(0).toUpperCase();
         }
         
-        // Extract phone number properly
-        const labPhone = typeof settings.phone === 'object' ? 
-          (settings.phone.primary || settings.phone.main || '818-877-4040') : 
-          (settings.phone || '818-877-4040');
-        
-        const labFax = typeof settings.fax === 'object' ? 
-          (settings.fax.primary || settings.fax.main || '818-403-3386') : 
-          (settings.fax || '818-403-3386');
+        // Extract phone number properly - no hardcoded values
+         const labPhone = typeof settings.phone === 'object' ? 
+         (settings.phone.primary || settings.phone.main || Object.values(settings.phone)[0] || '') : 
+          (settings.phone || '');
+
+           const labFax = typeof settings.fax === 'object' ? 
+           (settings.fax.primary || settings.fax.main || Object.values(settings.fax)[0] || '') : 
+            (settings.fax || '');
         
         // Build interpretation text
-        const interpretationText = result.overallResult?.clinicalInterpretation || 
+        let interpretationText = result.overallResult?.clinicalInterpretation || 
           '"Not Detected" results do not preclude urinary tract infection and should not be used as the sole basis for treatment or other patient decisions. "Detected" results are indicative of possible active urinary tract infection or coinfection with other bacteria. The pathogen(s) detected may not be the definitive cause of disease. Clinical correlation is recommended.';
+        
+        // Add note for partial results
+        if (isPartialResult) {
+          interpretationText = '<strong>Note: This is a preliminary/partial result. Additional testing may be pending.</strong><br><br>' + interpretationText;
+        }
         
         let reportHtml = '';
         reportHtml += '<div class="report-header">';
         reportHtml += '<div class="lab-header">';
         reportHtml += '<div>';
         reportHtml += '<h3 style="color: #2c5aa0; margin-bottom: 5px;">MATRIX LABORATORIES</h3>';
-        reportHtml += '<p class="mb-1"><strong>DIRECTOR:</strong> ' + (settings.labDirector?.firstName || 'Mike M.') + ' ' + (settings.labDirector?.lastName || 'Moradian') + ', ' + (settings.labDirector?.credentials || 'PhD., Bioanalyst') + '</p>';
-        reportHtml += '<p class="mb-1">' + (settings.address?.street || '6618 San Fernando Rd') + ', ' + (settings.address?.city || 'Glendale') + ', ' + (settings.address?.state || 'CA') + ' ' + (settings.address?.zipCode || '91201') + '</p>';
+        if (settings.labDirector && settings.labDirector.firstName) {
+  const directorName = `${settings.labDirector.firstName} ${settings.labDirector.lastName || ''}`.trim();
+  const directorTitle = settings.labDirector.title || '';
+  if (directorTitle) {
+    reportHtml += '<p class="mb-1"><strong>DIRECTOR:</strong> ' + directorName + ', ' + directorTitle + '</p>';
+  } else {
+    reportHtml += '<p class="mb-1"><strong>DIRECTOR:</strong> ' + directorName + '</p>';
+  }
+}
+
+const labAddress = settings.address ? 
+  `${settings.address.street || ''}, ${settings.address.city || ''}, ${settings.address.state || ''} ${settings.address.zipCode || ''}` : '';
+if (labAddress && labAddress !== ', , ') {
+  reportHtml += '<p class="mb-1">' + labAddress + '</p>';
+}
+        
         reportHtml += '<p class="mb-0"><strong>Phone:</strong> ' + labPhone + ' <strong>Fax:</strong> ' + labFax + '</p>';
-        reportHtml += '<p class="mb-0"><strong>Email:</strong> ' + (settings.email || 'info@matrixlabs.co') + '</p>';
+        const labEmail = typeof settings.email === 'object' ? settings.email.general : settings.email;reportHtml += '<p class="mb-0"><strong>Email:</strong> ' + (labEmail || '') + '</p>';
+
+
         reportHtml += '</div>';
         reportHtml += '<div class="text-end">';
-        reportHtml += '<span style="background-color: #28a745; color: white; padding: 4px 12px; border-radius: 4px; font-weight: bold;">FINAL</span><br>';
+        reportHtml += '<span style="background-color: ' + statusColor + '; color: white; padding: 4px 12px; border-radius: 4px; font-weight: bold;">' + statusText + '</span><br>';
         reportHtml += '<small class="text-muted mt-2">Page 1 of 1</small>';
         reportHtml += '</div>';
         reportHtml += '</div>';
@@ -646,23 +703,176 @@
 
       backToList: function() {
         $('#reportView').hide();
-        $('#resultsList').show();
+        $('#resultsList').parent().parent().show();
+        $('.section-header.no-print').show();
+        $('.unified-search-card').show();
       },
 
-      applyFilters: function() {
-        // Apply filters to results
+      resetFilters: function() {
+        $('#patientSearch').val('');
+        $('#statusFilter').val('');
+        $('#resultFilter').val('');
+        $('#fromDate').val('');
+        $('#toDate').val('');
         this.loadResults();
       },
 
-      downloadPDF: function() {
-        // For now, just use browser print to PDF
-        window.print();
-        // In production, you'd integrate a proper PDF library like jsPDF
+      applyFilters: function() {
+        const patientSearch = $('#patientSearch').val().toLowerCase();
+        const statusFilter = $('#statusFilter').val();
+        const resultFilter = $('#resultFilter').val();
+        const fromDate = $('#fromDate').val();
+        const toDate = $('#toDate').val();
+
+        let filteredResults = this.results;
+
+        // Apply patient search filter
+        if (patientSearch) {
+          filteredResults = filteredResults.filter(result => {
+            const patient = result.patient || {};
+            const fullName = `${patient.firstName || ''} ${patient.lastName || ''}`.toLowerCase();
+            const patientId = (patient.patientId || '').toLowerCase();
+            return fullName.includes(patientSearch) || patientId.includes(patientSearch);
+          });
+        }
+
+        // Apply status filter
+        if (statusFilter) {
+          filteredResults = filteredResults.filter(result => result.status === statusFilter);
+        }
+
+        // Apply result filter
+        if (resultFilter) {
+          filteredResults = filteredResults.filter(result => 
+            result.overallResult?.status === resultFilter
+          );
+        }
+
+        // Apply date filters
+        if (fromDate) {
+          const from = new Date(fromDate);
+          filteredResults = filteredResults.filter(result => 
+            new Date(result.performedDate || result.createdAt) >= from
+          );
+        }
+
+        if (toDate) {
+          const to = new Date(toDate);
+          to.setHours(23, 59, 59, 999);
+          filteredResults = filteredResults.filter(result => 
+            new Date(result.performedDate || result.createdAt) <= to
+          );
+        }
+
+        // Store filtered results temporarily and display them
+        const tempResults = this.results;
+        this.results = filteredResults;
+        this.displayResults();
+        this.results = tempResults; // Restore original results
+      },
+
+      downloadPDF: async function() {
+        if (!this.currentResult) {
+          this.showMessage('No report loaded', 'warning');
+          return;
+        }
+
+        try {
+          // Show loading indicator
+          const downloadBtn = event.target.closest('button');
+          const originalHtml = downloadBtn.innerHTML;
+          downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
+          downloadBtn.disabled = true;
+
+          // Create a temporary container for the PDF content
+          const tempContainer = document.createElement('div');
+          tempContainer.style.position = 'absolute';
+          tempContainer.style.left = '-9999px';
+          tempContainer.style.width = '8.5in';
+          tempContainer.style.backgroundColor = 'white';
+          tempContainer.style.padding = '0.5in';
+          document.body.appendChild(tempContainer);
+
+          // Clone the report content
+          const reportClone = document.getElementById('reportContent').cloneNode(true);
+          tempContainer.appendChild(reportClone);
+
+          // Use html2canvas to capture the content
+          const canvas = await html2canvas(tempContainer, {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            windowWidth: 816, // 8.5 inches at 96 DPI
+            windowHeight: 1056 // 11 inches at 96 DPI
+          });
+
+          // Convert to PDF using jsPDF
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'letter'
+          });
+
+          // Calculate dimensions
+          const imgWidth = 210; // A4 width in mm
+          const pageHeight = 297; // A4 height in mm
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+          // Add image to PDF
+          const imgData = canvas.toDataURL('image/png');
+          pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+
+          // Generate filename
+          const patient = this.currentResult.patient || {};
+          const date = new Date().toISOString().split('T')[0];
+          const filename = `PCR_Report_${patient.lastName || 'Patient'}_${patient.firstName || ''}_${date}.pdf`;
+
+          // Download the PDF
+          pdf.save(filename);
+
+          // Clean up
+          document.body.removeChild(tempContainer);
+
+          // Restore button
+          downloadBtn.innerHTML = originalHtml;
+          downloadBtn.disabled = false;
+
+        } catch (error) {
+          console.error('Error generating PDF:', error);
+          this.showMessage('Failed to generate PDF. Please try printing instead.', 'danger');
+          
+          // Restore button on error
+          const downloadBtn = event.target.closest('button');
+          if (downloadBtn) {
+            downloadBtn.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF';
+            downloadBtn.disabled = false;
+          }
+        }
+      },
+
+      // Helper function to show success/error messages
+      showMessage: function(message, type) {
+        const alertClass = type === 'success' ? 'alert-success' : 
+                          type === 'warning' ? 'alert-warning' : 'alert-danger';
+        const alertHtml = `
+          <div class="alert ${alertClass} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-5" style="z-index: 9999;">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        `;
+        $('body').append(alertHtml);
+        setTimeout(() => {
+          $('.alert').fadeOut(() => $('.alert').remove());
+        }, 3000);
       }
     };
 
     // Initialize when DOM is ready
     $(document).ready(() => ReportsManager.init());
   </script>
+
+  <!-- Footer container -->
+  <div id="footer-container"></div>
 </body>
 </html>

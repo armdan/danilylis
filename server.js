@@ -26,6 +26,9 @@ const organizationRoutes = require('./routes/organizations');
 const medicalOfficeRoutes = require('./routes/medicalOffices');
 const doctorRoutes = require('./routes/doctors');
 const pcrRoutes = require('./routes/pcrTests');
+const accessionRoutes = require('./routes/accession');
+const systemStatusRoutes = require('./routes/system-status');
+
 
 // Security middleware - disabled CSP for development
 app.use(helmet({
@@ -123,6 +126,10 @@ app.use('/api/organizations', organizationRoutes);
 app.use('/api/medical-offices', medicalOfficeRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/pcr', pcrRoutes);
+app.use('/api/accession', accessionRoutes);
+app.use('/api/system', systemStatusRoutes);
+
+
 
 // Serve HTML pages
 app.get('/', (req, res) => {
@@ -187,6 +194,14 @@ app.get('/pcr-tests', (req, res) => {
 
 app.get('/pcr-results', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pcr-results.html'));
+});
+// Accession page route
+app.get('/accession', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'accession.html'));
+});
+// Specimen tracking page (alias for accession)
+app.get('/specimen-tracking', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'accession.html'));
 });
 
 // Add these AFTER your existing routes like app.get('/orders', ...)

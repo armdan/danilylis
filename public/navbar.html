@@ -83,6 +83,11 @@ data-bs-toggle="dropdown" aria-expanded="false">
 </a>
 </li>
 <li><hr class="dropdown-divider"></li>
+<!-- Add this to the Laboratory Dropdown in navbar.html -->
+<!-- Place this after the "Test Management" section and before "Orders Section" -->
+
+<li><hr class="dropdown-divider"></li>
+
 <!-- Orders Section -->
 <li><h6 class="dropdown-header">Orders & Results</h6></li>
 <li>
@@ -93,13 +98,10 @@ data-bs-toggle="dropdown" aria-expanded="false">
 <li>
 <a class="dropdown-item" href="/orders/new">
 <i class="fas fa-plus-circle me-2 text-success"></i> New Order
+<span class="badge bg-primary ms-1">New</span>
 </a>
 </li>
-<li>
-<a class="dropdown-item" href="/pending-results">
-<i class="fas fa-clock me-2 text-warning"></i> Pending Orders
-</a>
-</li>
+
 <li><hr class="dropdown-divider"></li>
 <!-- Results Section -->
 <li><h6 class="dropdown-header">Results Management</h6></li>

@@ -16,7 +16,7 @@ router.get('/statistics', async (req, res) => {
     // Basic counts
     const totalPatients = await Patient.countDocuments({ isActive: true });
     const pendingOrders = await Order.countDocuments({ status: 'pending' });
-    const completedTests = await Result.countDocuments({ status: 'final' });
+    const completedTests = await Order.countDocuments({ status: 'completed' });
     const criticalResults = await Result.countDocuments({ 
       overallResult: 'critical',
       status: { $in: ['preliminary', 'final'] }
